@@ -19,8 +19,8 @@
 - [ ] [SEV] <one-line description> (category: <c>, source: <jot|critique|triage|expand|self>, score: N.N) — <commit hash where filed>
 -->
 
-_(empty — populates as `/critique`, `/triage`, `/jot`,
-`/iterate`-self-audit fire findings)_
+- [ ] [HIGH] /api/vote returns rpc_failed — `public.cast_vote` missing in Supabase schema cache (#23) (category: data, source: triage, score: 5.4) — cf69494
+- [ ] [MED] season-page comment thread renders empty state — read path not wired to Supabase (#24) (category: bug, source: triage, score: 4.2) — cf69494
 
 ## Done
 
