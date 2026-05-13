@@ -98,3 +98,46 @@ starts).
 Analytics dashboard; surfaces top-N pages, drop-off points,
 404s; files audit rows for any URL with >5% bounce. Lightweight
 human-in-loop ritual.
+
+### S7. Inline / takeover search (replace the `/search` route page)
+
+**Trigger:** after phase 19b ships (search icon lives in the
+new header).
+**Source:** user direction 2026-05-13 — "Search needs to be
+inline (or takeover) — not a new page. you click the icon
+(thats in the style of "Show identity, tokens and
+compositions" from the design, the search expands and you can
+type right there. the index is local so we don't care that we
+are hitting the service per keystroke. highlight the content
+that comes up with the keystroke (if we can)."
+
+**Scope sketch:**
+
+- Click `⌕ Search` in the header → an inline takeover slides
+  down from under the topnav. No route change.
+- The takeover holds a single `<input type="search">` + a
+  results list below.
+- Per-keystroke query against the local index built in phase
+  15 (`src/lib/search.ts`). Fast — no Supabase round-trip for
+  the index, since the index is content-only and built at
+  request-time from the content loader.
+- Highlight matching substrings in the results titles + first
+  blurb line (use `<mark>` spans).
+- Results group by kind: shows, seasons, themed lists.
+- Escape closes the takeover. Click outside also closes.
+- Keyboard: ↑/↓ navigates results; Enter activates the
+  highlighted result.
+- `/search?q=…` deep-link remains valid and opens the
+  takeover pre-populated. The standalone `/search` page can
+  redirect to `/?search=…` or simply continue to live as a
+  fallback for users without JS.
+- Accessibility: ARIA combobox pattern; results have
+  `aria-live="polite"`.
+
+Phase work: rewire `<Header>` (19b ships the icon link as a
+stub) so the icon toggles a `<SearchTakeover>` rather than
+navigating; create `<SearchTakeover>` under
+`src/components/chrome/`; deprecate `src/app/search/page.tsx`
+or render it as the no-JS fallback.
+
+**Filed:** 2026-05-13. Awaiting `/oversight` promotion.

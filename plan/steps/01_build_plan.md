@@ -56,13 +56,32 @@ in the same commit that ships the phase.
 **External-signal wiring (phase 19):**
 - [x] Phase 19 — `/critique` + `/triage` wiring (reader sub-agent walks live site with anon AND authed cookie passes; findings tagged `anon:`/`authed:`; triage skill enabled with the 13 labels; loop-issue mirror script; `/march` Step 3a starts dispatching to triage when unlabeled issues exist) — e3bc4e5
 
+**Design re-grounding (phases 19a–19e) — May 2026 pivot:**
+
+> The May 2026 facade grammar (column / pediment / frieze /
+> ornament + derived sigil) was prototyped and rejected — it
+> reads as AI-generated. The new visual law is **color +
+> typography only**, with a single shared brand mark. See
+> `design/CLAUDE.md`. These five phases scorch the per-show
+> SVG system and rebuild every page against the new spec
+> (`design/Pantheon · {Brand, Survivor, Heroes vs. Villains,
+> Show Identity, Compositions}.html`). Ship in order — 19a
+> first (removes the old system), 19b through 19e in any
+> order after.
+
+- [ ] Phase 19a — Scorched earth (rip out `src/components/facade/`, `src/lib/facade/`, `ShowFacadeArt`, `ShowSigilArt`, `/internal/facade-demo`, every `public/shows/<slug>/*.svg`, every facade unit test, every `show-facades.spec.ts` e2e. Add `<Bullet color size>` primitive at `src/components/atoms/Bullet.tsx`. Update show schema to the seven-field contract per `design/CLAUDE.md` — drop `hero_motifs`, `network`, `format`, `first_aired`; add `seasons` int + `blurb` required. Migrate three existing shows. Verify gate green.) — see `phase_19a_scorched_earth.md`
+- [ ] Phase 19b — Chrome + brand mark + bounded layout (new `<Header>` and `<Footer>` per `design/Pantheon · Brand.html`: shared brand-mark SVG `<svg viewBox="0 0 28 28">` + serif "Pantheon" wordmark; header has Shows / Lists / About + Search icon + Sign in; footer has wordmark + serif italic promise + three link columns + theme toggle + drops "an experiment". Page-width contract: non-show routes get a `<Wrap max-width:1240px>` container; show + season routes stay full-bleed. Regenerate the favicon set + `apple-touch-icon` via `brander` from the new brand mark. Reduced-motion contract preserved.) — see `phase_19b_chrome_and_layout.md`
+- [ ] Phase 19c — Show + season pages to spec (rebuild `/shows/[show]` against `design/Pantheon · Survivor.html`: full-bleed, chrome tints to show palette, `<ShowHero>` with wordmark + meta column + tagline + stats + shield, `<ShowSplit>` Canon/Community pair, season grid using the new `<SeasonCard>`. Rebuild `/shows/[show]/season/[n]` against `design/Pantheon · Heroes vs. Villains.html`: full-bleed tinted, eyebrow + h1 + rank row + body + vote block + adjacent prev/next + "Also appears in" themed-list row group + sticky thread aside on desktop. Content authoring expands: seasons need a lede + body paragraphs. Per-show palette delivered via `[data-show=<slug>]` wrapper + tinted layout segment.) — see `phase_19c_show_and_season_pages.md`
+- [ ] Phase 19d — Interaction primitives to spec (rewrite `<VotePair>`, `<CommentInput>`, `<RankShiftPill>` as exact ports of `design/compositions/interactions.jsx` — VotePair pill with flash + reduced-motion fade, CommentInput collapsed→open with serif placeholder + spoiler-phrase detection + warn border + "✱ flag" tooltip + post button gated, RankShiftPill arrow + delta + sentiment-tinted background. RankShiftPill is **built but not yet rendered in the product** — component + tests + Storybook-style demo route, but no production placement until a future phase wires the 72-hour shift signal. VotePair wires to existing `/api/vote`; CommentInput wires to existing `/api/comment`.) — see `phase_19d_interaction_primitives.md`
+- [ ] Phase 19e — Homepage to spec (rebuild `/` against `HomeScreen` in `design/compositions/screens.jsx` + the home section of `design/Pantheon · Compositions.html`: split hero — left cover = featured show paper + huge serif wordmark + blurb + "go to Survivor" pill, right copy = "Pantheon · est. 2026" eyebrow + "The seasons, ranked. *no spoilers.*" title + intro blurb + Browse all shows / How it works actions. Pantheons grid: 3-up `<ShowTile>` cards, each tinted to show palette, with bullet + name + blurb + meta. Themed lists rail: 1-column list of `<ListTile>` (sentiment dot + title + meta + arrow). No featured "Per-show facade" anything — color does it.) — see `phase_19e_homepage.md`
+
 **Content velocity endgame (phases 20+):**
-- [ ] Phase 20 — `/ship-content` skill landed + first show backfill (Amazing Race, Big Brother — `brander` + `content-curator` in parallel per show; bearings Rule 1 quota check goes live)
+- [ ] Phase 20 — `/ship-content` skill landed + first show backfill (Amazing Race, Big Brother — `content-curator` per show; bearings Rule 1 quota check goes live. **No facade work** — color + type only per `design/CLAUDE.md`. The show frontmatter is the seven-field contract from 19a.)
 - [ ] Phase 21 — Show backfill round 2 (Bachelor, Bachelorette, Traitors)
 - [ ] Phase 22 — Show backfill round 3 (Love Island US, Love Island UK, Bake Off, Project Runway, The Challenge — completes the 12-show launch quota per bearings Rule 1)
 - [ ] Phase 23 — Themed lists round 1 (best premieres, best finales, best post-merge runs, best returnee seasons, best newbie casts — 5 themes drains bearings Rule 3 to ≥5/10)
 - [ ] Phase 24 — Themed lists round 2 (best villain editing, best comeback seasons, best location reveals, best reunion specials, best non-winning runs — completes Rule 3 quota at 10)
-- [ ] Phase 25 — Sigil + canon iteration (replace placeholder `public/sigil.svg` with the real Pantheon sigil via brander; refresh canon rationales for the first 3 shows after critique passes file substantive feedback)
+- [ ] Phase 25 — Canon iteration (refresh canon rationales for the first 3 shows after critique passes file substantive feedback. **Brand mark refresh is not needed** — 19b already regenerated the favicon set + brand-mark SVG from the canonical spec.)
 
 > **After phase 25:** the loop transitions back into `/iterate`
 > + `/ship-content` + `/critique` + `/triage` cycles. Content

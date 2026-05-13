@@ -2,11 +2,37 @@
 
 > Entry point for any AI agent landing in this repo cold. Read
 > top-to-bottom; standing rules at the top are non-negotiable.
+>
+> **Visual law:** `design/CLAUDE.md` is supreme on anything
+> visible. Read `CLAUDE.md` at the repo root before improvising
+> — it lists the design reading order and the No-Per-Show-SVG
+> rule. Older guidance in this file or in `plan/bearings.md`
+> that conflicts with `design/CLAUDE.md` is **superseded** by
+> the design law.
 
 ## Standing rules
 
 These apply to every command, every skill, every session. The
 skill files repeat them; this is the canonical source.
+
+### 0. Read `design/` before any UI work.
+
+Anything visible — chrome (header, footer, nav, page width),
+page composition (home, show, season, themed list, search),
+interaction primitives (vote pair, comment input, rank-shift
+pill), brand mark, type, color — reads from `design/` as the
+single source of truth. The reading order is in
+`CLAUDE.md` at the repo root. Files older than
+`design/CLAUDE.md` that conflict with it are superseded.
+
+**The No-Per-Show-SVG rule.** Pantheon does NOT ship per-show
+illustration. No facades, no per-show sigils, no mascots, no
+ornaments. The identity is **color + typography only**, with a
+single shared brand mark (pediment + columns) in every header
+and footer. Where a show needs a marker, use the
+`<Bullet color={primary} />` primitive. This direction is
+locked. Do not retry, do not "improve," do not add "just one
+small icon."
 
 ### 1. Commit and push as a single atomic act
 
@@ -208,14 +234,13 @@ does the right thing end-to-end.
 |---|---|
 | `scout` | Open-web research (cast lists, air dates, format changes, casting news). Citations required. |
 | `reader` | Fresh-eyes critique of the live site (anonymous; no auth needed for public pages). |
-| `brander` | Per-show pantheon facade SVG generation. Column / pediment / frieze / ornament + 3-color palette. |
+| `brander` | Shared-asset renderer ONLY: the shared brand mark (pediment + columns), favicons, apple-touch-icon, OG / social-card composites, the Pantheon wordmark lockup, svg2png. **Never per-show illustration** — see `design/CLAUDE.md` Hard Rule 1. |
 | `data-steward` | Supabase migrations, RLS policies, query optimization, drop ops. |
 | `content-curator` | Spoiler-disciplined editorial blurbs. Voice: knowledgeable peer. |
 
 The main agent writes wiring, code, decisions. Spawn sub-agents
 aggressively for everything else. Two-or-more agents in parallel
-when their work is independent (a `brander` + `content-curator`
-pair for new-show launches, for instance).
+when their work is independent.
 
 ---
 
@@ -255,4 +280,6 @@ failure-mode condition rather than inventing a placeholder.
 | Latest weaknesses | `plan/AUDIT.md` |
 | Critique queue | `plan/CRITIQUE.md` |
 | Phase candidates from `/expand` | `plan/PHASE_CANDIDATES.md` |
-| Design tokens + grammar | `design/tokens.json`, `design/compositions/*.jsx` |
+| Visual law (UI, brand, chrome, page composition) | `design/CLAUDE.md` then `design/Pantheon · *.html` |
+| Design tokens | `design/tokens.json` |
+| Design compositions (page shells, interactions) | `design/compositions/screens.{jsx,css}`, `design/compositions/interactions.jsx` |

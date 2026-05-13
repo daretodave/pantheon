@@ -9,17 +9,22 @@
 
 ## 1. Purpose
 
-The four content-velocity rules in `plan/bearings.md` "Content
-velocity & editorial cadence" generate a continuous stream of
-content-gap findings until Pantheon's corpus reaches its launch
-quota (12 shows, every aired season blurbed, ≥10 themed lists,
-every show with a complete facade set). This skill codifies the
-proven shape — gap → classify → spawn `brander` + `content-curator`
-→ verify → commit → push — as a single autonomous flow.
+The three live content-velocity rules in `plan/bearings.md`
+"Content velocity & editorial cadence" generate a continuous
+stream of content-gap findings until Pantheon's corpus reaches
+its launch quota (12 shows, every aired season blurbed, ≥10
+themed lists). Rule 4 (facade completeness) is **retired** —
+per-show illustration is prohibited per `design/CLAUDE.md`. The
+visual identity is color + typography + the shared brand mark,
+not per-show art.
+
+This skill codifies the proven shape — gap → classify → spawn
+`content-curator` → verify → commit → push — as a single
+autonomous flow.
 
 Every tick is identical in shape; the variables are which
-content unit (show / season-batch / theme / facade) and which
-show/theme it targets.
+content unit (show / season-batch / theme) and which show/theme
+it targets.
 
 ## 2. Invocation
 
@@ -41,28 +46,22 @@ Called from:
 - **Ambiguous gap → pick the top row.** If two rows tie on
   score, prefer the one with the older filing date.
 - **Show coverage gap (Rule 1) → ship one full show per tick.**
-  Show metadata + initial canon stub + 3 seed season blurbs +
-  facade commissioned via `brander`. ~6-8 files in one commit.
+  Show metadata (seven fields per `design/CLAUDE.md`) + initial
+  canon stub + 3 seed season blurbs. ~5-7 files in one commit.
+  **No facade work** — the visual identity is color + typography
+  + the shared brand mark; per-show illustration is prohibited.
 - **Canon completeness (Rule 2) → ship a batch of 3-5 season
   blurbs.** Amortize the show context lookup across multiple
   blurbs in one tick.
 - **Themed list (Rule 3) → ship one themed list per tick.**
   10-entry ordered list with cross-show entries.
-- **Facade missing (Rule 4) → spawn `brander` only.** No
-  `content-curator` needed; this is a pure asset gap.
+- **Rule 4 retired.** Historical content-gap rows tagged
+  `category: facade-gap` are auto-marked `[x] superseded by 19a`
+  and skipped. Do not file new ones.
 - **content-curator returns malformed output → retry once**
   with a more explicit brief. If still malformed after retry,
   mark the row `[blocked: content-curator]`, skip to the
   next-highest content-gap row, ship that.
-- **brander fails → ship a placeholder commit.** Use the
-  Pantheon ceremonial-gold sigil from `public/sigil.svg` as
-  the stand-in facade (rendered to `public/shows/<slug>/facade.svg`
-  with a `<!-- placeholder -->` comment). File an AUDIT.md
-  row tagged `[brander-retry]`. Never hold the show back
-  waiting for art.
-- **No domain ⇒ skip image-mailing tests.** N/A here, but the
-  pattern matters: skill ships what it can, files audit rows
-  for what it can't.
 
 ## 4. Procedure
 
@@ -106,10 +105,9 @@ Confirm the top row maps to one of the 4 bearings rules:
   premieres, best finales, best returnee seasons, best
   villain editing, best post-merge runs, best location
   reveals, etc.).
-- **Rule 4 — facade missing:** `public/shows/<slug>/facade.svg`
-  doesn't exist OR has the `<!-- placeholder -->` marker.
-  Pick the most-trafficked show without a real facade
-  (proxy: oldest covered show first).
+- **Rule 4 — retired.** Skip any row tagged
+  `category: facade-gap` (auto-mark `[x] superseded by 19a`).
+  Per-show illustration is prohibited per `design/CLAUDE.md`.
 
 If no content-gap rows or all score < 3.0: exit cleanly. Log
 "no content queue — falling through" and return.

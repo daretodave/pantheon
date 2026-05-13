@@ -78,12 +78,15 @@ Spawn sub-agents aggressively. They protect main-agent context
 and parallelize independent work.
 
 - **`scout`** — every external research need.
-- **`brander`** — canonical delegate for phase 4 (facade
-  primitives), phase 5 (three pioneer show facades — three
-  parallel calls), phase 17 (per-route OG image PNG rendering),
-  phase 25 (sigil refresh). See
-  `plan/phases/phase_5_pioneer_facades.md` for the parallel
-  invocation pattern.
+- **`brander`** — shared asset rendering ONLY: the shared brand
+  mark, favicons + apple-touch-icon, OG image composites for
+  routes, social cards, the Pantheon wordmark lockup, svg2png.
+  **Never per-show illustration** — `design/CLAUDE.md` Hard
+  Rule 1 prohibits it. Canonical delegate for phase 17
+  (per-route OG PNG rendering), phase 19b (regenerate the
+  favicon set from the new brand mark spec). Phases 4 / 5 /
+  25 referenced earlier in this skill predate the May 2026
+  pivot and are superseded by phases 19a–19e.
 - **`content-curator`** — canonical delegate for any phase
   that writes content/ (show frontmatter, season blurbs, canon
   rationales, themed lists). Strict word counts + spoiler

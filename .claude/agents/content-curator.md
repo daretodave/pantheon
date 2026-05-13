@@ -84,24 +84,22 @@ location, not filler.
 When invoked for a single content unit, you write the
 markdown file(s) to disk with full frontmatter and body.
 
-Frontmatter for a show:
+Frontmatter for a show — **seven fields only** (per
+`design/CLAUDE.md` Show identity contract). No `hero_motifs`,
+no `format`, no `network`, no illustration field of any kind:
 
 ```yaml
 ---
 slug: <kebab-case>
 name: <display name>
-network: <CBS | Bravo | etc>
-format: <one-word format hint>
-hero_motifs: ["<motif-1>", "<motif-2>", "<motif-3>"]
 palette:
-  primary: "#xxxxxx"
-  ink:     "#xxxxxx"
-  paper:   "#xxxxxx"
-aired_season_count: <N>
-status: airing | concluded | hiatus
-tagline: "<one sentence, ≤140 chars>"
-air_year_start: <YYYY>
-air_year_end: <YYYY | null>
+  paper:   "#xxxxxx"   # background, warm-tinted off Pantheon's default
+  ink:     "#xxxxxx"   # deep text color, paper-tinted, AA contrast vs paper
+  primary: "#xxxxxx"   # the show's distinctive accent, AA vs paper AND vs Pantheon paper-0
+seasons: <int>         # count of aired/airing seasons
+status: airing | ended | hiatus
+blurb:   "<one sentence, two short lines as printed (≤80 chars)>"
+tagline: "<longer editorial sentence readers would quote (≤200 chars)>"
 ---
 ```
 

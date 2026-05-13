@@ -143,12 +143,13 @@ If any row scores ≥ 3.0:
 - Execute its procedure end-to-end.
 - Return.
 
-(Pantheon has 4 content-velocity rules in
+(Pantheon has 3 live content-velocity rules in
 `plan/bearings.md` "Content velocity & editorial cadence"
 that consistently surface content-gap rows: show coverage
-quota, canon completeness, themed list quota, facade
-completeness. After phase 18 ships, this dispatch fires
-most ticks until the launch quota is reached.)
+quota, canon completeness, themed list quota. Rule 4
+(facade completeness) is retired — per-show illustration is
+prohibited per `design/CLAUDE.md`. After phase 18 ships, this
+dispatch fires most ticks until the launch quota is reached.)
 
 #### 3c. Expand due (rate-limited, posture-gated)?
 
