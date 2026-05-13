@@ -1,6 +1,19 @@
-import Link from 'next/link'
 import type { Metadata } from 'next'
-import { getAllThemes } from '@/content'
+import {
+  getAllThemes,
+  getFeaturedThemes,
+  getShow,
+  getShowsForTheme,
+  getThemeStats,
+  getThemesByCategory,
+} from '@/content'
+import type { Show, Theme } from '@/content'
+import { Wrap } from '@/components/chrome/Wrap'
+import { ListsHero } from '@/components/lists/ListsHero'
+import { ListsFilterController } from '@/components/lists/ListsFilterController'
+import { ListsFeaturedRow } from '@/components/lists/ListsFeaturedRow'
+import { ListsAllSection } from '@/components/lists/ListsAllSection'
+import type { FilterKey } from '@/lib/themes-format'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
 
 export const dynamic = 'force-static'
@@ -8,52 +21,77 @@ export const dynamic = 'force-static'
 export function generateMetadata(): Metadata {
   return buildMetadata({
     title: 'Themes',
-    description: 'Cross-show themed rankings: best premieres, best finales, best post-merge runs, and more.',
+    description:
+      'Themed lists across every Pantheon canon — best premieres, best finales, cross-canon and single-show pantheons, organized by what they admire.',
     path: '/themes',
   })
 }
 
+function resolveShows(theme: Theme): Show[] {
+  const slugs = getShowsForTheme(theme)
+  const out: Show[] = []
+  for (const slug of slugs) {
+    const s = getShow(slug)
+    if (s) out.push(s)
+  }
+  return out
+}
+
 export default function ThemesIndexPage() {
   const themes = getAllThemes()
-  const ld = buildJsonLd({
-    type: 'CollectionPage',
-    name: 'Themes — pantheon',
-    description: 'Cross-show themed rankings.',
-    path: '/themes',
-  })
+  const stats = getThemeStats()
+  const byCategory = getThemesByCategory()
+  const featured = getFeaturedThemes(3)
+
+  const showsByTheme: Record<string, Show[]> = {}
+  for (const t of themes) showsByTheme[t.slug] = resolveShows(t)
+
+  const counts: Record<FilterKey, number> = {
+    all: themes.length,
+    tone: byCategory.tone.length,
+    craft: byCategory.craft.length,
+    era: byCategory.era.length,
+    single: byCategory.single.length,
+  }
+
+  const ld = {
+    ...buildJsonLd({
+      type: 'CollectionPage',
+      name: 'Themes — pantheon',
+      description: 'Themed lists across every Pantheon canon.',
+      path: '/themes',
+    }),
+    numberOfItems: themes.length,
+    hasPart: themes.slice(0, 10).map((t) => ({
+      '@type': 'ItemList',
+      name: t.title,
+      url: `/themes/${t.slug}`,
+    })),
+  }
+
+  if (themes.length === 0) {
+    return (
+      <Wrap>
+        <script {...jsonLdScriptProps({ id: 'ld-themes-index', data: ld })} />
+        <ListsHero stats={stats} />
+        <p className="lists-all-wrap" style={{ paddingTop: 64, paddingBottom: 96 }}>
+          Themed lists haven&rsquo;t shipped yet — this page populates as the loop drains the queue.
+        </p>
+      </Wrap>
+    )
+  }
 
   return (
-    <section className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-16 md:py-24">
+    <Wrap>
       <script {...jsonLdScriptProps({ id: 'ld-themes-index', data: ld })} />
-      <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-4xl leading-tight text-ink-0 md:text-5xl">
-          Themes
-        </h1>
-        <p className="font-serif text-lg text-ink-1">
-          Cross-show rankings — patterns that cut across formats.
-        </p>
-      </header>
-
-      {themes.length === 0 ? (
-        <p className="text-ink-2">
-          Themed lists haven&rsquo;t been added yet — this page populates as the loop ships them.
-        </p>
-      ) : (
-        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {themes.map((theme) => (
-            <li key={theme.slug} className="rounded-lg border border-line-soft bg-paper-1 p-5">
-              <Link
-                href={`/themes/${theme.slug}`}
-                prefetch={false}
-                className="flex flex-col gap-2"
-              >
-                <h2 className="font-serif text-xl text-ink-0">{theme.title}</h2>
-                <p className="text-sm text-ink-2">{theme.description}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+      <ListsHero stats={stats} />
+      <ListsFilterController counts={counts}>
+        <ListsFeaturedRow featured={featured} showsByTheme={showsByTheme} />
+        <ListsAllSection
+          byCategory={byCategory}
+          showsByTheme={showsByTheme}
+        />
+      </ListsFilterController>
+    </Wrap>
   )
 }

@@ -3,6 +3,7 @@
 @import '../styles/screens.css';
 @import '../styles/atoms.css';
 @import '../styles/chrome.css';
+@import '../styles/lists.css';
 
 @layer base {
   /* Phase 18 — Skip-to-main-content link. Visually hidden until

@@ -1,30 +1,95 @@
 import { expect, test } from '@playwright/test'
 
-// Phase 14 — dedicated coverage for the themed-list family.
-// Smoke walker already 200s /themes and each /themes/[theme];
-// this spec adds family-level assertions: JSON-LD shape,
-// entry count + ordering, cross-link to season pages, mobile
-// reflow.
+// Phase 14 + 19g — coverage for the themed-list family.
+// /themes is the cross-canon index; /themes/[theme] is the detail.
 
-test.describe('/themes index', () => {
-  test('renders one card per themed list, links to detail pages', async ({ page }) => {
+test.describe('/themes index (phase 19g shape)', () => {
+  test('renders the lists hero with three stats', async ({ page }) => {
     const res = await page.goto('/themes', { waitUntil: 'domcontentloaded' })
     expect(res?.status()).toBe(200)
-    await expect(page.locator('h1')).toContainText('Themes')
-    const cards = page.locator('a[href^="/themes/"]')
-    const count = await cards.count()
-    expect(count).toBeGreaterThanOrEqual(2)
+    await expect(page.locator('h1')).toContainText(/Themed lists/i)
+    const stats = page.getByTestId('lists-hero-stats')
+    await expect(stats).toBeVisible()
+    await expect(page.getByTestId('lists-stat-total')).toContainText(/\d+/)
+    await expect(page.getByTestId('lists-stat-shows')).toContainText(/\d+/)
+    await expect(page.getByTestId('lists-stat-revised')).toContainText(
+      /\d{4}/,
+    )
   })
 
-  test('emits CollectionPage JSON-LD', async ({ page }) => {
+  test('filter bar has 5 chips with the right data-filter attrs', async ({
+    page,
+  }) => {
+    await page.goto('/themes', { waitUntil: 'domcontentloaded' })
+    const chips = page.locator('[data-testid=lists-filter-bar] .chip')
+    await expect(chips).toHaveCount(5)
+    for (const filter of ['all', 'tone', 'craft', 'era', 'single']) {
+      await expect(page.getByTestId(`lists-chip-${filter}`)).toBeVisible()
+    }
+  })
+
+  test('All-Lists section renders at least one group, each row has data-slug', async ({
+    page,
+  }) => {
+    await page.goto('/themes', { waitUntil: 'domcontentloaded' })
+    const groups = page.getByTestId('lists-group')
+    expect(await groups.count()).toBeGreaterThanOrEqual(1)
+    const rows = page.getByTestId('lists-row')
+    const rowCount = await rows.count()
+    expect(rowCount).toBeGreaterThanOrEqual(2)
+    for (let i = 0; i < rowCount; i++) {
+      await expect(rows.nth(i)).toHaveAttribute('data-slug', /.+/)
+    }
+  })
+
+  test('featured row renders 0–3 cards (does not pad)', async ({ page }) => {
+    await page.goto('/themes', { waitUntil: 'domcontentloaded' })
+    const cards = page.getByTestId('lists-featured-card')
+    const count = await cards.count()
+    expect(count).toBeLessThanOrEqual(3)
+  })
+
+  test('clicking a category chip flips data-active-filter and hides off-filter groups', async ({
+    page,
+  }) => {
+    await page.goto('/themes', { waitUntil: 'domcontentloaded' })
+    const scope = page.getByTestId('lists-filter-scope')
+    await expect(scope).toHaveAttribute('data-active-filter', 'all')
+
+    // Pick a category that has at least one group on the page.
+    const groups = page.getByTestId('lists-group')
+    const first = groups.first()
+    const category = await first.getAttribute('data-category')
+    expect(category).toBeTruthy()
+
+    if (category) {
+      await page.getByTestId(`lists-chip-${category}`).click()
+      await expect(scope).toHaveAttribute('data-active-filter', category)
+
+      // Off-filter groups should be hidden.
+      const otherGroups = page.locator(
+        `[data-testid=lists-group]:not([data-category="${category}"])`,
+      )
+      const otherCount = await otherGroups.count()
+      for (let i = 0; i < otherCount; i++) {
+        await expect(otherGroups.nth(i)).toBeHidden()
+      }
+    }
+  })
+
+  test('emits CollectionPage JSON-LD with numberOfItems', async ({ page }) => {
     await page.goto('/themes', { waitUntil: 'domcontentloaded' })
     const ld = await page.locator('script#ld-themes-index').textContent()
     expect(ld).toBeTruthy()
     const parsed = JSON.parse(ld ?? '{}')
     expect(parsed['@type']).toBe('CollectionPage')
+    expect(typeof parsed.numberOfItems).toBe('number')
+    expect(parsed.numberOfItems).toBeGreaterThanOrEqual(1)
   })
 
-  test('mobile @ 375px viewport: no horizontal scroll, H1 visible', async ({ page }) => {
+  test('mobile @ 375px viewport: no horizontal scroll, H1 visible', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 375, height: 800 })
     await page.goto('/themes', { waitUntil: 'domcontentloaded' })
     const overflow = await page.evaluate(
@@ -45,11 +110,8 @@ test.describe('/themes/[theme] detail', () => {
     expect(res?.status()).toBe(200)
     await expect(page.locator('h1')).toContainText(/Survivor/i)
 
-    // Each entry has a "survivor · S<n>" stamp.
     const entries = page.locator('ol > li')
     await expect(entries).toHaveCount(4)
-
-    // The first entry should reference survivor S1 (highest rank).
     await expect(entries.nth(0)).toContainText('S1')
   })
 
@@ -91,7 +153,6 @@ test.describe('show page → themes cross-link retrofit', () => {
     await expect(featured).toBeVisible()
     const links = page.getByTestId('featured-theme-link')
     const count = await links.count()
-    // Both starter themes contain survivor.
     expect(count).toBeGreaterThanOrEqual(2)
   })
 
