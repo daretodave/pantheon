@@ -245,6 +245,48 @@ describe('themeSchema', () => {
     })
     expect(parsed.body_md).toBe('')
   })
+
+  it('themeFrontmatter defaults sentiment to "neutral" when omitted', () => {
+    const parsed = themeFrontmatterSchema.parse({
+      slug: 'no-sentiment',
+      title: 'No sentiment',
+      description: 'Defaults apply.',
+      entries: [entry],
+    })
+    expect(parsed.sentiment).toBe('neutral')
+  })
+
+  it('themeFrontmatter accepts every valid sentiment value', () => {
+    for (const sentiment of [
+      'warm-up',
+      'warm-down',
+      'neutral',
+      'hold',
+      'verdict',
+      'consensus',
+    ] as const) {
+      const parsed = themeFrontmatterSchema.parse({
+        slug: `s-${sentiment}`,
+        title: sentiment,
+        description: 'covering sentiment',
+        sentiment,
+        entries: [entry],
+      })
+      expect(parsed.sentiment).toBe(sentiment)
+    }
+  })
+
+  it('themeFrontmatter rejects unknown sentiment values', () => {
+    expect(() =>
+      themeFrontmatterSchema.parse({
+        slug: 'bad',
+        title: 'Bad',
+        description: 'invalid sentiment',
+        sentiment: 'spicy',
+        entries: [entry],
+      }),
+    ).toThrow()
+  })
 })
 
 describe('canonEntrySchema', () => {

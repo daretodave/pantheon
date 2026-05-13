@@ -20,10 +20,12 @@ const chromeVisible = [
 
 export const pageReads: Record<string, PageReadAssertion> = {
   '/': {
-    expectH1Pattern: /The seasons.*ranked.*No spoilers/i,
+    expectH1Pattern: /The seasons.*ranked.*no spoilers/i,
     expectVisible: [
       '[data-testid=hero]',
       '[data-testid=home-hero]',
+      '[data-testid=home-hero-cover]',
+      '[data-testid=home-cover-go]',
       '[data-testid=home-show-grid]',
       '[data-testid=home-list-grid]',
       ...chromeVisible,

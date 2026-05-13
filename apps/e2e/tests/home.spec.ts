@@ -14,14 +14,19 @@ test('home renders the promise + hero + grids', async ({ page }) => {
   expect(response?.status()).toBe(200)
 
   const main = page.getByRole('main')
-  // Phase 16 — the H1 is the cold-search promise itself.
+  // Phase 19e — the H1 is still the cold-search promise itself.
   await expect(main.locator('h1')).toContainText(/the seasons/i)
   await expect(main.locator('h1')).toContainText(/no spoilers/i)
 
-  // The three home regions.
+  // The hero shell + the two grids.
   await expect(page.getByTestId('home-hero')).toBeVisible()
+  await expect(page.getByTestId('home-hero-cover')).toBeVisible()
   await expect(page.getByTestId('home-show-grid')).toBeVisible()
   await expect(page.getByTestId('home-list-grid')).toBeVisible()
+
+  // The home page is bounded — it lives inside the (default)
+  // layout's <Wrap>.
+  await expect(page.getByTestId('wrap')).toBeVisible()
 
   // The chrome.
   await expect(page.getByRole('contentinfo')).toBeVisible()
@@ -34,7 +39,6 @@ test('home renders the promise + hero + grids', async ({ page }) => {
 
 test('theme toggle flips data-theme without flash', async ({ page }) => {
   await page.goto('/')
-  // Default: dark (no data-theme set, tokens default at :root).
   const initialTheme = await page.evaluate(() => document.documentElement.dataset['theme'])
   expect(initialTheme === undefined || initialTheme === 'dark').toBe(true)
 
@@ -45,22 +49,32 @@ test('theme toggle flips data-theme without flash', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
 })
 
-test('hero eyebrow names the featured show + CTAs link', async ({ page }) => {
+test('hero cover names the featured show + go-pill links to /shows/<slug>', async ({
+  page,
+}) => {
   await page.goto('/')
-  const eyebrow = page.getByTestId('home-hero-eyebrow')
-  await expect(eyebrow).toContainText(/currently featured/i)
+  const cover = page.getByTestId('home-hero-cover')
+  await expect(cover).toContainText(/currently featured/i)
+  await expect(cover).toContainText(/survivor/i)
+
+  const go = page.getByTestId('home-cover-go')
+  await expect(go).toHaveAttribute('href', /^\/shows\/[a-z][a-z0-9-]*$/)
+})
+
+test('hero copy column carries the est-2026 eyebrow + the CTAs', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByTestId('home-hero')).toContainText(/pantheon · est\. 2026/i)
   await expect(page.getByTestId('home-cta-shows')).toHaveAttribute('href', '/shows')
   await expect(page.getByTestId('home-cta-about')).toHaveAttribute('href', '/about')
 })
 
-test('show grid renders one tile per shipped show, capped at 5', async ({ page }) => {
+test('show grid renders one tile per shipped show, capped at 3', async ({ page }) => {
   await page.goto('/')
   const tiles = page.getByTestId('home-show-tile')
   const count = await tiles.count()
   expect(count).toBeGreaterThanOrEqual(1)
-  expect(count).toBeLessThanOrEqual(5)
+  expect(count).toBeLessThanOrEqual(3)
 
-  // Every tile links to /shows/<slug>.
   const hrefs = await tiles.evaluateAll((els) =>
     els.map((el) => el.getAttribute('href') ?? ''),
   )
@@ -69,12 +83,23 @@ test('show grid renders one tile per shipped show, capped at 5', async ({ page }
   }
 })
 
-test('list grid renders one tile per themed list, capped at 5', async ({ page }) => {
+test('every show tile renders a bullet + serif name', async ({ page }) => {
+  await page.goto('/')
+  const tiles = page.getByTestId('home-show-tile')
+  const count = await tiles.count()
+  for (let i = 0; i < count; i++) {
+    const tile = tiles.nth(i)
+    await expect(tile.getByTestId('bullet').first()).toBeVisible()
+    await expect(tile.locator('.show-tile-name').first()).toBeVisible()
+  }
+})
+
+test('list grid renders one tile per themed list, capped at 3', async ({ page }) => {
   await page.goto('/')
   const tiles = page.getByTestId('home-list-tile')
   const count = await tiles.count()
-  expect(count).toBeGreaterThanOrEqual(1)
-  expect(count).toBeLessThanOrEqual(5)
+  expect(count).toBeGreaterThanOrEqual(0)
+  expect(count).toBeLessThanOrEqual(3)
 
   const hrefs = await tiles.evaluateAll((els) =>
     els.map((el) => el.getAttribute('href') ?? ''),
@@ -84,7 +109,19 @@ test('list grid renders one tile per themed list, capped at 5', async ({ page })
   }
 })
 
-test('home hero is copy-only and contains no per-show facade art', async ({ page }) => {
+test('every list tile renders a sentiment dot', async ({ page }) => {
+  await page.goto('/')
+  const tiles = page.getByTestId('home-list-tile')
+  const count = await tiles.count()
+  for (let i = 0; i < count; i++) {
+    const tile = tiles.nth(i)
+    await expect(tile.getByTestId('home-list-tile-dot')).toBeVisible()
+    const sentiment = await tile.getAttribute('data-sentiment')
+    expect(sentiment).toMatch(/^(warm-up|warm-down|neutral|hold|verdict|consensus)$/)
+  }
+})
+
+test('home hero is color-only — no facade art, no svg illustrations', async ({ page }) => {
   await page.goto('/')
   const hero = page.getByTestId('home-hero')
   await expect(hero).toBeVisible()

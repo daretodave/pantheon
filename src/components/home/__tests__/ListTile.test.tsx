@@ -8,6 +8,7 @@ function theme(overrides: Partial<Theme> = {}): Theme {
     slug: 'survivor-pillars',
     title: 'Survivor: the load-bearing seasons',
     description: 'Four seasons that define the show.',
+    sentiment: 'neutral',
     entries: [
       { show: 'survivor', season: 1, rank: 1, blurb: 'b1' },
       { show: 'survivor', season: 28, rank: 2, blurb: 'b2' },
@@ -40,5 +41,19 @@ describe('<ListTile>', () => {
       />,
     )
     expect(screen.getByTestId('home-list-tile').textContent).toContain('1 entry')
+  })
+
+  it('exposes the sentiment as data-sentiment + dot background var', () => {
+    render(<ListTile theme={theme({ sentiment: 'warm-up' })} />)
+    const link = screen.getByTestId('home-list-tile')
+    expect(link.dataset['sentiment']).toBe('warm-up')
+    const dot = screen.getByTestId('home-list-tile-dot') as HTMLDivElement
+    expect(dot.style.background).toContain('--s-warm-up')
+  })
+
+  it('falls back to the neutral sentiment when not set in the data', () => {
+    render(<ListTile theme={theme()} />)
+    const link = screen.getByTestId('home-list-tile')
+    expect(link.dataset['sentiment']).toBe('neutral')
   })
 })

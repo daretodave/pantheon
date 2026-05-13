@@ -1,33 +1,30 @@
-import { getAllSeasons, getAllShows, getAllThemes, getShow } from '@/content'
-import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
+import { FEATURED_SHOW_SLUG, getAllSeasons, getAllShows, getAllThemes, getShow } from '@/content'
 import { HomeHero } from '@/components/home/HomeHero'
 import { HomeShowGrid } from '@/components/home/HomeShowGrid'
 import { HomeListGrid } from '@/components/home/HomeListGrid'
 import { ShowTile } from '@/components/home/ShowTile'
 import { ListTile } from '@/components/home/ListTile'
 
-// Phase 16 — home page hero. The cold-search landing surface.
-// Static across the board: content is build-time stable, so SSR
-// adds nothing.
+// Phase 19e — homepage to spec. Split hero with featured-show cover
+// + cold-search promise, Pantheons grid (3-up), themed lists rail
+// (1-column). Color + type only; the chrome wrap is applied by the
+// (default) layout — no full-bleed escape for the home page.
 
 export const dynamic = 'force-static'
 
-const FEATURED_SHOW_SLUG = 'survivor'
-const FEATURED_MAX = 5
+const FEATURED_TILES = 3
 
 export default function HomePage() {
   const featured = getShow(FEATURED_SHOW_SLUG)
   const shows = getAllShows()
     .slice()
     .sort((a, b) => a.slug.localeCompare(b.slug))
-    .slice(0, FEATURED_MAX)
-  const themes = getAllThemes().slice(0, FEATURED_MAX)
+    .slice(0, FEATURED_TILES)
+  const themes = getAllThemes().slice(0, FEATURED_TILES)
 
   return (
     <div className="screen home" data-testid="hero">
-      <ShowPaletteScope show={FEATURED_SHOW_SLUG}>
-        <HomeHero featuredShowName={featured?.name ?? 'Pantheon'} />
-      </ShowPaletteScope>
+      {featured ? <HomeHero featured={featured} /> : null}
 
       <HomeShowGrid>
         {shows.map((show) => (

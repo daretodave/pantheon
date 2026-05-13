@@ -96,10 +96,22 @@ export const themeEntrySchema = z.object({
 
 export type ThemeEntry = z.infer<typeof themeEntrySchema>
 
+export const themeSentimentEnum = z.enum([
+  'warm-up',
+  'warm-down',
+  'neutral',
+  'hold',
+  'verdict',
+  'consensus',
+])
+
+export type ThemeSentiment = z.infer<typeof themeSentimentEnum>
+
 export const themeFrontmatterSchema = z.object({
   slug,
   title: z.string().min(1),
   description: z.string().min(1).max(280),
+  sentiment: themeSentimentEnum.default('neutral'),
   entries: z.array(themeEntrySchema).min(1).max(15),
 })
 

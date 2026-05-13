@@ -24,6 +24,9 @@ export type {
   Theme,
   ThemeEntry,
   ThemeFrontmatter,
+  ThemeSentiment,
 } from './schemas'
+
+export { FEATURED_SHOW_SLUG } from './featured'
 
 export { setContentRoot } from './paths'
