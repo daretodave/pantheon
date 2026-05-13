@@ -90,7 +90,7 @@ in the same commit that ships the phase.
 
 **Content velocity endgame (phases 20+):**
 - [x] Phase 20 — `/ship-content` skill landed + first show backfill (Amazing Race, Big Brother — `content-curator` per show; bearings Rule 1 quota check goes live. **No facade work** — color + type only per `design/CLAUDE.md`. The show frontmatter is the seven-field contract from 19a.) — 495c9e8
-- [ ] Phase 21 — Show backfill round 2 (Bachelor, Bachelorette, Traitors)
+- [x] Phase 21 — Show backfill round 2 (Bachelor, Bachelorette, Traitors) — 5ba35f1
 - [ ] Phase 22 — Show backfill round 3 (Love Island US, Love Island UK, Bake Off, Project Runway, The Challenge — completes the 12-show launch quota per bearings Rule 1)
 - [ ] Phase 23 — Themed lists round 1 (best premieres, best finales, best post-merge runs, best returnee seasons, best newbie casts — 5 themes drains bearings Rule 3 to ≥5/10)
 - [ ] Phase 24 — Themed lists round 2 (best villain editing, best comeback seasons, best location reveals, best reunion specials, best non-winning runs — completes Rule 3 quota at 10)
