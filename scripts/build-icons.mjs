@@ -44,13 +44,21 @@ async function main() {
   const pngToIco = (await import('png-to-ico')).default
 
   await mkdir(OUT_DIR, { recursive: true })
-  const svg = await readFile(SOURCE)
+  const rawSvg = await readFile(SOURCE, 'utf8')
+  // The canonical sigil.svg uses `currentColor` so it inherits the
+  // surrounding ink token when rendered inline (HTML / OG). For raster
+  // output we resolve `currentColor` to Pantheon ink-0 (#F2EADB) so the
+  // mark is visible against the dark paper-1 (#15110C) tile we render
+  // beneath it — same recipe Stripe / Linear use for monochrome glyph
+  // favicons on a solid brand tile.
+  const svg = rawSvg.replace(/currentColor/g, '#F2EADB')
+  const BG = '#15110C'
 
   console.log(`Rendering ${SIZES.length} PNG variants from ${SOURCE}...`)
   for (const size of SIZES) {
     const png = new Resvg(svg, {
       fitTo: { mode: 'width', value: size },
-      background: 'rgba(0,0,0,0)',
+      background: BG,
     })
       .render()
       .asPng()
@@ -59,10 +67,11 @@ async function main() {
     console.log(`  -> ${out} (${png.length} bytes)`)
   }
 
-  // Apple touch icon: 180x180 with no transparency (iOS quirk).
+  // Apple touch icon: 180x180 with no transparency (iOS quirk; matches
+  // the PNG tiles above).
   const apple = new Resvg(svg, {
     fitTo: { mode: 'width', value: 180 },
-    background: '#15110C', // Pantheon paper-1 dark
+    background: BG,
   })
     .render()
     .asPng()

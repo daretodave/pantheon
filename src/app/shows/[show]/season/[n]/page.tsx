@@ -129,7 +129,7 @@ export default function SeasonPage({ params }: { params: Params }) {
                     Does this belong in the canon top 10?
                   </div>
                   <div className="season-vote-meta">
-                    Votes land for real in phase 11 — this is the working shell.
+                    Voted weekly. Tap an arrow to weigh in.
                   </div>
                 </div>
                 <VotePair

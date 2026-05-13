@@ -27,10 +27,10 @@ function reducer(state: VotePairState, action: Action): VotePairState {
  * (up vote = count slides up). `prefers-reduced-motion` collapses the
  * slide to an opacity fade per `design/tokens.json` motion.reduced.
  *
- * Wiring to `/api/vote` is fire-and-forget for phase 9; phase 11 lands
- * the real persistence + error recovery. The optimistic count + flash
- * runs regardless of network outcome — see decisions in
- * plan/phases/phase_9_season_page.md.
+ * Wiring to `/api/vote` is fire-and-forget — the optimistic count +
+ * flash always runs. Network failures (e.g. a stale Supabase RPC) do
+ * not block the visual feedback, but they also don't currently warn
+ * the reader; a proper error toast is on the backlog.
  */
 export function VotePair({
   initialCount = 0,
