@@ -37,7 +37,12 @@ export const pageReads: Record<string, PageReadAssertion> = {
     expectJsonLdType: 'ItemList',
   },
   '/shows/[show]/season/[n]': {
-    expectVisible: ['[data-testid=vote-pair]'],
+    expectVisible: [
+      '[data-testid=vote-pair]',
+      '[data-testid=comment-thread]',
+      '[data-testid=shield-badge]',
+      '[data-testid=season-page-screen]',
+    ],
     expectJsonLdType: 'Article',
   },
   '/themes': {
