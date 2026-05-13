@@ -78,11 +78,7 @@ function validate<T extends z.ZodType>(
 export function parseShowFile(raw: string, file: string): Show {
   const { data, content } = readFrontmatter(raw)
   const body = content.trim()
-  const merged = {
-    ...data,
-    tagline: (data as { tagline?: unknown }).tagline ?? (body.length > 0 ? body : undefined),
-    body_md: body,
-  }
+  const merged = body.length > 0 ? { ...data, body_md: body } : { ...data }
   return validate(showSchema, merged, file, 'show')
 }
 

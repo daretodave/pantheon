@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllShows, getCanon, getShow } from '@/content'
-import { PaletteScope } from '@/components/facade'
+import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import {
   CanonEntry,
   CanonList,
@@ -9,7 +9,6 @@ import {
   ShowHero,
 } from '@/components/composition'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
-import { ShowSigilArt } from '../ShowSigilArt'
 
 type Params = { show: string }
 
@@ -71,7 +70,7 @@ export default function CanonPage({ params }: { params: Params }) {
   })
 
   return (
-    <PaletteScope show={show.slug}>
+    <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-canon', data: itemListLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-canon-breadcrumb', data: crumbsLd })} />
       <div className="screen canon-page" data-testid="canon-page-screen">
@@ -84,7 +83,6 @@ export default function CanonPage({ params }: { params: Params }) {
           }
           title="Editor's Canon"
           lede={`${show.name}, ranked with confidence. Every placement is spoiler-safe, every rationale is on the record.`}
-          art={<ShowSigilArt slug={show.slug} name={show.name} />}
           shield={<ShieldBadge />}
         />
 
@@ -113,6 +111,6 @@ export default function CanonPage({ params }: { params: Params }) {
           </p>
         )}
       </div>
-    </PaletteScope>
+    </ShowPaletteScope>
   )
 }

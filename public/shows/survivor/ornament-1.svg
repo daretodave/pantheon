@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="survivor-ornament-1-title">
-  <title id="survivor-ornament-1-title">Survivor ornament — woven rope knot</title>
-  <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
-    <path d="M 6 40 Q 23 14 40 40 Q 57 66 74 40"/>
-    <path d="M 6 40 Q 23 66 40 40 Q 57 14 74 40"/>
-  </g>
-  <circle cx="40" cy="40" r="5" fill="#D55E36" stroke="#EFE2BD" stroke-width="2"/>
-</svg>

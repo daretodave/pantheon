@@ -22,13 +22,14 @@ describe('themesContainingShow', () => {
       `---
 slug: survivor
 name: Survivor
-network: CBS
-format: reality competition
 palette:
   primary: '#aa3300'
   ink: '#111111'
   paper: '#fafafa'
+seasons: 47
 status: airing
+blurb: One torch at a time.
+tagline: 47 seasons of strangers on a beach.
 ---
 `,
     )
@@ -37,13 +38,14 @@ status: airing
       `---
 slug: top-chef
 name: Top Chef
-network: Bravo
-format: cooking competition
 palette:
   primary: '#003366'
   ink: '#111111'
   paper: '#fafafa'
+seasons: 22
 status: airing
+blurb: Knives drawn, herbs fresh.
+tagline: 22 seasons of professional cooks.
 ---
 `,
     )

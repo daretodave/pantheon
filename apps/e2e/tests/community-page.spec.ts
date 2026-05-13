@@ -18,15 +18,17 @@ const EXPECTED_SOURCE: Record<string, 'canon' | 'seasons' | 'votes'> = {
 for (const url of communityUrls) {
   const slug = url.show ?? ''
   test.describe(`community page: ${slug}`, () => {
-    test(`renders ShowHero + sigil + source banner + (cards | empty)`, async ({ page }) => {
+    test(`renders ShowHero + source banner + (cards | empty)`, async ({ page }) => {
       const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
       expect(response?.status()).toBe(200)
 
       await expect(page.getByTestId('community-page-screen')).toBeVisible()
       await expect(page.getByTestId('show-hero')).toBeVisible()
       await expect(page.locator('h1').first()).toContainText(/community rank/i)
-      await expect(page.getByTestId('show-sigil').first()).toBeVisible()
       await expect(page.getByTestId('shield-badge').first()).toBeVisible()
+
+      const sigilCount = await page.getByTestId('show-sigil').count()
+      expect(sigilCount).toBe(0)
 
       const banner = page.getByTestId('community-source-banner')
       await expect(banner).toBeVisible()

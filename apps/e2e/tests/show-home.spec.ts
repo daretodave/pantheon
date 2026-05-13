@@ -15,15 +15,20 @@ const EXPECTED_PALETTES: Record<string, { primary: string; ink: string; paper: s
 for (const url of showHomeUrls) {
   const slug = url.show ?? ''
   test.describe(`show home: ${slug}`, () => {
-    test(`renders facade hero + split + season region + palette swap`, async ({ page }) => {
+    test(`renders hero + split + season region + palette swap + bullet`, async ({ page }) => {
       const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
       expect(response?.status(), `status for ${url.path}`).toBe(200)
 
       await expect(page.getByTestId('show-home-screen')).toBeVisible()
       await expect(page.getByTestId('show-hero')).toBeVisible()
-      await expect(page.getByTestId('facade').first()).toBeVisible()
+      await expect(page.getByTestId('bullet').first()).toBeVisible()
       await expect(page.getByTestId('show-split')).toBeVisible()
       await expect(page.getByTestId('shield-badge').first()).toBeVisible()
+
+      const facadeCount = await page.getByTestId('facade').count()
+      expect(facadeCount).toBe(0)
+      const showFacadeArtCount = await page.getByTestId('show-facade-art').count()
+      expect(showFacadeArtCount).toBe(0)
 
       const canon = page.getByTestId('split-btn-canon')
       const community = page.getByTestId('split-btn-community')

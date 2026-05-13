@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSeasons, getAllShows, getShow } from '@/content'
-import { PaletteScope, ShowFacadeArt } from '@/components/facade'
+import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
+import { Bullet } from '@/components/atoms/Bullet'
 import {
   SeasonCard,
   SeasonGrid,
@@ -30,21 +31,18 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   }
   return buildMetadata({
     title: `${show.name} — ranked seasons, no spoilers`,
-    description:
-      show.tagline ??
-      `Editor's Canon and Community Rank for every ${show.name} season. Spoiler-free.`,
+    description: show.tagline,
     path: `/shows/${show.slug}`,
   })
 }
 
 function seasonTag(
   season: ReturnType<typeof getAllSeasons>[number],
-  show: NonNullable<ReturnType<typeof getShow>>,
 ): string {
   if (season.premiere_date) {
     return new Date(season.premiere_date).getUTCFullYear().toString()
   }
-  return show.format
+  return `Season ${season.number}`
 }
 
 export default function ShowHomePage({ params }: { params: Params }) {
@@ -55,8 +53,7 @@ export default function ShowHomePage({ params }: { params: Params }) {
   const collectionLd = buildJsonLd({
     type: 'CollectionPage',
     name: `${show.name} — pantheon`,
-    description:
-      show.tagline ?? `Editor's Canon and Community Rank for every ${show.name} season.`,
+    description: show.tagline,
     path: `/shows/${show.slug}`,
   })
   const crumbsLd = buildJsonLd({
@@ -70,19 +67,20 @@ export default function ShowHomePage({ params }: { params: Params }) {
   const seasonsSorted = [...seasons].sort((a, b) => a.number - b.number)
 
   return (
-    <PaletteScope show={show.slug}>
+    <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-show-home', data: collectionLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-show-breadcrumb', data: crumbsLd })} />
       <div className="screen show-home" data-testid="show-home-screen">
         <ShowHero
           crumb={
             <>
+              <Bullet color={show.palette.primary} />
+              {' '}
               <a href="/shows">Pantheons</a> / {show.name}
             </>
           }
           title={show.name}
-          lede={show.tagline ?? `${show.network} · ${show.format}`}
-          art={<ShowFacadeArt slug={show.slug} name={show.name} />}
+          lede={show.tagline}
           shield={<ShieldBadge />}
         />
         <ShowSplit
@@ -120,7 +118,7 @@ export default function ShowHomePage({ params }: { params: Params }) {
                   key={season.number}
                   rank={season.canonical_position ?? season.number}
                   title={season.title}
-                  tag={seasonTag(season, show)}
+                  tag={seasonTag(season)}
                   seasonNumber={season.number}
                   href={`/shows/${show.slug}/season/${season.number}`}
                 />
@@ -132,6 +130,6 @@ export default function ShowHomePage({ params }: { params: Params }) {
           <FeaturedThemes show={show.slug} />
         </div>
       </div>
-    </PaletteScope>
+    </ShowPaletteScope>
   )
 }

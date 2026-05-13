@@ -67,18 +67,15 @@ describe('search() — integration via temp content/', () => {
       `---
 slug: survivor
 name: Survivor
-network: CBS
-format: reality competition
-hero_motifs: [torch, idol]
 palette:
   primary: '#aa3300'
   ink: '#111111'
   paper: '#fafafa'
+seasons: 47
 status: airing
+blurb: One torch at a time.
 tagline: Sixteen Americans on an island
 ---
-
-Body.
 `,
     )
     writeFileSync(

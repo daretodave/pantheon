@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSeasons, getAllShows, getCanon, getShow } from '@/content'
-import { PaletteScope } from '@/components/facade'
+import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import {
   SeasonCard,
   SeasonGrid,
@@ -10,7 +10,6 @@ import {
 } from '@/components/composition'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
 import { computeCommunityRank, sourceBannerCopy } from '@/lib/community/rank'
-import { ShowSigilArt } from '../ShowSigilArt'
 
 type Params = { show: string }
 
@@ -74,7 +73,7 @@ export default function CommunityPage({ params }: { params: Params }) {
   const banner = sourceBannerCopy(result.source)
 
   return (
-    <PaletteScope show={show.slug}>
+    <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-community', data: itemListLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-community-breadcrumb', data: crumbsLd })} />
       <div className="screen community-page" data-testid="community-page-screen">
@@ -87,7 +86,6 @@ export default function CommunityPage({ params }: { params: Params }) {
           }
           title="Community Rank"
           lede={`Voted by people who've watched it. ${show.name}'s ranking shifts as the community weighs in — be the first to push it.`}
-          art={<ShowSigilArt slug={show.slug} name={show.name} />}
           shield={<ShieldBadge />}
         />
 
@@ -131,6 +129,6 @@ export default function CommunityPage({ params }: { params: Params }) {
           </p>
         )}
       </div>
-    </PaletteScope>
+    </ShowPaletteScope>
   )
 }

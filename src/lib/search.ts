@@ -114,16 +114,14 @@ function scoreShow(show: Show, queryTokens: Set<string>): SearchHit | null {
   const fields: { text: string; weight: number }[] = [
     { text: show.name, weight: TITLE_WEIGHT },
     { text: show.slug, weight: TITLE_WEIGHT },
-    ...(show.tagline ? [{ text: show.tagline, weight: TAGLINE_WEIGHT }] : []),
-    { text: show.network, weight: META_WEIGHT },
-    { text: show.format, weight: META_WEIGHT },
-    ...show.hero_motifs.map((m) => ({ text: m, weight: BODY_WEIGHT })),
+    { text: show.tagline, weight: TAGLINE_WEIGHT },
+    { text: show.blurb, weight: BLURB_WEIGHT },
   ]
   const { score, matched, firstHitField } = scoreFields(fields, queryTokens)
   if (score === 0) return null
   const snippet = firstHitField
     ? snippetFromField(firstHitField, matched)
-    : (show.tagline ?? show.format)
+    : show.tagline
   return {
     type: 'show',
     slug: show.slug,

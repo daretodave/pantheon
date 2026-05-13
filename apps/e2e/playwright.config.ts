@@ -14,9 +14,17 @@ const BASE_URL = `http://127.0.0.1:${PORT}`
 // supabase start is idempotent (no-op if already running). On a fresh
 // box it can take 60–90s to pull images; the 300s overall timeout
 // covers that.
+// The supabase CLI binds to the project_id in supabase/config.toml
+// for local containers. If SUPABASE_PROJECT_ID is set in env (cloud
+// runners forward the remote project hash), the CLI mistakenly
+// looks for containers under that name. Strip it before any
+// `supabase …` command so local-stack ops always match the
+// config.toml project_id ("pantheon").
+const stripProjectId = 'unset SUPABASE_PROJECT_ID'
+
 const chain = [
-  'supabase start',
-  'supabase db reset --no-seed',
+  `${stripProjectId}; supabase start`,
+  `${stripProjectId}; supabase db reset --no-seed`,
   'node scripts/mint-e2e-cookie.mjs',
   'pnpm start',
 ]
@@ -34,7 +42,18 @@ const startCommand =
 // remote project URL baked into .env / NEXT_PUBLIC_SUPABASE_URL.
 function readLocalSupabaseEnv(): { url: string; key: string } | null {
   try {
-    const out = execSync('supabase status -o env', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+    // Strip SUPABASE_PROJECT_ID — when present, the CLI treats it as
+    // the project name for container lookup, but the local stack
+    // names containers off config.toml's project_id. The mismatch
+    // makes `supabase status` exit non-zero in cloud runners whose
+    // SUPABASE_PROJECT_ID points to the remote project. Local-stack
+    // discovery should never depend on the remote project hash.
+    const { SUPABASE_PROJECT_ID: _stripped, ...env } = process.env
+    const out = execSync('supabase status -o env', {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      env,
+    })
     const lines = out.split(/\r?\n/)
     const map: Record<string, string> = {}
     for (const line of lines) {

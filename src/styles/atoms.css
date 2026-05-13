@@ -1,0 +1,15 @@
+/* ========================================================================
+   ATOMS — Tiny shared primitives.
+
+   These have no per-show variants. The colored <Bullet> takes its
+   color via inline style from the consumer (typically
+   var(--show-primary) resolved upstream); the only thing this
+   stylesheet provides is shape + flow.
+   ======================================================================== */
+
+.bullet {
+  display: inline-block;
+  border-radius: 999px;
+  flex-shrink: 0;
+  vertical-align: baseline;
+}

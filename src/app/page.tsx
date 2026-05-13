@@ -1,5 +1,5 @@
 import { getAllSeasons, getAllShows, getAllThemes, getShow } from '@/content'
-import { PaletteScope, ShowFacadeArt } from '@/components/facade'
+import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import { HomeHero } from '@/components/home/HomeHero'
 import { HomeShowGrid } from '@/components/home/HomeShowGrid'
 import { HomeListGrid } from '@/components/home/HomeListGrid'
@@ -25,16 +25,9 @@ export default function HomePage() {
 
   return (
     <div className="screen home" data-testid="hero">
-      <PaletteScope show={FEATURED_SHOW_SLUG}>
-        <HomeHero
-          featuredShowName={featured?.name ?? 'Pantheon'}
-          art={
-            featured ? (
-              <ShowFacadeArt slug={featured.slug} name={featured.name} />
-            ) : null
-          }
-        />
-      </PaletteScope>
+      <ShowPaletteScope show={FEATURED_SHOW_SLUG}>
+        <HomeHero featuredShowName={featured?.name ?? 'Pantheon'} />
+      </ShowPaletteScope>
 
       <HomeShowGrid>
         {shows.map((show) => (
@@ -42,7 +35,6 @@ export default function HomePage() {
             key={show.slug}
             show={show}
             seasonCount={getAllSeasons(show.slug).length}
-            artSrc={`/shows/${show.slug}/sigil.svg`}
           />
         ))}
       </HomeShowGrid>

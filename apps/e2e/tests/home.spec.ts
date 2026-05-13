@@ -84,13 +84,12 @@ test('list grid renders one tile per themed list, capped at 5', async ({ page })
   }
 })
 
-test('featured hero art renders the survivor facade', async ({ page }) => {
+test('home hero is copy-only and contains no per-show facade art', async ({ page }) => {
   await page.goto('/')
   const hero = page.getByTestId('home-hero')
-  const facade = hero.getByTestId('facade')
-  await expect(facade).toBeVisible()
-  // The art slot inlines the SVG for the featured show.
-  await expect(facade).toHaveAttribute('data-show-facade', 'survivor')
+  await expect(hero).toBeVisible()
+  expect(await hero.getByTestId('facade').count()).toBe(0)
+  expect(await hero.getByTestId('home-hero-art').count()).toBe(0)
 })
 
 test('mobile @ 375px viewport: no horizontal scroll, H1 visible', async ({ page }) => {

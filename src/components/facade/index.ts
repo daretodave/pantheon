@@ -1,8 +1,0 @@
-export { Facade } from './Facade'
-export { Pediment } from './Pediment'
-export { Column } from './Column'
-export { Frieze } from './Frieze'
-export { Ornament } from './Ornament'
-export { Sigil } from './Sigil'
-export { PaletteScope } from './PaletteScope'
-export { ShowFacadeArt } from './ShowFacadeArt'

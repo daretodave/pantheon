@@ -16,7 +16,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<Param
   return buildOgImage({
     eyebrow: 'Pantheon · Show',
     title: show.name,
-    blurb: show.tagline ?? show.format,
+    blurb: show.blurb,
     palette: {
       paper: show.palette.paper,
       ink: show.palette.ink,

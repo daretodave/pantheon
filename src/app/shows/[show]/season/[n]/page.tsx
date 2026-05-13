@@ -6,7 +6,7 @@ import {
   getSeason,
   getShow,
 } from '@/content'
-import { PaletteScope } from '@/components/facade'
+import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import {
   CommentInputStub,
   CommentThread,
@@ -16,7 +16,6 @@ import {
   VotePair,
 } from '@/components/composition'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
-import { ShowSigilArt } from '../../ShowSigilArt'
 
 type Params = { show: string; n: string }
 
@@ -85,7 +84,7 @@ export default function SeasonPage({ params }: { params: Params }) {
   const seasonTargetId = `${show.slug}:${season.number}`
 
   return (
-    <PaletteScope show={show.slug}>
+    <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-season', data: articleLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-season-breadcrumb', data: crumbsLd })} />
       <div className="screen season-page" data-testid="season-page-screen">
@@ -100,7 +99,6 @@ export default function SeasonPage({ params }: { params: Params }) {
                     <span>Season {season.number}</span>
                   </>
                 }
-                sigil={<ShowSigilArt slug={show.slug} name={show.name} />}
                 title={season.title}
                 rankRow={
                   <>
@@ -155,6 +153,6 @@ export default function SeasonPage({ params }: { params: Params }) {
           }
         />
       </div>
-    </PaletteScope>
+    </ShowPaletteScope>
   )
 }

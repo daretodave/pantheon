@@ -6,12 +6,11 @@ function fakeShow(slug: string): Show {
   return {
     slug,
     name: slug,
-    network: 'Test',
-    format: 'test-format',
-    hero_motifs: [],
     palette: { primary: '#000000', ink: '#ffffff', paper: '#111111' },
+    seasons: 0,
     status: 'airing',
-    body_md: '',
+    blurb: 'blurb',
+    tagline: 'tagline',
   }
 }
 
@@ -90,9 +89,9 @@ describe('computeCommunityRank', () => {
     expect(result.entries[0]?.tag).toBe('2009')
   })
 
-  it('falls back to show.format when premiere_date is missing', () => {
+  it('falls back to a season-and-show label when premiere_date is missing', () => {
     const result = computeCommunityRank(fakeShow('x'), [fakeSeason(1)], null)
-    expect(result.entries[0]?.tag).toBe('test-format')
+    expect(result.entries[0]?.tag).toBe('Season 1 · x')
   })
 })
 

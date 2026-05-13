@@ -27,17 +27,15 @@ function makeShow(root: string, slug: string, name: string): void {
     `---
 slug: ${slug}
 name: ${name}
-network: TestNet
-format: test-format
 palette:
   primary: "#000000"
   ink: "#FFFFFF"
   paper: "#777777"
+seasons: 1
 status: airing
+blurb: A short blurb.
 tagline: A short tagline.
 ---
-
-Body.
 `,
   )
 }
@@ -226,16 +224,15 @@ describe('loaders', () => {
       `---
 slug: alpha
 name: Alpha
-network: TestNet
-format: test-format
 palette:
   primary: "#000000"
   ink: "#FFFFFF"
   paper: "#777777"
+seasons: 1
 status: airing
+blurb: A blurb.
+tagline: A tagline.
 ---
-
-body
 `,
     )
     expect(() => getAllShows()).toThrow(/slug mismatch/)

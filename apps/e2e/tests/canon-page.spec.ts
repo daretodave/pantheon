@@ -13,7 +13,7 @@ const SHOWS_WITH_CANON = new Set(['survivor'])
 for (const url of canonUrls) {
   const slug = url.show ?? ''
   test.describe(`canon page: ${slug}`, () => {
-    test(`renders ShowHero + sigil + palette swap + ${SHOWS_WITH_CANON.has(slug) ? 'ranked list' : 'empty state'}`, async ({
+    test(`renders ShowHero + palette swap + ${SHOWS_WITH_CANON.has(slug) ? 'ranked list' : 'empty state'}`, async ({
       page,
     }) => {
       const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
@@ -22,8 +22,10 @@ for (const url of canonUrls) {
       await expect(page.getByTestId('canon-page-screen')).toBeVisible()
       await expect(page.getByTestId('show-hero')).toBeVisible()
       await expect(page.locator('h1').first()).toContainText(/editor['’]s canon/i)
-      await expect(page.getByTestId('show-sigil').first()).toBeVisible()
       await expect(page.getByTestId('shield-badge').first()).toBeVisible()
+
+      const sigilCount = await page.getByTestId('show-sigil').count()
+      expect(sigilCount).toBe(0)
 
       const wrapper = page.locator(`[data-show="${slug}"]`).first()
       await expect(wrapper).toBeVisible()

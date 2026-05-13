@@ -24,22 +24,22 @@ export const paletteSchema = z.object({
 
 export const showStatusEnum = z.enum(['airing', 'ended', 'hiatus'])
 
-export const showFrontmatterSchema = z.object({
-  slug,
-  name: z.string().min(1),
-  network: z.string().min(1),
-  format: z.string().min(1),
-  hero_motifs: z.array(z.string().min(1)).max(6).default([]),
-  palette: paletteSchema,
-  status: showStatusEnum,
-  tagline: z.string().min(1).optional(),
-  first_aired: isoDate.optional(),
-})
+export const showFrontmatterSchema = z
+  .object({
+    slug,
+    name: z.string().min(1),
+    palette: paletteSchema,
+    seasons: z.number().int().nonnegative(),
+    status: showStatusEnum,
+    blurb: z.string().min(1).max(120),
+    tagline: z.string().min(1).max(280),
+  })
+  .strict()
 
 export type ShowFrontmatter = z.infer<typeof showFrontmatterSchema>
 
 export const showSchema = showFrontmatterSchema.extend({
-  body_md: z.string(),
+  body_md: z.string().optional(),
 })
 
 export type Show = z.infer<typeof showSchema>

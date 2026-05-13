@@ -10,34 +10,32 @@ import {
 const survivorShow = `---
 slug: survivor
 name: Survivor
-network: CBS
-format: outwit-outplay-outlast
-hero_motifs: [palm-column, torch-pediment]
 palette:
   primary: "#C9551A"
   ink: "#1A1410"
   paper: "#F5EFE6"
+seasons: 47
 status: airing
-first_aired: 2000-05-31
+blurb: 47 seasons. One torch at a time.
 tagline: The mother format.
 ---
 
 Survivor flavor body.
 `
 
-const survivorShowNoTagline = `---
+const survivorShowExtra = `---
 slug: survivor
 name: Survivor
-network: CBS
-format: outwit-outplay-outlast
 palette:
   primary: "#C9551A"
   ink: "#1A1410"
   paper: "#F5EFE6"
+seasons: 47
 status: airing
+blurb: 47 seasons. One torch at a time.
+tagline: The mother format.
+hero_motifs: [palm-column]
 ---
-
-The mother format. Forty-plus seasons of strangers and beaches.
 `
 
 const sixtyWords = Array.from({ length: 60 }, (_, i) => `w${i}`).join(' ')
@@ -116,14 +114,14 @@ describe('parseShowFile', () => {
     expect(show.slug).toBe('survivor')
     expect(show.name).toBe('Survivor')
     expect(show.status).toBe('airing')
-    expect(show.first_aired).toBe('2000-05-31')
+    expect(show.seasons).toBe(47)
+    expect(show.blurb).toBe('47 seasons. One torch at a time.')
     expect(show.tagline).toBe('The mother format.')
     expect(show.body_md).toContain('Survivor flavor body.')
   })
 
-  it('uses body as tagline fallback when frontmatter lacks tagline', () => {
-    const show = parseShowFile(survivorShowNoTagline, 'survivor.md')
-    expect(show.tagline).toContain('mother format')
+  it('rejects extra frontmatter fields like hero_motifs (strict schema)', () => {
+    expect(() => parseShowFile(survivorShowExtra, 'survivor.md')).toThrow(/hero_motifs|Unrecognized/i)
   })
 
   it('throws ContentValidationError with file path on bad palette', () => {

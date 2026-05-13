@@ -1,22 +1,15 @@
 import Link from 'next/link'
-import type { ReactNode } from 'react'
 
 type HomeHeroProps = {
   featuredShowName: string
-  art: ReactNode
 }
 
-// Phase 16 — the cold-search landing hero. Mirrors the
-// .home-hero composition in design/compositions/screens.jsx.
-// Copy is locked (bearings + spec); the only show-specific
-// substitution is the eyebrow line.
+// Phase 19a placeholder: copy-only hero. The split cover + featured
+// show paper is rebuilt in phase 19e per design/Pantheon · Compositions.
 
-export function HomeHero({ featuredShowName, art }: HomeHeroProps) {
+export function HomeHero({ featuredShowName }: HomeHeroProps) {
   return (
     <section className="home-hero" data-testid="home-hero">
-      <div className="home-hero-art" data-testid="home-hero-art">
-        {art}
-      </div>
       <div className="home-hero-copy">
         <div className="home-hero-eyebrow" data-testid="home-hero-eyebrow">
           Currently featured · {featuredShowName}

@@ -18,11 +18,11 @@ const VALID_PALETTE = {
 const VALID_SHOW = {
   slug: 'survivor',
   name: 'Survivor',
-  network: 'CBS',
-  format: 'outwit-outplay-outlast',
-  hero_motifs: ['palm-column', 'torch-pediment'],
   palette: VALID_PALETTE,
+  seasons: 47,
   status: 'airing' as const,
+  blurb: '47 seasons. One torch at a time.',
+  tagline: '47 seasons of strangers on a beach.',
 }
 
 const validSeasonBlurb = (wordCount: number): string =>
@@ -80,10 +80,37 @@ describe('showFrontmatterSchema', () => {
     ).toThrow()
   })
 
-  it('defaults hero_motifs to []', () => {
-    const { hero_motifs: _h, ...rest } = VALID_SHOW
-    const parsed = showFrontmatterSchema.parse(rest)
-    expect(parsed.hero_motifs).toEqual([])
+  it('rejects missing seasons int', () => {
+    const { seasons: _s, ...rest } = VALID_SHOW
+    expect(() => showFrontmatterSchema.parse(rest)).toThrow()
+  })
+
+  it('rejects negative seasons int', () => {
+    expect(() =>
+      showFrontmatterSchema.parse({ ...VALID_SHOW, seasons: -1 }),
+    ).toThrow()
+  })
+
+  it('rejects missing blurb', () => {
+    const { blurb: _b, ...rest } = VALID_SHOW
+    expect(() => showFrontmatterSchema.parse(rest)).toThrow()
+  })
+
+  it('rejects missing tagline', () => {
+    const { tagline: _t, ...rest } = VALID_SHOW
+    expect(() => showFrontmatterSchema.parse(rest)).toThrow()
+  })
+
+  it('rejects extra legacy fields like hero_motifs (strict)', () => {
+    expect(() =>
+      showFrontmatterSchema.parse({ ...VALID_SHOW, hero_motifs: ['palm'] }),
+    ).toThrow()
+  })
+
+  it('rejects extra legacy fields like network (strict)', () => {
+    expect(() =>
+      showFrontmatterSchema.parse({ ...VALID_SHOW, network: 'CBS' }),
+    ).toThrow()
   })
 })
 

@@ -51,7 +51,7 @@ export default function ShowsIndexPage() {
                 className="flex flex-col gap-2"
               >
                 <h2 className="font-serif text-xl text-ink-0">{show.name}</h2>
-                <p className="text-sm text-ink-2">{show.network} · {show.format}</p>
+                <p className="text-sm text-ink-2">{show.blurb}</p>
               </Link>
             </li>
           ))}

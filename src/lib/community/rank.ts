@@ -17,7 +17,7 @@ function tagForSeason(season: Season, show: Show): string {
   if (season.premiere_date) {
     return new Date(season.premiere_date).getUTCFullYear().toString()
   }
-  return show.format
+  return `Season ${season.number} · ${show.name}`
 }
 
 export function computeCommunityRank(
