@@ -3,6 +3,7 @@ import { VercelAnalytics } from '@/components/analytics/VercelAnalytics'
 import { VercelSpeedInsights } from '@/components/analytics/VercelSpeedInsights'
 import { Header } from '@/components/chrome/Header'
 import { Footer } from '@/components/chrome/Footer'
+import { SkipToMain } from '@/components/chrome/SkipToMain'
 import { siteConfig } from '@/lib/seo'
 import './globals.css'
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
       <body className="flex min-h-dvh flex-col">
+        <SkipToMain />
         <Header />
         <main id="main" className="flex-1">
           {children}

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Show } from '@/content'
 
@@ -29,13 +30,14 @@ export function ShowTile({ show, seasonCount, artSrc }: ShowTileProps) {
       }
     >
       <div className="show-tile-art">
-        <img
+        <Image
           src={artSrc}
           alt=""
           aria-hidden="true"
           width={96}
           height={96}
           loading="lazy"
+          unoptimized
         />
       </div>
       <div className="show-tile-body">

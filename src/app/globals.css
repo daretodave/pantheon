@@ -3,6 +3,29 @@
 @import '../styles/screens.css';
 
 @layer base {
+  /* Phase 18 — Skip-to-main-content link. Visually hidden until
+     keyboard focus jumps to it. */
+  .skip-to-main {
+    position: fixed;
+    top: -40px;
+    left: 16px;
+    z-index: 100;
+    background: var(--color-paper-1, #1a1714);
+    color: var(--color-ink-0, #f2eadb);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: var(--font-family-sans);
+    font-size: 14px;
+    transition: top 120ms ease-out;
+  }
+
+  .skip-to-main:focus,
+  .skip-to-main:focus-visible {
+    top: 8px;
+    outline: 2px solid var(--color-primary-base, #d55e36);
+    outline-offset: 2px;
+  }
+
   html,
   body {
     background-color: var(--color-paper-0);
