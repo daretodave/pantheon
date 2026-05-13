@@ -71,4 +71,8 @@ export const pageReads: Record<string, PageReadAssertion> = {
   '/mod': {
     expectH1Pattern: /Moderation/i,
   },
+  '/search': {
+    expectH1Pattern: /Search/i,
+    expectVisible: ['[data-testid=search-form]'],
+  },
 }
