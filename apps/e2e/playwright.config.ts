@@ -83,6 +83,10 @@ export default defineConfig({
       DISABLE_ANALYTICS: '1',
       PLAYWRIGHT_BASE_URL: BASE_URL,
       INTERNAL_DEMOS: '1',
+      // Phase 12 — short-circuit the OpenAI pre-filter to its
+      // deterministic stub so the e2e leg never makes a network
+      // call. Stub rules live in src/lib/openai/preFilter.ts.
+      OPENAI_FAKE: '1',
       // SUPABASE_URL (not NEXT_PUBLIC_SUPABASE_URL — that's inlined
       // at build) is the runtime-overridable form. Server-side
       // helper in src/lib/supabase/server.ts prefers SUPABASE_URL

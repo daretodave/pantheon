@@ -99,6 +99,88 @@ export async function upsertUser(args: UpsertUserArgs): Promise<void> {
   if (error) throw new Error(`upsertUser: ${error.message}`)
 }
 
+// Convenience helper for the post_comment() RPC.
+export type PostCommentArgs = {
+  sessionId: string
+  targetType: 'season' | 'comment'
+  targetId: string
+  parentId: string | null
+  body: string
+  verdict: 'allow' | 'flag' | 'block'
+  categories: string[]
+  confidence: number
+  reason: string
+  redactedPhrase: string | null
+}
+
+export type PostCommentResult = {
+  id: string
+  status: 'published' | 'pending' | 'hidden' | 'removed'
+  count: number
+}
+
+export async function postComment(args: PostCommentArgs): Promise<PostCommentResult> {
+  const client = serviceRoleClient()
+  const { data, error } = await client.rpc('post_comment', {
+    p_session_id: args.sessionId,
+    p_target_type: args.targetType,
+    p_target_id: args.targetId,
+    p_parent_id: args.parentId,
+    p_body: args.body,
+    p_verdict: args.verdict,
+    p_categories: args.categories,
+    p_confidence: args.confidence,
+    p_ai_reason: args.reason,
+    p_redacted_phrase: args.redactedPhrase,
+  })
+  if (error) {
+    const e = new Error(error.message) as Error & { code?: string; hint?: string }
+    e.code = error.code
+    e.hint = error.hint ?? undefined
+    throw e
+  }
+  const row = Array.isArray(data) ? data[0] : data
+  if (!row) throw new Error('post_comment: no row returned')
+  return {
+    id: String(row.id),
+    status: row.status,
+    count: Number(row.count),
+  }
+}
+
+// Convenience helper for the flag_comment() RPC.
+export type FlagCommentArgs = {
+  sessionId: string
+  commentId: string
+  reason: string
+}
+
+export type FlagCommentResult = {
+  flagCount: number
+  autoHidden: boolean
+}
+
+export async function flagComment(args: FlagCommentArgs): Promise<FlagCommentResult> {
+  const client = serviceRoleClient()
+  const { data, error } = await client.rpc('flag_comment', {
+    p_session_id: args.sessionId,
+    p_comment_id: args.commentId,
+    p_reason: args.reason,
+  })
+  if (error) {
+    const e = new Error(error.message) as Error & { code?: string; hint?: string }
+    e.code = error.code
+    e.hint = error.hint ?? undefined
+    throw e
+  }
+  const row = Array.isArray(data) ? data[0] : data
+  if (!row) throw new Error('flag_comment: no row returned')
+  return {
+    flagCount: Number(row.flag_count),
+    autoHidden: Boolean(row.auto_hidden),
+  }
+}
+
 // Ensure the authed user has a sessions row linked to their sub,
 // optionally claiming an anon row. Returns the canonical session id.
 export async function claimAnonSession(args: {

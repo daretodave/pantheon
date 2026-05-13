@@ -4,27 +4,21 @@ import { auth0 } from '@/lib/auth0'
 import { ANON_COOKIE_NAME, isValidAnonId } from '@/lib/anonSession'
 import {
   claimAnonSession,
-  postComment,
+  flagComment,
   upsertUser,
 } from '@/lib/supabase/server'
-import { moderateComment } from '@/lib/openai/preFilter'
 
-// Phase 12 — comments are durable. The route enforces:
-//  - body shape via Zod
-//  - auth required (anon callers get 401)
-//  - resolves the user's sessions row + ensures users row exists
-//  - runs the AI pre-filter (gpt-5-mini, or OPENAI_FAKE stub)
-//  - delegates the write + rate-limit + new-account hold to
-//    post_comment() RPC (service-role; SECURITY DEFINER)
+// Phase 12 — flags are durable. Auth required (anon get 401).
+// Thin wrapper around flag_comment() RPC, which enforces the
+// sliding-window auto-hide threshold (5 flags / 1h on the same
+// comment).
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const bodySchema = z.object({
-  targetType: z.enum(['season', 'comment']),
-  targetId: z.string().min(1).max(128),
-  parentId: z.string().uuid().nullable().optional(),
-  body: z.string().min(1).max(4000),
+  commentId: z.string().uuid(),
+  reason: z.string().min(1).max(200),
 })
 
 function handleFromSession(user: Record<string, unknown> | null | undefined): string {
@@ -50,9 +44,6 @@ export async function POST(request: Request) {
     )
   }
 
-  // Resolve the session id. Comments require auth, but we still
-  // read the anon cookie so claim_anon_session() can re-attribute
-  // any prior anon activity to the authed session.
   const cookieHeader = request.headers.get('cookie') ?? ''
   const anonCookieMatch = cookieHeader.match(
     new RegExp(`(?:^|; )${ANON_COOKIE_NAME}=([^;]+)`),
@@ -61,7 +52,6 @@ export async function POST(request: Request) {
   const validAnonId = isValidAnonId(anonId) ? anonId : null
 
   let sessionId: string | null = null
-
   try {
     const session = await auth0.getSession()
     const user = session?.user as Record<string, unknown> | undefined
@@ -69,7 +59,7 @@ export async function POST(request: Request) {
 
     if (!sub) {
       return NextResponse.json(
-        { ok: false, error: 'auth_required', detail: 'sign in to comment' },
+        { ok: false, error: 'auth_required', detail: 'sign in to flag' },
         { status: 401 },
       )
     }
@@ -90,47 +80,28 @@ export async function POST(request: Request) {
 
   if (!sessionId) {
     return NextResponse.json(
-      { ok: false, error: 'auth_required', detail: 'sign in to comment' },
+      { ok: false, error: 'auth_required', detail: 'sign in to flag' },
       { status: 401 },
     )
   }
 
-  // Pre-filter. OPENAI_FAKE=1 short-circuits to the deterministic
-  // stub; production calls gpt-5-mini.
-  const verdict = await moderateComment(parsed.body)
-
   try {
-    const result = await postComment({
+    const result = await flagComment({
       sessionId,
-      targetType: parsed.targetType,
-      targetId: parsed.targetId,
-      parentId: parsed.parentId ?? null,
-      body: parsed.body,
-      verdict: verdict.verdict,
-      categories: verdict.categories,
-      confidence: verdict.confidence,
-      reason: verdict.reason,
-      redactedPhrase: verdict.redacted_phrase,
+      commentId: parsed.commentId,
+      reason: parsed.reason,
     })
     return NextResponse.json({
       ok: true,
-      id: result.id,
-      status: result.status,
-      count: result.count,
-      verdict: verdict.verdict,
+      flag_count: result.flagCount,
+      auto_hidden: result.autoHidden,
     })
   } catch (err) {
     const e = err as { code?: string; hint?: string; message?: string }
     if (e.code === '42501') {
       return NextResponse.json(
-        { ok: false, error: 'auth_required', detail: 'sign in to comment' },
+        { ok: false, error: 'auth_required', detail: 'sign in to flag' },
         { status: 401 },
-      )
-    }
-    if (e.code === '23505') {
-      return NextResponse.json(
-        { ok: false, error: 'rate_limited', detail: e.message ?? 'comment rate limit exceeded' },
-        { status: 429 },
       )
     }
     if (e.code === '22023') {
