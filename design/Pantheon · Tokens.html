@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pantheon · Visual System · Phase 1 · Tokens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     PANTHEON · TOKENS
+     Dark mode is the default. Light mode is a parallel surface.
+     ========================================================= */
+  :root {
+    /* dark */
+    --paper-0: #0E0B08;
+    --paper-1: #15110C;
+    --paper-2: #1E1812;
+    --paper-3: #2A2218;
+    --line-soft: #241D14;
+    --line: #3A2F22;
+    --line-loud: #5A4A35;
+    --ink-3: #6E6353;
+    --ink-2: #9D9485;
+    --ink-1: #D8CFBE;
+    --ink-0: #F2EADB;
+    --primary: #E8B65A;
+    --primary-soft: #C9963F;
+    --primary-loud: #FFD27A;
+
+    --warm-up: #E0843A;
+    --warm-down: #5A8FA6;
+    --neutral: #8C8275;
+    --hold: #7A8F5C;
+    --verdict: #B57FB8;
+    --consensus: #D5A93D;
+
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans:  'Inter', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 16px;
+
+    --elev-1: 0 1px 0 rgba(0,0,0,0.25);
+    --elev-2: 0 1px 0 rgba(0,0,0,0.45);
+    --elev-3: 0 1px 0 rgba(0,0,0,0.65);
+
+    --d-quick: 120ms;
+    --d-base:  240ms;
+    --d-calm:  480ms;
+    --e-rise:   cubic-bezier(.2,.8,.2,1);
+    --e-settle: cubic-bezier(.4,0,.2,1);
+    --e-dwell:  cubic-bezier(.6,0,.8,0);
+  }
+  [data-mode="light"] {
+    --paper-0: #F5EFE3;
+    --paper-1: #EEE7D7;
+    --paper-2: #E5DDC9;
+    --paper-3: #DBD2BC;
+    --line-soft: #D9CFB6;
+    --line: #C8BC9F;
+    --line-loud: #A8997A;
+    --ink-3: #8A7E64;
+    --ink-2: #5D533F;
+    --ink-1: #3A3225;
+    --ink-0: #1A1610;
+    --primary: #8B5A1F;
+    --primary-soft: #A8742E;
+    --primary-loud: #6B4416;
+
+    --warm-up: #B2611E;
+    --warm-down: #356A82;
+    --neutral: #6E6553;
+    --hold: #566B3D;
+    --verdict: #7E4A82;
+    --consensus: #8B6A1A;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper-0);
+    color: var(--ink-1);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle);
+  }
+  ::selection { background: var(--primary); color: var(--paper-0); }
+
+  /* ---------- layout ---------- */
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 720px) { .wrap { padding: 0 20px; } }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in oklab, var(--paper-0) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink-0);
+    letter-spacing: -0.01em;
+  }
+  .brand .mark {
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .brand small {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin-left: 4px;
+  }
+  .mode-toggle {
+    display: inline-flex; gap: 0; align-items: stretch;
+    border: 1px solid var(--line); border-radius: 999px; padding: 3px;
+    background: var(--paper-1);
+  }
+  .mode-toggle button {
+    appearance: none; border: 0; background: transparent;
+    color: var(--ink-2);
+    font: 500 12px/1 var(--sans);
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color var(--d-quick), background var(--d-quick);
+    letter-spacing: 0.02em;
+  }
+  .mode-toggle button[aria-pressed="true"] {
+    background: var(--ink-0); color: var(--paper-0);
+  }
+
+  /* ---------- hero ---------- */
+  header.hero {
+    padding: 96px 0 72px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px; font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before {
+    content: ""; display: inline-block;
+    width: 28px; height: 1px; background: var(--line-loud);
+  }
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--ink-0);
+    margin: 0 0 24px;
+    text-wrap: balance;
+  }
+  h1.title em { color: var(--primary); font-style: italic; font-weight: 500; }
+  .lede {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--ink-1);
+    max-width: 640px;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .meta-row {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    margin-top: 48px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .meta-row span b { color: var(--ink-1); font-weight: 500; }
+
+  /* ---------- section ---------- */
+  section { padding: 96px 0; border-bottom: 1px solid var(--line-soft); }
+  section:last-of-type { border-bottom: 0; }
+  .sec-head {
+    display: grid; grid-template-columns: 220px 1fr; gap: 48px;
+    margin-bottom: 48px;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .sec-head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .sec-num {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase;
+    padding-top: 6px;
+  }
+  .sec-title {
+    font-family: var(--serif);
+    font-weight: 500; font-size: 36px; line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink-0);
+    margin: 0 0 12px;
+  }
+  .sec-desc {
+    font-family: var(--serif);
+    font-size: 17px; line-height: 1.6; color: var(--ink-2);
+    max-width: 640px; margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* ---------- palette ---------- */
+  .palette-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 48px;
+  }
+  @media (max-width: 720px) { .palette-grid { grid-template-columns: 1fr; gap: 56px; } }
+
+  .pal-col h4 {
+    margin: 0 0 16px;
+    font: 500 11px/1 var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pal-col h4::after {
+    content: ""; flex: 1; height: 1px; background: var(--line-soft);
+  }
+  .pal-stack { display: flex; flex-direction: column; gap: 2px; }
+  .swatch {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 16px;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid var(--line-soft);
+    background: var(--paper-1);
+    border-radius: var(--r-sm);
+  }
+  .sw-chip {
+    width: 56px; height: 40px; border-radius: var(--r-sm);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .sw-name {
+    font-family: var(--sans);
+    font-size: 13px; font-weight: 500;
+    color: var(--ink-0);
+  }
+  .sw-name small {
+    display: block;
+    font: 400 11px/1.4 var(--mono);
+    color: var(--ink-3);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .sw-hex {
+    font: 500 12px/1 var(--mono);
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .sw-hex small {
+    display: block; margin-top: 4px;
+    font-size: 10px; color: var(--ink-3); font-weight: 400;
+  }
+
+  /* ---------- sentiment ---------- */
+  .sent-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 820px) { .sent-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .sent-grid { grid-template-columns: 1fr; } }
+  .sent-card {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    background: var(--paper-1);
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .sent-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .sent-name {
+    font: 500 14px/1 var(--sans);
+    color: var(--ink-0);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sent-dot {
+    width: 12px; height: 12px; border-radius: 999px;
+  }
+  .sent-hex { font: 500 11px/1 var(--mono); color: var(--ink-3); letter-spacing: 0.04em; }
+  .sent-pill {
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.06em;
+  }
+  .sent-use {
+    font-family: var(--serif);
+    font-size: 14px; line-height: 1.5; color: var(--ink-2);
+    margin: 0;
+  }
+
+  /* ---------- type scale ---------- */
+  .type-row {
+    display: grid; grid-template-columns: 80px 80px 1fr 120px;
+    gap: 24px; align-items: baseline;
+    padding: 24px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .type-row:last-child { border-bottom: 1px solid var(--line-soft); }
+  @media (max-width: 720px) {
+    .type-row { grid-template-columns: 60px 60px 1fr; }
+    .type-row .type-use { display: none; }
+  }
+  .type-tag { font: 500 11px/1 var(--mono); color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .type-px  { font: 400 11px/1 var(--mono); color: var(--ink-3); }
+  .type-sample { color: var(--ink-0); }
+  .type-use { font: 400 12px/1.4 var(--sans); color: var(--ink-3); text-align: right; }
+
+  .families {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 720px) { .families { grid-template-columns: 1fr; } }
+  .fam-card {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    background: var(--paper-1);
+    padding: 24px;
+  }
+  .fam-name { font: 500 11px/1 var(--mono); color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 12px; }
+  .fam-spec { font: 400 12px/1.5 var(--mono); color: var(--ink-3); margin-top: 12px; }
+  .fam-spec b { color: var(--ink-1); font-weight: 500; }
+  .fam-disp { color: var(--ink-0); font-size: 28px; line-height: 1.1; letter-spacing: -0.01em; }
+
+  /* ---------- spacing ---------- */
+  .spacing-grid {
+    display: grid; grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .sp-row {
+    display: grid; grid-template-columns: 64px 80px 1fr;
+    gap: 24px; align-items: center;
+    padding: 8px 0;
+  }
+  .sp-token { font: 500 12px/1 var(--mono); color: var(--ink-1); }
+  .sp-px    { font: 400 12px/1 var(--mono); color: var(--ink-3); }
+  .sp-bar   { height: 18px; background: var(--primary); border-radius: var(--r-sm); }
+
+  /* ---------- radii / shadow ---------- */
+  .demo-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  @media (max-width: 720px) { .demo-grid { grid-template-columns: 1fr; } }
+  .demo-card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    padding: 28px;
+    height: 140px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .demo-tag { font: 500 11px/1 var(--mono); color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; }
+  .demo-val { font: 400 11px/1 var(--mono); color: var(--ink-2); }
+
+  /* ---------- motion ---------- */
+  .motion-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+  }
+  @media (max-width: 720px) { .motion-grid { grid-template-columns: 1fr; } }
+  .motion-card {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    background: var(--paper-1);
+    padding: 24px;
+  }
+  .motion-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .motion-name { font: 500 13px/1 var(--sans); color: var(--ink-0); }
+  .motion-curve { font: 400 11px/1 var(--mono); color: var(--ink-3); }
+  .motion-track {
+    height: 6px; background: var(--paper-3); border-radius: 999px;
+    position: relative; overflow: hidden;
+  }
+  .motion-dot {
+    position: absolute; left: 0; top: 50%;
+    width: 16px; height: 16px; margin-top: -8px;
+    border-radius: 999px;
+    background: var(--primary);
+    transform: translateX(0);
+  }
+  .motion-card.playing .motion-dot {
+    animation-name: slide;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+  }
+  @keyframes slide {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(calc(100% + 20px)); }
+  }
+  .motion-card.m-rise   .motion-dot { animation-timing-function: var(--e-rise); animation-duration: var(--d-calm); }
+  .motion-card.m-settle .motion-dot { animation-timing-function: var(--e-settle); animation-duration: var(--d-base); }
+  .motion-card.m-linear .motion-dot { animation-timing-function: linear; animation-duration: var(--d-base); }
+  .motion-card.m-dwell  .motion-dot { animation-timing-function: var(--e-dwell); animation-duration: var(--d-calm); }
+  .motion-play {
+    margin-top: 14px;
+    background: transparent; border: 1px solid var(--line);
+    color: var(--ink-1);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 14px; border-radius: 999px;
+    cursor: pointer;
+  }
+  .motion-play:hover { border-color: var(--ink-2); color: var(--ink-0); }
+
+  /* ---------- next ---------- */
+  .next {
+    margin-top: 80px; padding: 32px; border: 1px dashed var(--line-loud);
+    border-radius: var(--r-md);
+    background: var(--paper-1);
+    display: grid; grid-template-columns: 1fr auto; gap: 24px;
+    align-items: center;
+  }
+  @media (max-width: 720px) { .next { grid-template-columns: 1fr; } }
+  .next h3 {
+    font-family: var(--serif); font-weight: 500; font-size: 22px;
+    margin: 0 0 6px; color: var(--ink-0); letter-spacing: -0.01em;
+  }
+  .next p { margin: 0; font-family: var(--serif); font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+  .next .stamp {
+    font: 600 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--primary);
+    padding: 10px 16px; border: 1px solid var(--primary); border-radius: 999px;
+  }
+
+  /* ---------- footer ---------- */
+  footer { padding: 48px 0; color: var(--ink-3); font: 400 12px/1.6 var(--mono); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+
+  /* small bits */
+  .anchor-mark {
+    width: 28px; height: 28px;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ====================================================== top bar -->
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="mark">
+        <!-- minimal pediment + columns mark; deliberately spare -->
+        <svg viewBox="0 0 28 28" class="anchor-mark" aria-hidden="true">
+          <path d="M2 11 L14 3 L26 11 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="5" y1="14" x2="5" y2="25" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="14" y1="14" x2="14" y2="25" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="23" y1="14" x2="23" y2="25" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="2" y1="26" x2="26" y2="26" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+      </span>
+      <span>Pantheon <small>visual system / v0.1</small></span>
+    </div>
+    <div class="mode-toggle" role="group" aria-label="Color mode">
+      <button data-set="dark"  aria-pressed="true">Dark</button>
+      <button data-set="light" aria-pressed="false">Light</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================== hero -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Phase 01 · Tokens · Pending approval</div>
+    <h1 class="title">The seasons,<br/>ranked. <em>no spoilers.</em></h1>
+    <p class="lede">A confident, editorial system for ranking television without ruining it. This page locks the foundation — palette, type, spacing, motion — before the per-show facades arrive in phase 02.</p>
+    <div class="meta-row">
+      <span>Project / <b>Pantheon</b></span>
+      <span>Phase / <b>01 of 03</b></span>
+      <span>Mode / <b>Dark default</b></span>
+      <span>Constraint / <b>SVG-first, ≤60KB</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================== palette -->
+<section id="palette">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 01 · Palette</div>
+      <div>
+        <h2 class="sec-title">Warm ink on warm paper.</h2>
+        <p class="sec-desc">Never pure black; never pure white. Paper carries a deliberate brown undertone so the architecture feels carved from stone, not screen. One ceremonial gold is the only saturated color in the chrome — everything else stays close to the neutral spine.</p>
+      </div>
+    </div>
+
+    <div class="palette-grid">
+      <!-- Dark column -->
+      <div class="pal-col">
+        <h4>Dark · default</h4>
+        <div class="pal-stack" id="pal-dark"></div>
+      </div>
+      <!-- Light column -->
+      <div class="pal-col">
+        <h4>Light · secondary</h4>
+        <div class="pal-stack" id="pal-light"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== sentiment -->
+<section id="sentiment">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 02 · Sentiment</div>
+      <div>
+        <h2 class="sec-title">Six muted signals.</h2>
+        <p class="sec-desc">Rank movement is editorial information, not a casino. Each sentiment is a single low-saturation hue, used sparingly and always paired with text — never as a standalone color cue. AA-tested against paper and ink at 14px.</p>
+      </div>
+    </div>
+    <div class="sent-grid" id="sent-grid"></div>
+  </div>
+</section>
+
+<!-- ====================================================== type -->
+<section id="type">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 03 · Type</div>
+      <div>
+        <h2 class="sec-title">Serif for voice. Sans for tools. Mono for ranks.</h2>
+        <p class="sec-desc">Editorial weight rests on Source Serif 4 — a contemporary text serif with a generous italic. Inter handles the interface chrome. JetBrains Mono carries every number, rank, and code-adjacent label so quantities never compete with prose.</p>
+      </div>
+    </div>
+
+    <div class="families">
+      <div class="fam-card">
+        <div class="fam-name">Serif · headlines</div>
+        <div class="fam-disp" style="font-family: var(--serif); font-weight: 500;">Survivor, ranked. — <em style="color: var(--primary)">finally.</em></div>
+        <div class="fam-spec">Source Serif 4 · <b>400 / 500 / 600 / 700</b> · italic</div>
+      </div>
+      <div class="fam-card">
+        <div class="fam-name">Sans · interface</div>
+        <div class="fam-disp" style="font-family: var(--sans); font-weight: 500;">Editor's Canon · Community Rank</div>
+        <div class="fam-spec">Inter · <b>400 / 500 / 600 / 700</b></div>
+      </div>
+      <div class="fam-card">
+        <div class="fam-name">Mono · ranks</div>
+        <div class="fam-disp" style="font-family: var(--mono); font-weight: 500;">#01 · #02 · #03 · +274</div>
+        <div class="fam-spec">JetBrains Mono · <b>400 / 500 / 600</b></div>
+      </div>
+    </div>
+
+    <div id="type-scale"></div>
+  </div>
+</section>
+
+<!-- ====================================================== spacing -->
+<section id="spacing">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 04 · Spacing</div>
+      <div>
+        <h2 class="sec-title">An 8-pixel skeleton.</h2>
+        <p class="sec-desc">All gaps, padding, and rhythm derive from a single 8px unit, with one 4px half-step for tight typographic adjustments. Use 24 / 32 / 48 for editorial breathing room; 64 / 96 for chapter breaks.</p>
+      </div>
+    </div>
+    <div class="spacing-grid" id="space-grid"></div>
+  </div>
+</section>
+
+<!-- ====================================================== radii & shadow -->
+<section id="surfaces">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 05 · Surfaces</div>
+      <div>
+        <h2 class="sec-title">Three radii. Three opacities.</h2>
+        <p class="sec-desc">The shadow contract is the strictest rule in the system: a single 1px y-offset, no blur, no spread. Depth is implied by line and tone, never by haze. Three radii cover everything from chips to hero cards.</p>
+      </div>
+    </div>
+
+    <h4 style="margin: 0 0 16px; font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);">Radii</h4>
+    <div class="demo-grid" style="margin-bottom: 56px;">
+      <div class="demo-card" style="border-radius: var(--r-sm);"><span class="demo-tag">sm</span><span class="demo-val">4px</span></div>
+      <div class="demo-card" style="border-radius: var(--r-md);"><span class="demo-tag">md</span><span class="demo-val">8px</span></div>
+      <div class="demo-card" style="border-radius: var(--r-lg);"><span class="demo-tag">lg</span><span class="demo-val">16px</span></div>
+    </div>
+
+    <h4 style="margin: 0 0 16px; font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);">Shadow · single 1px offset only</h4>
+    <div class="demo-grid">
+      <div class="demo-card" style="box-shadow: var(--elev-1); border-radius: var(--r-md);"><span class="demo-tag">elev-1</span><span class="demo-val">.25 α</span></div>
+      <div class="demo-card" style="box-shadow: var(--elev-2); border-radius: var(--r-md);"><span class="demo-tag">elev-2</span><span class="demo-val">.45 α</span></div>
+      <div class="demo-card" style="box-shadow: var(--elev-3); border-radius: var(--r-md);"><span class="demo-tag">elev-3</span><span class="demo-val">.65 α</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== motion -->
+<section id="motion">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 06 · Motion</div>
+      <div>
+        <h2 class="sec-title">Three durations. Four curves.</h2>
+        <p class="sec-desc">Motion is editorial punctuation, not entertainment. Quick (120ms) for direct response, base (240ms) for state change, calm (480ms) for entrances and ranking shifts. <code style="font: 500 12px var(--mono); color: var(--ink-1);">prefers-reduced-motion</code> collapses every transform to a plain opacity fade.</p>
+      </div>
+    </div>
+
+    <div class="motion-grid" id="motion-grid"></div>
+  </div>
+</section>
+
+<!-- ====================================================== next -->
+<section id="next" style="border-bottom: 0;">
+  <div class="wrap">
+    <div class="next">
+      <div>
+        <h3>Next, with your approval: the facade grammar.</h3>
+        <p>Phase 02 documents the shared column / pediment / frieze / ornament vocabulary, then materializes Survivor, Top Chef, and RuPaul's Drag Race as benchmarks.</p>
+      </div>
+      <div class="stamp">awaiting sign-off</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Pantheon · visual system · v0.1 · 2026</span>
+    <span>the seasons, ranked. no spoilers.</span>
+  </div>
+</footer>
+
+<!-- ====================================================== data + script -->
+<script>
+  const TOKENS = {
+    paletteDark: [
+      { name: "paper-0", desc: "deepest background",        hex: "#0E0B08" },
+      { name: "paper-1", desc: "surface · panels",          hex: "#15110C" },
+      { name: "paper-2", desc: "raised · cards",            hex: "#1E1812" },
+      { name: "paper-3", desc: "highest · popovers",        hex: "#2A2218" },
+      { name: "line",    desc: "dividers · borders",        hex: "#3A2F22" },
+      { name: "ink-3",   desc: "mute · captions",           hex: "#6E6353" },
+      { name: "ink-2",   desc: "body · subtle",             hex: "#9D9485" },
+      { name: "ink-1",   desc: "body · default",            hex: "#D8CFBE" },
+      { name: "ink-0",   desc: "high emphasis · headlines", hex: "#F2EADB" },
+      { name: "primary", desc: "Pantheon gold · ceremonial",hex: "#E8B65A" },
+    ],
+    paletteLight: [
+      { name: "paper-0", desc: "deepest background",        hex: "#F5EFE3" },
+      { name: "paper-1", desc: "surface · panels",          hex: "#EEE7D7" },
+      { name: "paper-2", desc: "raised · cards",            hex: "#E5DDC9" },
+      { name: "paper-3", desc: "highest · popovers",        hex: "#DBD2BC" },
+      { name: "line",    desc: "dividers · borders",        hex: "#C8BC9F" },
+      { name: "ink-3",   desc: "mute · captions",           hex: "#8A7E64" },
+      { name: "ink-2",   desc: "body · subtle",             hex: "#5D533F" },
+      { name: "ink-1",   desc: "body · default",            hex: "#3A3225" },
+      { name: "ink-0",   desc: "high emphasis · headlines", hex: "#1A1610" },
+      { name: "primary", desc: "burnt amber · ceremonial",  hex: "#8B5A1F" },
+    ],
+    sentiment: [
+      { name: "warm-up",   hex: "#E0843A", label: "↑ 3", use: "Rank rising. Up-vote flash, +N pill." },
+      { name: "warm-down", hex: "#5A8FA6", label: "↓ 2", use: "Rank falling. Down-vote flash, −N pill." },
+      { name: "neutral",   hex: "#8C8275", label: "—",   use: "No change. Zero-delta indicator." },
+      { name: "hold",      hex: "#7A8F5C", label: "◆",   use: "Locked / held position post-finale." },
+      { name: "verdict",   hex: "#B57FB8", label: "✱",   use: "Editor's Canon delta. Used rarely." },
+      { name: "consensus", hex: "#D5A93D", label: "★",   use: "Community rank reaches stable consensus." },
+    ],
+    typeScale: [
+      { tag: "2xl",  px: "56", lh: 1.07, weight: 500, font: "serif", sample: "The seasons, ranked.",        use: "Hero / show name" },
+      { tag: "xl",   px: "32", lh: 1.18, weight: 500, font: "serif", sample: "Editor's Canon",              use: "Page subhead" },
+      { tag: "lg",   px: "22", lh: 1.36, weight: 600, font: "sans",  sample: "Most contested seasons",     use: "Section head" },
+      { tag: "md",   px: "18", lh: 1.55, weight: 400, font: "serif", sample: "A confident verdict, never a guess.", use: "Lede / blurb" },
+      { tag: "base", px: "16", lh: 1.55, weight: 400, font: "sans",  sample: "The promise is plain: ranked television without ruining it.", use: "Body" },
+      { tag: "sm",   px: "14", lh: 1.45, weight: 400, font: "sans",  sample: "Posted by 412 readers · 2h ago",    use: "Secondary UI" },
+      { tag: "xs",   px: "12", lh: 1.4,  weight: 500, font: "mono",  sample: "#01 · RANK · NO SPOILERS · COMMUNITY", use: "Caption / meta" },
+    ],
+    space: [
+      { token: "1",  px: 4   }, { token: "2",  px: 8   },
+      { token: "3",  px: 12  }, { token: "4",  px: 16  },
+      { token: "5",  px: 24  }, { token: "6",  px: 32  },
+      { token: "7",  px: 48  }, { token: "8",  px: 64  },
+      { token: "9",  px: 96  }, { token: "10", px: 128 },
+    ],
+    motion: [
+      { name: "rise",   curve: "cubic-bezier(.2,.8,.2,1)",  klass: "m-rise",   duration: "calm · 480ms", use: "Entrances · facade reveal" },
+      { name: "settle", curve: "cubic-bezier(.4,0,.2,1)",   klass: "m-settle", duration: "base · 240ms", use: "State changes · hovers" },
+      { name: "linear", curve: "linear",                     klass: "m-linear", duration: "base · 240ms", use: "Crossfades · scrub" },
+      { name: "dwell",  curve: "cubic-bezier(.6,0,.8,0)",   klass: "m-dwell",  duration: "calm · 480ms", use: "Anticipation · vote-lock" },
+    ],
+  };
+
+  // ---------- palette ----------
+  function renderPalette(target, list) {
+    target.innerHTML = list.map(s => `
+      <div class="swatch">
+        <div class="sw-chip" style="background:${s.hex}"></div>
+        <div class="sw-name">${s.name}<small>${s.desc}</small></div>
+        <div class="sw-hex">${s.hex}<small>oklch</small></div>
+      </div>
+    `).join("");
+  }
+  renderPalette(document.getElementById("pal-dark"),  TOKENS.paletteDark);
+  renderPalette(document.getElementById("pal-light"), TOKENS.paletteLight);
+
+  // ---------- sentiment ----------
+  document.getElementById("sent-grid").innerHTML = TOKENS.sentiment.map(s => `
+    <div class="sent-card">
+      <div class="sent-top">
+        <div class="sent-name"><span class="sent-dot" style="background:${s.hex}"></span>${s.name}</div>
+        <div class="sent-hex">${s.hex}</div>
+      </div>
+      <div class="sent-pill" style="background: color-mix(in oklab, ${s.hex} 18%, transparent); color: ${s.hex};">${s.label} ${s.name.replace("-"," ")}</div>
+      <p class="sent-use">${s.use}</p>
+    </div>
+  `).join("");
+
+  // ---------- type scale ----------
+  document.getElementById("type-scale").innerHTML = TOKENS.typeScale.map(t => {
+    const fam = t.font === "serif" ? "var(--serif)" : (t.font === "mono" ? "var(--mono)" : "var(--sans)");
+    return `
+    <div class="type-row">
+      <div class="type-tag">${t.tag}</div>
+      <div class="type-px">${t.px}px</div>
+      <div class="type-sample" style="font-family:${fam}; font-size:${t.px}px; line-height:${t.lh}; font-weight:${t.weight}; letter-spacing:${t.px > 24 ? '-0.015em' : '0'}">${t.sample}</div>
+      <div class="type-use">${t.use}</div>
+    </div>
+    `;
+  }).join("");
+
+  // ---------- spacing ----------
+  document.getElementById("space-grid").innerHTML = TOKENS.space.map(s => `
+    <div class="sp-row">
+      <div class="sp-token">space-${s.token}</div>
+      <div class="sp-px">${s.px}px</div>
+      <div class="sp-bar" style="width:${s.px}px"></div>
+    </div>
+  `).join("");
+
+  // ---------- motion ----------
+  const motionGrid = document.getElementById("motion-grid");
+  motionGrid.innerHTML = TOKENS.motion.map(m => `
+    <div class="motion-card ${m.klass}">
+      <div class="motion-head">
+        <div class="motion-name">${m.name} · <span style="color:var(--ink-3);font-weight:400">${m.duration}</span></div>
+        <div class="motion-curve">${m.curve}</div>
+      </div>
+      <div class="motion-track"><div class="motion-dot"></div></div>
+      <button class="motion-play">replay ${m.name}</button>
+      <div style="margin-top: 12px; font: 400 13px/1.4 var(--serif); color: var(--ink-2);">${m.use}</div>
+    </div>
+  `).join("");
+
+  // auto-play once on load + replay buttons
+  function play(card) {
+    card.classList.remove("playing");
+    void card.offsetWidth;
+    card.classList.add("playing");
+  }
+  motionGrid.querySelectorAll(".motion-card").forEach((card, i) => {
+    setTimeout(() => play(card), 400 + i * 220);
+    card.querySelector(".motion-play").addEventListener("click", () => play(card));
+  });
+
+  // ---------- mode toggle ----------
+  const root = document.documentElement;
+  document.querySelectorAll(".mode-toggle button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.set;
+      root.setAttribute("data-mode", mode);
+      document.querySelectorAll(".mode-toggle button").forEach(b => {
+        b.setAttribute("aria-pressed", b.dataset.set === mode ? "true" : "false");
+      });
+    });
+  });
+</script>
+</body>
+</html>

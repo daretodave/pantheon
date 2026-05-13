@@ -1,0 +1,5 @@
+# Code owners — every PR auto-requests review from the listed
+# owners. Pantheon's autonomous loop pushes direct to main, so
+# CODEOWNERS only fires for human-opened PRs.
+
+* @daretodave

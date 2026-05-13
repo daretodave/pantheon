@@ -1,0 +1,1606 @@
+<!doctype html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pantheon · Visual System · Phase 2 · Facade Grammar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper-0:#0E0B08; --paper-1:#15110C; --paper-2:#1E1812; --paper-3:#2A2218;
+    --line-soft:#241D14; --line:#3A2F22; --line-loud:#5A4A35;
+    --ink-3:#6E6353; --ink-2:#9D9485; --ink-1:#D8CFBE; --ink-0:#F2EADB;
+    --primary:#E8B65A;
+    --serif:'Source Serif 4', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --r-sm:4px; --r-md:8px; --r-lg:16px;
+    --elev-1:0 1px 0 rgba(0,0,0,.25);
+    --elev-2:0 1px 0 rgba(0,0,0,.45);
+    --d-base:240ms; --e-settle:cubic-bezier(.4,0,.2,1);
+  }
+  [data-mode="light"]{
+    --paper-0:#F5EFE3; --paper-1:#EEE7D7; --paper-2:#E5DDC9; --paper-3:#DBD2BC;
+    --line-soft:#D9CFB6; --line:#C8BC9F; --line-loud:#A8997A;
+    --ink-3:#8A7E64; --ink-2:#5D533F; --ink-1:#3A3225; --ink-0:#1A1610;
+    --primary:#8B5A1F;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--sans);
+    background:var(--paper-0);
+    color:var(--ink-1);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    transition:background var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle);
+  }
+  ::selection{background:var(--primary);color:var(--paper-0)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  @media(max-width:720px){.wrap{padding:0 20px}}
+
+  /* topbar */
+  .topbar{position:sticky;top:0;z-index:10;
+    background:color-mix(in oklab, var(--paper-0) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);}
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--serif);
+    font-size:18px;font-weight:600;color:var(--ink-0);letter-spacing:-0.01em;}
+  .brand small{font-family:var(--mono);font-size:11px;font-weight:400;
+    color:var(--ink-3);letter-spacing:.04em;margin-left:4px;}
+  .brand-nav{display:flex;gap:8px;align-items:center}
+  .brand-nav a{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);text-decoration:none;padding:8px 12px;border-radius:999px;
+    border:1px solid transparent;transition:color var(--d-base), border-color var(--d-base);}
+  .brand-nav a:hover{color:var(--ink-1);border-color:var(--line)}
+  .brand-nav a.current{color:var(--ink-0);border-color:var(--line)}
+  .mode-toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;
+    padding:3px;background:var(--paper-1);}
+  .mode-toggle button{appearance:none;border:0;background:transparent;color:var(--ink-2);
+    font:500 12px/1 var(--sans);padding:6px 14px;border-radius:999px;cursor:pointer;
+    transition:color var(--d-base), background var(--d-base);letter-spacing:.02em;}
+  .mode-toggle button[aria-pressed="true"]{background:var(--ink-0);color:var(--paper-0)}
+
+  /* hero */
+  header.hero{padding:96px 0 72px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink-3);
+    letter-spacing:.16em;text-transform:uppercase;margin-bottom:28px;
+    display:flex;align-items:center;gap:12px;}
+  .eyebrow::before{content:"";display:inline-block;width:28px;height:1px;background:var(--line-loud)}
+  h1.title{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1.02;
+    letter-spacing:-0.02em;color:var(--ink-0);margin:0 0 24px;text-wrap:balance;}
+  h1.title em{color:var(--primary);font-style:italic;font-weight:500}
+  .lede{font-family:var(--serif);font-size:22px;line-height:1.5;color:var(--ink-1);
+    max-width:680px;margin:0;text-wrap:pretty;}
+
+  section{padding:96px 0;border-bottom:1px solid var(--line-soft)}
+  section:last-of-type{border-bottom:0}
+  .sec-head{display:grid;grid-template-columns:220px 1fr;gap:48px;margin-bottom:48px;align-items:start}
+  @media(max-width:820px){.sec-head{grid-template-columns:1fr;gap:16px}}
+  .sec-num{font-family:var(--mono);font-size:12px;color:var(--ink-3);
+    letter-spacing:.14em;text-transform:uppercase;padding-top:6px;}
+  .sec-title{font-family:var(--serif);font-weight:500;font-size:36px;line-height:1.1;
+    letter-spacing:-0.015em;color:var(--ink-0);margin:0 0 12px;}
+  .sec-desc{font-family:var(--serif);font-size:17px;line-height:1.6;color:var(--ink-2);
+    max-width:660px;margin:0;text-wrap:pretty;}
+
+  /* grammar blueprint */
+  .blueprint{
+    border:1px solid var(--line);
+    border-radius:var(--r-md);
+    background:var(--paper-1);
+    padding:0;
+    overflow:hidden;
+    position:relative;
+  }
+  .blueprint .canvas{
+    aspect-ratio:1200/800;
+    width:100%;
+    background:
+      linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0/40px 40px,
+      var(--paper-2);
+    position:relative;
+  }
+  .blueprint svg{position:absolute;inset:0;width:100%;height:100%}
+  .legend{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    border-top:1px solid var(--line);
+  }
+  @media(max-width:720px){.legend{grid-template-columns:repeat(2,1fr)}}
+  .legend > div{padding:20px 24px;border-right:1px solid var(--line);}
+  .legend > div:last-child{border-right:0}
+  .leg-num{font:500 11px/1 var(--mono);color:var(--primary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+  .leg-name{font-family:var(--serif);font-weight:500;font-size:18px;color:var(--ink-0);margin-bottom:4px}
+  .leg-dim{font:400 11px/1.4 var(--mono);color:var(--ink-3)}
+
+  /* rules list */
+  .rules{display:grid;grid-template-columns:repeat(2,1fr);gap:0;
+    border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+  @media(max-width:720px){.rules{grid-template-columns:1fr}}
+  .rule{padding:24px 28px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper-1)}
+  .rule:nth-child(2n){border-right:0}
+  @media(max-width:720px){.rule{border-right:0}}
+  .rule:nth-last-child(-n+2){border-bottom:0}
+  @media(max-width:720px){.rule{border-bottom:1px solid var(--line)} .rule:last-child{border-bottom:0}}
+  .rule-num{font:500 11px/1 var(--mono);color:var(--primary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .rule h4{font-family:var(--serif);font-weight:500;font-size:18px;color:var(--ink-0);margin:0 0 8px;letter-spacing:-0.01em}
+  .rule p{font-family:var(--serif);font-size:14px;line-height:1.55;color:var(--ink-2);margin:0;text-wrap:pretty}
+
+  /* primitives cheat */
+  .cheat{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
+  }
+  @media(max-width:820px){.cheat{grid-template-columns:repeat(2,1fr)}}
+  .cheat > div{background:var(--paper-1);padding:24px}
+  .cheat-tag{font:500 11px/1 var(--mono);color:var(--primary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .cheat-name{font-family:var(--serif);font-weight:500;font-size:18px;color:var(--ink-0);margin:0 0 12px}
+  .cheat-spec{font:400 12px/1.7 var(--mono);color:var(--ink-2)}
+  .cheat-spec b{color:var(--ink-0);font-weight:500}
+
+  /* SHOW PLATE ====================================================== */
+  .show{
+    padding:0;
+    border-bottom:1px solid var(--line-soft);
+    --show-paper:var(--paper-1);
+    --show-ink:var(--ink-0);
+    --show-primary:var(--primary);
+  }
+  .show.survivor{
+    --show-paper:#0E2A2A;
+    --show-ink:#EFE2BD;
+    --show-primary:#D55E36;
+  }
+  .show.topchef{
+    --show-paper:#1B2418;
+    --show-ink:#ECDFC6;
+    --show-primary:#B86A2E;
+  }
+  .show.dragrace{
+    --show-paper:#2D0B2A;
+    --show-ink:#F2E1D2;
+    --show-primary:#E64B86;
+  }
+  .show-inner{padding:96px 0}
+  .show-head{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;
+    margin-bottom:48px;}
+  @media(max-width:720px){.show-head{grid-template-columns:1fr}}
+  .show-meta{font-family:var(--mono);font-size:12px;color:var(--ink-3);
+    letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px;}
+  .show-title{font-family:var(--serif);font-weight:500;font-size:80px;line-height:1;
+    letter-spacing:-0.025em;color:var(--ink-0);margin:0 0 16px;text-wrap:balance;}
+  .show-blurb{font-family:var(--serif);font-size:19px;line-height:1.5;color:var(--ink-2);
+    max-width:560px;margin:0;text-wrap:pretty;}
+  .show-pal{display:flex;gap:0;align-items:stretch}
+  .show-pal > div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+    padding:14px 18px;border:1px solid var(--line);background:var(--paper-1);
+    border-radius:0;}
+  .show-pal > div:first-child{border-radius:var(--r-md) 0 0 var(--r-md)}
+  .show-pal > div:last-child{border-radius:0 var(--r-md) var(--r-md) 0;border-left:0}
+  .show-pal > div:nth-child(2){border-left:0}
+  .show-pal .sw{width:32px;height:32px;border-radius:var(--r-sm);border:1px solid rgba(0,0,0,.2)}
+  .show-pal .sw-tag{font:500 10px/1 var(--mono);color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+  .show-pal .sw-hex{font:500 11px/1 var(--mono);color:var(--ink-0);letter-spacing:.04em}
+
+  /* primitives row */
+  .prim-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px}
+  @media(max-width:820px){.prim-row{grid-template-columns:repeat(2,1fr)}}
+  .prim{
+    border:1px solid var(--line);background:var(--paper-1);
+    border-radius:var(--r-md);overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .prim-stage{
+    aspect-ratio:1/1;
+    background:var(--show-paper);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .prim-stage.tall{aspect-ratio:2/3}
+  .prim-stage.wide{aspect-ratio:3/1}
+  .prim-stage.pediment{aspect-ratio:5/2;padding:0 4px}
+  .prim-stage svg{width:90%;height:90%;display:block}
+  .prim-stage.wide svg{width:96%;height:80%}
+  .prim-meta{
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--line);
+  }
+  .prim-name{font:500 12px/1 var(--mono);color:var(--ink-1);letter-spacing:.06em;text-transform:uppercase}
+  .prim-vb{font:400 11px/1 var(--mono);color:var(--ink-3)}
+
+  /* facade hero */
+  .facade-hero{
+    border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
+    margin-bottom:32px;
+  }
+  .facade-stage{
+    aspect-ratio:1200/800;width:100%;
+    background:var(--show-paper);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .facade-stage svg{width:100%;height:100%;display:block}
+
+  /* sigil row */
+  .sigil-row{display:grid;grid-template-columns:200px 200px 1fr;gap:24px;align-items:center}
+  @media(max-width:720px){.sigil-row{grid-template-columns:1fr 1fr}}
+  .sigil-tile{
+    aspect-ratio:1/1;background:var(--show-paper);
+    border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .sigil-tile.small{max-width:80px}
+  .sigil-tile svg{width:100%;height:100%;display:block}
+  .sigil-note{font-family:var(--serif);font-size:15px;line-height:1.55;color:var(--ink-2);
+    max-width:520px;text-wrap:pretty}
+  .sigil-note b{color:var(--ink-0);font-weight:500}
+  .sigil-note small{display:block;margin-top:8px;font:400 11px/1.5 var(--mono);color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase}
+
+  /* rationale */
+  .rationale{
+    margin-top:40px;
+    border-top:1px solid var(--line-soft);padding-top:32px;
+    display:grid;grid-template-columns:200px 1fr;gap:48px;
+  }
+  @media(max-width:720px){.rationale{grid-template-columns:1fr;gap:12px}}
+  .rationale-label{font:500 11px/1 var(--mono);color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase;padding-top:4px}
+  .rationale p{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--ink-2);margin:0 0 14px;text-wrap:pretty}
+  .rationale p:last-child{margin-bottom:0}
+  .rationale p b{color:var(--ink-0);font-weight:500}
+
+  /* next */
+  .next{margin-top:80px;padding:32px;border:1px dashed var(--line-loud);
+    border-radius:var(--r-md);background:var(--paper-1);
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;}
+  @media(max-width:720px){.next{grid-template-columns:1fr}}
+  .next h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:0 0 6px;color:var(--ink-0);letter-spacing:-0.01em}
+  .next p{margin:0;font-family:var(--serif);font-size:15px;color:var(--ink-2);line-height:1.5}
+  .next .stamp{font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--primary);padding:10px 16px;border:1px solid var(--primary);border-radius:999px;}
+
+  footer{padding:48px 0;color:var(--ink-3);font:400 12px/1.6 var(--mono)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+
+  /* annotation overlay */
+  .anno{font:500 11px/1 var(--mono);fill:var(--primary);letter-spacing:.1em;text-transform:uppercase}
+  .anno-tick{stroke:var(--primary);stroke-width:1;fill:none}
+  .anno-dim{font:400 10px/1 var(--mono);fill:var(--ink-3);letter-spacing:.06em}
+
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true">
+        <path d="M2 11 L14 3 L26 11 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="5" y1="14" x2="5" y2="25" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="14" y1="14" x2="14" y2="25" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="23" y1="14" x2="23" y2="25" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="2" y1="26" x2="26" y2="26" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+      <span>Pantheon <small>visual system / v0.1</small></span>
+    </div>
+    <div class="brand-nav">
+      <a href="Pantheon · Tokens.html">01 · Tokens</a>
+      <a href="#" class="current">02 · Facades</a>
+      <a href="#" style="opacity:.4;pointer-events:none">03 · Compositions</a>
+    </div>
+    <div class="mode-toggle" role="group" aria-label="Color mode">
+      <button data-set="dark" aria-pressed="true">Dark</button>
+      <button data-set="light" aria-pressed="false">Light</button>
+    </div>
+  </div>
+</div>
+
+<!-- hero -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Phase 02 · Facade grammar · Pending approval</div>
+    <h1 class="title">A shared architecture.<br/>An <em>endless vocabulary.</em></h1>
+    <p class="lede">Every show is a flat, illustrated facade. The grammar is universal — column, frieze, pediment, ornament — but the motifs belong to the show. The promise stays editorial; the surface stays alive.</p>
+  </div>
+</header>
+
+<!-- ====================================================== grammar diagram -->
+<section id="grammar">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 01 · The four slots</div>
+      <div>
+        <h2 class="sec-title">A pediment, a frieze, columns, an ornament.</h2>
+        <p class="sec-desc">A facade fits a 1200 × 800 viewBox at 3:2 — a confident editorial ratio that holds at any breakpoint. Every show ships four primitives that snap into these slots. Mass and proportion stay constant; only the vocabulary changes.</p>
+      </div>
+    </div>
+
+    <div class="blueprint">
+      <div class="canvas">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+          <!-- Pediment outline -->
+          <g stroke="var(--ink-2)" stroke-width="2" fill="none">
+            <path d="M 60 240 L 600 60 L 1140 240" />
+            <line x1="40" y1="240" x2="1160" y2="240"/>
+          </g>
+          <!-- Frieze band -->
+          <g stroke="var(--ink-2)" stroke-width="2" fill="none">
+            <rect x="40" y="260" width="1120" height="60"/>
+          </g>
+          <!-- Columns -->
+          <g stroke="var(--ink-2)" stroke-width="2" fill="none">
+            <rect x="120" y="340" width="100" height="340"/>
+            <rect x="320" y="340" width="100" height="340"/>
+            <rect x="550" y="340" width="100" height="340"/>
+            <rect x="780" y="340" width="100" height="340"/>
+            <rect x="980" y="340" width="100" height="340"/>
+          </g>
+          <!-- Stylobate -->
+          <g stroke="var(--ink-2)" stroke-width="2" fill="none">
+            <rect x="40" y="700" width="1120" height="30"/>
+          </g>
+          <!-- Ornament markers -->
+          <g fill="var(--primary)">
+            <circle cx="600" cy="150" r="6"/>
+            <circle cx="600" cy="290" r="6"/>
+            <circle cx="170" cy="510" r="6"/>
+            <circle cx="1030" cy="510" r="6"/>
+          </g>
+
+          <!-- Annotation lines + labels -->
+          <g class="anno-tick">
+            <!-- pediment -->
+            <line x1="1180" y1="60" x2="1220" y2="60"/>
+            <line x1="1180" y1="240" x2="1220" y2="240"/>
+            <line x1="1200" y1="60" x2="1200" y2="240"/>
+          </g>
+          <text class="anno-dim" x="1208" y="155" transform="rotate(90 1208 155)">PEDIMENT · 240H</text>
+          <text class="anno" x="610" y="180">① PEDIMENT</text>
+
+          <g class="anno-tick">
+            <line x1="40" y1="370" x2="120" y2="370"/>
+          </g>
+          <text class="anno" x="135" y="295">② FRIEZE · 60H</text>
+
+          <text class="anno" x="135" y="375">③ COLUMN · ×3 OR ×5</text>
+          <text class="anno-dim" x="245" y="345">160w · 360h</text>
+
+          <text class="anno" x="135" y="720">STYLOBATE · 30H</text>
+
+          <text class="anno" x="615" y="295">④ ORNAMENT · 1:1</text>
+
+          <!-- Total dimensions -->
+          <g class="anno-tick">
+            <line x1="40" y1="755" x2="40" y2="775"/>
+            <line x1="1160" y1="755" x2="1160" y2="775"/>
+            <line x1="40" y1="765" x2="1160" y2="765"/>
+          </g>
+          <text class="anno-dim" x="580" y="780">1200</text>
+        </svg>
+      </div>
+      <div class="legend">
+        <div>
+          <div class="leg-num">① Pediment</div>
+          <div class="leg-name">The crown</div>
+          <div class="leg-dim">1200 × 240 · triangular · isoceles</div>
+        </div>
+        <div>
+          <div class="leg-num">② Frieze</div>
+          <div class="leg-name">The horizontal band</div>
+          <div class="leg-dim">1200 × 80 · tileable · 15:1</div>
+        </div>
+        <div>
+          <div class="leg-num">③ Column</div>
+          <div class="leg-name">The vertical motif</div>
+          <div class="leg-dim">160 × 440 · 3× or 5× across</div>
+        </div>
+        <div>
+          <div class="leg-num">④ Ornament</div>
+          <div class="leg-name">The repeating mark</div>
+          <div class="leg-dim">80 × 80 · season pages, cards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== composition rules -->
+<section id="rules">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 02 · Composition rules</div>
+      <div>
+        <h2 class="sec-title">Six rules that make a facade.</h2>
+        <p class="sec-desc">The grammar isn't a kit of parts — it's a contract. These rules guarantee that a new show, designed by a new contributor, lands inside the Pantheon family on first try.</p>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-num">Rule 01</div>
+        <h4>3 columns at desktop, 5 at hero.</h4>
+        <p>Hero facades on the home and show-home use 5 columns spaced 200px on-center. Cards and inline contexts compress to 3 columns at 360px on-center. Even counts are forbidden — the eye needs a center column.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-num">Rule 02</div>
+        <h4>Pediment apex on the vertical axis.</h4>
+        <p>The pediment apex sits at viewBox x=600, dead center. The triangle is isoceles, never scalene. Apex y is constant at 60. This is the only fixed point in the whole grammar.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-num">Rule 03</div>
+        <h4>The frieze tiles. It never centers.</h4>
+        <p>Friezes are designed as a repeating unit and tiled across the 1200px width. The pattern continues off-canvas — never cropped to fit a centerpiece. If the show needs a centerpiece, it lives in the pediment.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-num">Rule 04</div>
+        <h4>Three colors, no more.</h4>
+        <p>Each show ships exactly three colors: a <b>show-paper</b> (background), a <b>show-ink</b> (linework), and a <b>show-primary</b> (the one ceremonial accent). The Pantheon gold from the chrome never appears inside a facade.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-num">Rule 05</div>
+        <h4>Linework before fill.</h4>
+        <p>Every primitive is drawn at stroke-width 3 in show-ink. Fills are reserved for show-primary, used on no more than 15% of the visible area. A facade reads as an etching first, a poster second.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-num">Rule 06</div>
+        <h4>The sigil is the facade, cropped.</h4>
+        <p>Every show's <b>sigil.svg</b> is the pediment + the center column, cropped to a 320 × 320 square. No new artwork. If the facade can't survive being cropped to a square, the facade is wrong, not the sigil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== primitives cheat -->
+<section id="cheat">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 03 · Primitives cheat sheet</div>
+      <div>
+        <h2 class="sec-title">The four files a new show must ship.</h2>
+        <p class="sec-desc">Adding a show to Pantheon means producing exactly these four SVGs, in these viewBoxes, against these palettes. Everything else — facade composition, sigil derivation, card thumbnails, share images — is generated.</p>
+      </div>
+    </div>
+
+    <div class="cheat">
+      <div>
+        <div class="cheat-tag">file 01</div>
+        <div class="cheat-name">column.svg</div>
+        <div class="cheat-spec">
+          viewBox <b>0 0 160 440</b><br/>
+          stroke <b>3px · show-ink</b><br/>
+          fill <b>show-primary · ≤15%</b><br/>
+          baseline <b>y = 440</b>
+        </div>
+      </div>
+      <div>
+        <div class="cheat-tag">file 02</div>
+        <div class="cheat-name">pediment.svg</div>
+        <div class="cheat-spec">
+          viewBox <b>0 0 1200 240</b><br/>
+          apex <b>x = 600 · y = 0</b><br/>
+          base <b>y = 240</b><br/>
+          slope <b>isoceles only</b>
+        </div>
+      </div>
+      <div>
+        <div class="cheat-tag">file 03</div>
+        <div class="cheat-name">frieze.svg</div>
+        <div class="cheat-spec">
+          viewBox <b>0 0 1200 80</b><br/>
+          tile width <b>240px (5 reps)</b><br/>
+          must repeat seamlessly<br/>
+          height fixed at <b>80</b>
+        </div>
+      </div>
+      <div>
+        <div class="cheat-tag">file 04</div>
+        <div class="cheat-name">ornament.svg</div>
+        <div class="cheat-spec">
+          viewBox <b>0 0 80 80</b><br/>
+          centered · 8px padding<br/>
+          single-color preferred<br/>
+          used at <b>16px → 80px</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== sigil derivation -->
+<section id="derivation">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">§ 04 · Sigil derivation</div>
+      <div>
+        <h2 class="sec-title">From facade to badge in one crop.</h2>
+        <p class="sec-desc">The sigil is the show's compressed identity — used on cards, share images, page headers, the favicon. It is never drawn separately. Take the full facade, isolate the pediment and the center column, fit to a 320 × 320 square. Done.</p>
+      </div>
+    </div>
+
+    <div class="blueprint">
+      <div class="canvas">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+          <!-- Faded facade -->
+          <g stroke="var(--ink-3)" stroke-width="2" fill="none" opacity="0.4">
+            <path d="M 60 240 L 600 60 L 1140 240"/>
+            <line x1="40" y1="240" x2="1160" y2="240"/>
+            <rect x="40" y="260" width="1120" height="60"/>
+            <rect x="120" y="340" width="100" height="340"/>
+            <rect x="320" y="340" width="100" height="340"/>
+            <rect x="550" y="340" width="100" height="340"/>
+            <rect x="780" y="340" width="100" height="340"/>
+            <rect x="980" y="340" width="100" height="340"/>
+            <rect x="40" y="700" width="1120" height="30"/>
+          </g>
+          <!-- Sigil crop highlight -->
+          <rect x="440" y="40" width="320" height="320" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="6 6"/>
+          <text class="anno" x="460" y="30">320 × 320 · sigil crop</text>
+          <!-- Sigil call-out -->
+          <line x1="760" y1="200" x2="900" y2="200" stroke="var(--primary)" stroke-width="1" stroke-dasharray="3 3"/>
+          <text class="anno" x="910" y="206">pediment + center column</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================== SURVIVOR -->
+<section class="show survivor">
+  <div class="wrap show-inner">
+    <div class="show-head">
+      <div>
+        <div class="show-meta">Benchmark · 01 / 03</div>
+        <h2 class="show-title">Survivor</h2>
+        <p class="show-blurb">The first archetype. Equatorial dusk. Carved teak. A single coral flame held against the gathering dark.</p>
+      </div>
+      <div class="show-pal">
+        <div>
+          <div class="sw" style="background:#0E2A2A"></div>
+          <div class="sw-tag">paper</div>
+          <div class="sw-hex">#0E2A2A</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#EFE2BD"></div>
+          <div class="sw-tag">ink</div>
+          <div class="sw-hex">#EFE2BD</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#D55E36"></div>
+          <div class="sw-tag">primary</div>
+          <div class="sw-hex">#D55E36</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primitives row -->
+    <div class="prim-row">
+      <!-- Column -->
+      <div class="prim">
+        <div class="prim-stage tall">
+          <svg viewBox="0 0 160 440">
+            <!-- plinth -->
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="20" y="408" width="120" height="28"/>
+              <rect x="30" y="392" width="100" height="16"/>
+            </g>
+            <!-- trunk -->
+            <path d="M 56 392 L 64 140 L 96 140 L 104 392 Z" fill="none" stroke="#EFE2BD" stroke-width="3" stroke-linejoin="round"/>
+            <!-- trunk rings -->
+            <g stroke="#EFE2BD" stroke-width="2" fill="none" opacity="0.7">
+              <path d="M 59 360 Q 80 365 101 360"/>
+              <path d="M 60 320 Q 80 325 100 320"/>
+              <path d="M 61 280 Q 80 285 99 280"/>
+              <path d="M 62 240 Q 80 245 98 240"/>
+              <path d="M 63 200 Q 80 205 97 200"/>
+              <path d="M 63 165 Q 80 170 97 165"/>
+            </g>
+            <!-- coconuts -->
+            <circle cx="68" cy="148" r="10" fill="#D55E36"/>
+            <circle cx="92" cy="155" r="9" fill="#D55E36"/>
+            <!-- fronds -->
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M 80 140 Q 30 100 8 30"/>
+              <path d="M 80 140 Q 50 80 38 8"/>
+              <path d="M 80 140 Q 80 70 78 4"/>
+              <path d="M 80 140 Q 110 80 122 8"/>
+              <path d="M 80 140 Q 130 100 152 30"/>
+              <!-- leaflets -->
+              <path d="M 30 95 L 16 88"/><path d="M 22 70 L 8 65"/>
+              <path d="M 50 75 L 38 60"/><path d="M 42 40 L 30 30"/>
+              <path d="M 78 70 L 70 55"/><path d="M 78 35 L 70 25"/>
+              <path d="M 110 75 L 122 60"/><path d="M 118 40 L 130 30"/>
+              <path d="M 130 95 L 144 88"/><path d="M 138 70 L 152 65"/>
+            </g>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">column · palm trunk</span>
+          <span class="prim-vb">160 × 440</span>
+        </div>
+      </div>
+
+      <!-- Pediment -->
+      <div class="prim">
+        <div class="prim-stage pediment">
+          <svg viewBox="0 0 1200 240">
+            <!-- triangle -->
+            <g stroke="#EFE2BD" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <!-- crossed palm fronds -->
+            <g stroke="#EFE2BD" stroke-width="4" fill="none" stroke-linecap="round">
+              <path d="M 600 210 Q 420 180 320 95"/>
+              <path d="M 600 210 Q 780 180 880 95"/>
+              <path d="M 380 115 L 360 95"/><path d="M 430 145 L 410 130"/><path d="M 490 175 L 472 160"/>
+              <path d="M 820 115 L 840 95"/><path d="M 770 145 L 790 130"/><path d="M 710 175 L 728 160"/>
+            </g>
+            <!-- torch shaft -->
+            <rect x="590" y="100" width="20" height="100" fill="#EFE2BD"/>
+            <!-- flame -->
+            <path d="M 600 30 Q 568 70 580 110 Q 590 95 600 100 Q 610 95 620 110 Q 632 70 600 30 Z" fill="#D55E36" stroke="#EFE2BD" stroke-width="3" stroke-linejoin="round"/>
+            <!-- torch holder -->
+            <rect x="578" y="98" width="44" height="12" fill="#EFE2BD"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">pediment · torch</span>
+          <span class="prim-vb">1200 × 240</span>
+        </div>
+      </div>
+
+      <!-- Frieze -->
+      <div class="prim">
+        <div class="prim-stage wide">
+          <svg viewBox="0 0 1200 80">
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="10" x2="1200" y2="10"/>
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <!-- rope twist pattern repeating every 80 -->
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+              <g>
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(80 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(160 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(240 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(320 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(400 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(480 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(560 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(640 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(720 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(800 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(880 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(960 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(1040 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+              <g transform="translate(1120 0)">
+                <path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/>
+                <path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">frieze · woven rope</span>
+          <span class="prim-vb">1200 × 80</span>
+        </div>
+      </div>
+
+      <!-- Ornament -->
+      <div class="prim">
+        <div class="prim-stage">
+          <svg viewBox="0 0 80 80">
+            <!-- shaft -->
+            <rect x="36" y="46" width="8" height="28" fill="#EFE2BD"/>
+            <!-- holder -->
+            <rect x="30" y="44" width="20" height="6" fill="#EFE2BD"/>
+            <!-- flame -->
+            <path d="M 40 8 Q 22 26 28 48 Q 34 42 40 44 Q 46 42 52 48 Q 58 26 40 8 Z" fill="#D55E36" stroke="#EFE2BD" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">ornament · torch</span>
+          <span class="prim-vb">80 × 80</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Facade -->
+    <div class="facade-hero">
+      <div class="facade-stage">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+          <!-- background already paper via container -->
+
+          <!-- PEDIMENT (1200 x 240) at y 40-240 -->
+          <g transform="translate(0 40)">
+            <g stroke="#EFE2BD" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <g stroke="#EFE2BD" stroke-width="4" fill="none" stroke-linecap="round">
+              <path d="M 600 210 Q 420 180 320 95"/>
+              <path d="M 600 210 Q 780 180 880 95"/>
+              <path d="M 380 115 L 360 95"/><path d="M 430 145 L 410 130"/><path d="M 490 175 L 472 160"/>
+              <path d="M 820 115 L 840 95"/><path d="M 770 145 L 790 130"/><path d="M 710 175 L 728 160"/>
+            </g>
+            <rect x="590" y="100" width="20" height="100" fill="#EFE2BD"/>
+            <path d="M 600 30 Q 568 70 580 110 Q 590 95 600 100 Q 610 95 620 110 Q 632 70 600 30 Z" fill="#D55E36" stroke="#EFE2BD" stroke-width="3" stroke-linejoin="round"/>
+            <rect x="578" y="98" width="44" height="12" fill="#EFE2BD"/>
+          </g>
+
+          <!-- FRIEZE (1200 x 80) at y 280-360 -->
+          <g transform="translate(0 280)">
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="10" x2="1200" y2="10"/>
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+              <g transform="translate(0 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(80 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(160 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(240 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(320 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(400 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(480 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(560 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(640 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(720 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(800 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(880 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(960 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(1040 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+              <g transform="translate(1120 0)"><path d="M 0 40 Q 20 10 40 40 Q 60 70 80 40"/><path d="M 0 40 Q 20 70 40 40 Q 60 10 80 40"/></g>
+            </g>
+          </g>
+
+          <!-- COLUMNS (5×) at y 360-720, x-centers 200, 400, 600, 800, 1000 -->
+          <g>
+            <use href="#surv-col" x="120" y="280"/>
+            <use href="#surv-col" x="320" y="280"/>
+            <use href="#surv-col" x="520" y="280"/>
+            <use href="#surv-col" x="720" y="280"/>
+            <use href="#surv-col" x="920" y="280"/>
+          </g>
+
+          <!-- STYLOBATE -->
+          <g stroke="#EFE2BD" stroke-width="5" fill="none">
+            <line x1="0" y1="720" x2="1200" y2="720"/>
+            <line x1="0" y1="740" x2="1200" y2="740"/>
+            <line x1="0" y1="760" x2="1200" y2="760"/>
+          </g>
+
+          <!-- column symbol -->
+          <defs>
+            <g id="surv-col">
+              <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="20" y="408" width="120" height="28"/>
+                <rect x="30" y="392" width="100" height="16"/>
+              </g>
+              <path d="M 56 392 L 64 140 L 96 140 L 104 392 Z" fill="none" stroke="#EFE2BD" stroke-width="3" stroke-linejoin="round"/>
+              <g stroke="#EFE2BD" stroke-width="2" fill="none" opacity="0.7">
+                <path d="M 59 360 Q 80 365 101 360"/>
+                <path d="M 60 320 Q 80 325 100 320"/>
+                <path d="M 61 280 Q 80 285 99 280"/>
+                <path d="M 62 240 Q 80 245 98 240"/>
+                <path d="M 63 200 Q 80 205 97 200"/>
+                <path d="M 63 165 Q 80 170 97 165"/>
+              </g>
+              <circle cx="68" cy="148" r="10" fill="#D55E36"/>
+              <circle cx="92" cy="155" r="9" fill="#D55E36"/>
+              <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+                <path d="M 80 140 Q 30 100 8 30"/>
+                <path d="M 80 140 Q 50 80 38 8"/>
+                <path d="M 80 140 Q 80 70 78 4"/>
+                <path d="M 80 140 Q 110 80 122 8"/>
+                <path d="M 80 140 Q 130 100 152 30"/>
+                <path d="M 30 95 L 16 88"/><path d="M 22 70 L 8 65"/>
+                <path d="M 50 75 L 38 60"/><path d="M 42 40 L 30 30"/>
+                <path d="M 78 70 L 70 55"/><path d="M 78 35 L 70 25"/>
+                <path d="M 110 75 L 122 60"/><path d="M 118 40 L 130 30"/>
+                <path d="M 130 95 L 144 88"/><path d="M 138 70 L 152 65"/>
+              </g>
+            </g>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Sigil derivation -->
+    <div class="sigil-row">
+      <div class="sigil-tile">
+        <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet">
+          <!-- compressed pediment -->
+          <g transform="translate(0 0)">
+            <g stroke="#EFE2BD" stroke-width="5" fill="none" stroke-linejoin="round">
+              <path d="M 30 130 L 160 30 L 290 130"/>
+              <line x1="20" y1="130" x2="300" y2="130"/>
+            </g>
+            <rect x="153" y="80" width="14" height="56" fill="#EFE2BD"/>
+            <path d="M 160 38 Q 140 60 148 84 Q 154 76 160 78 Q 166 76 172 84 Q 180 60 160 38 Z" fill="#D55E36" stroke="#EFE2BD" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="146" y="76" width="28" height="8" fill="#EFE2BD"/>
+          </g>
+          <!-- center column -->
+          <g transform="translate(80 130)">
+            <g stroke="#EFE2BD" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <path d="M 80 140 Q 36 100 18 40"/>
+              <path d="M 80 140 Q 60 80 52 12"/>
+              <path d="M 80 140 Q 80 70 80 8"/>
+              <path d="M 80 140 Q 100 80 108 12"/>
+              <path d="M 80 140 Q 124 100 142 40"/>
+            </g>
+            <circle cx="68" cy="148" r="9" fill="#D55E36"/>
+            <circle cx="92" cy="154" r="8" fill="#D55E36"/>
+            <path d="M 56 152 L 64 184 L 96 184 L 104 152 Z" fill="none" stroke="#EFE2BD" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-tile small">
+        <svg viewBox="0 0 80 80">
+          <g stroke="#EFE2BD" stroke-width="1.5" fill="none" stroke-linejoin="round">
+            <path d="M 8 32 L 40 8 L 72 32"/>
+          </g>
+          <rect x="38" y="22" width="4" height="14" fill="#EFE2BD"/>
+          <path d="M 40 12 Q 34 18 36 26 Q 38 23 40 24 Q 42 23 44 26 Q 46 18 40 12 Z" fill="#D55E36"/>
+          <g stroke="#EFE2BD" stroke-width="1" fill="none">
+            <path d="M 40 36 Q 22 50 14 70"/>
+            <path d="M 40 36 Q 32 56 30 70"/>
+            <path d="M 40 36 Q 40 56 40 72"/>
+            <path d="M 40 36 Q 48 56 50 70"/>
+            <path d="M 40 36 Q 58 50 66 70"/>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-note">
+        <b>survivor.sigil.svg</b> — pediment + center column, fit to 320 × 320. Renders cleanly at any size from 16px (favicon) to a Times Square jumbotron, in theory.
+        <small>at 80×80 · 320×320 — same file</small>
+      </div>
+    </div>
+
+    <!-- Rationale -->
+    <div class="rationale">
+      <div class="rationale-label">Color rationale</div>
+      <div>
+        <p><b>Paper · #0E2A2A</b> reads as ocean-at-dusk: the moment after sunset on a beach in a place very far from home. It is the show's emotional setting, not its lighting.</p>
+        <p><b>Ink · #EFE2BD</b> is the warm cream of weathered driftwood, of beach-pebble bone — never bright white. It is what gets exposed when the ocean retreats.</p>
+        <p><b>Primary · #D55E36</b> is the single coral flame of the torch. The brief said no licensed imagery; this is the universal language of fire, not a logo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================== TOP CHEF -->
+<section class="show topchef">
+  <div class="wrap show-inner">
+    <div class="show-head">
+      <div>
+        <div class="show-meta">Benchmark · 02 / 03</div>
+        <h2 class="show-title">Top Chef</h2>
+        <p class="show-blurb">A pantry at midnight. Polished brass cellars line a deep olive wall. The herbs are still fresh. The knives are already drawn.</p>
+      </div>
+      <div class="show-pal">
+        <div>
+          <div class="sw" style="background:#1B2418"></div>
+          <div class="sw-tag">paper</div>
+          <div class="sw-hex">#1B2418</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#ECDFC6"></div>
+          <div class="sw-tag">ink</div>
+          <div class="sw-hex">#ECDFC6</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#B86A2E"></div>
+          <div class="sw-tag">primary</div>
+          <div class="sw-hex">#B86A2E</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primitives -->
+    <div class="prim-row">
+      <!-- Column: salt cellar -->
+      <div class="prim">
+        <div class="prim-stage tall">
+          <svg viewBox="0 0 160 440">
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+              <!-- plinth -->
+              <rect x="20" y="408" width="120" height="28"/>
+              <rect x="32" y="392" width="96" height="16"/>
+              <!-- wide base -->
+              <path d="M 30 392 L 38 360 L 122 360 L 130 392"/>
+              <!-- belly -->
+              <path d="M 38 360 Q 20 320 38 280 L 122 280 Q 140 320 122 360"/>
+              <!-- narrow neck -->
+              <rect x="50" y="240" width="60" height="40"/>
+              <!-- shoulder -->
+              <path d="M 36 240 L 50 240 L 50 200 L 110 200 L 110 240 L 124 240 Z"/>
+              <!-- cap -->
+              <rect x="40" y="180" width="80" height="20"/>
+              <!-- finial -->
+              <path d="M 70 180 Q 80 150 90 180"/>
+              <circle cx="80" cy="140" r="6" fill="#B86A2E" stroke="#ECDFC6" stroke-width="2"/>
+            </g>
+            <!-- steam wisps · constrained above the cap, below the frieze line -->
+            <g stroke="#B86A2E" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.85">
+              <path d="M 68 130 Q 60 115 68 100 Q 76 88 68 78"/>
+              <path d="M 80 130 Q 88 115 80 100 Q 72 88 80 78"/>
+              <path d="M 92 130 Q 100 115 92 100 Q 84 88 92 78"/>
+            </g>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">column · salt cellar</span>
+          <span class="prim-vb">160 × 440</span>
+        </div>
+      </div>
+
+      <!-- Pediment: bowl + crossed spoons -->
+      <div class="prim">
+        <div class="prim-stage pediment">
+          <svg viewBox="0 0 1200 240">
+            <g stroke="#ECDFC6" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <!-- crossed spoons: thick copper handles + bowl heads -->
+            <g stroke-linecap="round" stroke-linejoin="round">
+              <!-- back spoon (handle bottom-right -> bowl top-left) -->
+              <line x1="700" y1="205" x2="500" y2="95" stroke="#B86A2E" stroke-width="16"/>
+              <line x1="700" y1="205" x2="500" y2="95" stroke="#ECDFC6" stroke-width="2" fill="none"/>
+              <ellipse cx="478" cy="82" rx="34" ry="22" transform="rotate(-30 478 82)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3"/>
+              <!-- front spoon -->
+              <line x1="500" y1="205" x2="700" y2="95" stroke="#B86A2E" stroke-width="16"/>
+              <line x1="500" y1="205" x2="700" y2="95" stroke="#ECDFC6" stroke-width="2" fill="none"/>
+              <ellipse cx="722" cy="82" rx="34" ry="22" transform="rotate(30 722 82)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3"/>
+            </g>
+            <!-- center bowl with rim -->
+            <g stroke="#ECDFC6" stroke-width="5" stroke-linecap="round" fill="none">
+              <line x1="525" y1="202" x2="675" y2="202"/>
+              <path d="M 540 202 Q 600 240 660 202"/>
+              <!-- steam from bowl -->
+              <path d="M 580 195 Q 575 185 580 175" stroke-width="3"/>
+              <path d="M 600 192 Q 595 180 600 168" stroke-width="3"/>
+              <path d="M 620 195 Q 625 185 620 175" stroke-width="3"/>
+            </g>
+            <!-- side leaves (bay laurel) -->
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M 220 215 Q 270 195 320 205"/>
+              <path d="M 232 208 Q 240 198 252 200"/>
+              <path d="M 258 204 Q 266 194 278 196"/>
+              <path d="M 284 200 Q 292 190 304 192"/>
+              <path d="M 880 205 Q 930 195 980 215"/>
+              <path d="M 896 196 Q 908 190 920 200"/>
+              <path d="M 922 192 Q 934 186 946 196"/>
+              <path d="M 948 188 Q 960 182 972 192"/>
+            </g>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">pediment · bowl + spoons</span>
+          <span class="prim-vb">1200 × 240</span>
+        </div>
+      </div>
+
+      <!-- Frieze: herbs -->
+      <div class="prim">
+        <div class="prim-stage wide">
+          <svg viewBox="0 0 1200 80">
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="10" x2="1200" y2="10"/>
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <!-- herb sprig pattern: rosemary, thyme-dot, sage repeats every 240 -->
+            <g stroke="#ECDFC6" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <g><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+              <g transform="translate(40 0)"><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+              <g transform="translate(80 0)"><line x1="20" y1="68" x2="20" y2="30"/><circle cx="14" cy="58" r="3" fill="#ECDFC6"/><circle cx="26" cy="50" r="3" fill="#ECDFC6"/><circle cx="14" cy="42" r="3" fill="#ECDFC6"/><circle cx="26" cy="34" r="3" fill="#ECDFC6"/><circle cx="20" cy="25" r="3" fill="#ECDFC6"/></g>
+              <g transform="translate(120 0)"><line x1="20" y1="68" x2="20" y2="30"/><path d="M 20 55 Q 8 50 10 38"/><path d="M 20 45 Q 32 40 30 28"/><path d="M 20 35 Q 8 30 10 18"/></g>
+              <g transform="translate(160 0)"><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+              <g transform="translate(200 0)"><line x1="20" y1="68" x2="20" y2="30"/><circle cx="14" cy="58" r="3" fill="#ECDFC6"/><circle cx="26" cy="50" r="3" fill="#ECDFC6"/><circle cx="14" cy="42" r="3" fill="#ECDFC6"/><circle cx="26" cy="34" r="3" fill="#ECDFC6"/><circle cx="20" cy="25" r="3" fill="#ECDFC6"/></g>
+            </g>
+            <g transform="translate(240 0)">
+              <use href="#tc-herb-set"/>
+            </g>
+            <g transform="translate(480 0)"><use href="#tc-herb-set"/></g>
+            <g transform="translate(720 0)"><use href="#tc-herb-set"/></g>
+            <g transform="translate(960 0)"><use href="#tc-herb-set"/></g>
+            <defs>
+              <g id="tc-herb-set" stroke="#ECDFC6" stroke-width="2.5" fill="none" stroke-linecap="round">
+                <g><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+                <g transform="translate(40 0)"><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+                <g transform="translate(80 0)"><line x1="20" y1="68" x2="20" y2="30"/><circle cx="14" cy="58" r="3" fill="#ECDFC6"/><circle cx="26" cy="50" r="3" fill="#ECDFC6"/><circle cx="14" cy="42" r="3" fill="#ECDFC6"/><circle cx="26" cy="34" r="3" fill="#ECDFC6"/><circle cx="20" cy="25" r="3" fill="#ECDFC6"/></g>
+                <g transform="translate(120 0)"><line x1="20" y1="68" x2="20" y2="30"/><path d="M 20 55 Q 8 50 10 38"/><path d="M 20 45 Q 32 40 30 28"/><path d="M 20 35 Q 8 30 10 18"/></g>
+                <g transform="translate(160 0)"><line x1="20" y1="68" x2="20" y2="20"/><line x1="20" y1="55" x2="10" y2="48"/><line x1="20" y1="50" x2="30" y2="43"/><line x1="20" y1="42" x2="10" y2="36"/><line x1="20" y1="36" x2="30" y2="30"/><line x1="20" y1="28" x2="10" y2="22"/></g>
+                <g transform="translate(200 0)"><line x1="20" y1="68" x2="20" y2="30"/><circle cx="14" cy="58" r="3" fill="#ECDFC6"/><circle cx="26" cy="50" r="3" fill="#ECDFC6"/><circle cx="14" cy="42" r="3" fill="#ECDFC6"/><circle cx="26" cy="34" r="3" fill="#ECDFC6"/><circle cx="20" cy="25" r="3" fill="#ECDFC6"/></g>
+              </g>
+            </defs>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">frieze · herbs</span>
+          <span class="prim-vb">1200 × 80</span>
+        </div>
+      </div>
+
+      <!-- Ornament: knife -->
+      <div class="prim">
+        <div class="prim-stage">
+          <svg viewBox="0 0 80 80">
+            <!-- blade -->
+            <path d="M 14 24 L 56 18 L 60 32 L 14 30 Z" fill="#B86A2E" stroke="#ECDFC6" stroke-width="2" stroke-linejoin="round"/>
+            <!-- bolster -->
+            <rect x="58" y="20" width="6" height="14" fill="#ECDFC6"/>
+            <!-- handle -->
+            <rect x="64" y="22" width="14" height="10" fill="#ECDFC6"/>
+            <!-- accents -->
+            <circle cx="68" cy="27" r="1.5" fill="#1B2418"/>
+            <circle cx="74" cy="27" r="1.5" fill="#1B2418"/>
+            <!-- cutting board line -->
+            <line x1="6" y1="54" x2="74" y2="54" stroke="#ECDFC6" stroke-width="2" stroke-linecap="round"/>
+            <line x1="6" y1="62" x2="74" y2="62" stroke="#ECDFC6" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">ornament · knife</span>
+          <span class="prim-vb">80 × 80</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facade hero -->
+    <div class="facade-hero">
+      <div class="facade-stage">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+          <!-- pediment -->
+          <g transform="translate(0 40)">
+            <g stroke="#ECDFC6" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <!-- crossed spoons -->
+            <g stroke-linecap="round" stroke-linejoin="round">
+              <line x1="700" y1="205" x2="500" y2="95" stroke="#B86A2E" stroke-width="16"/>
+              <line x1="700" y1="205" x2="500" y2="95" stroke="#ECDFC6" stroke-width="2" fill="none"/>
+              <ellipse cx="478" cy="82" rx="34" ry="22" transform="rotate(-30 478 82)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3"/>
+              <line x1="500" y1="205" x2="700" y2="95" stroke="#B86A2E" stroke-width="16"/>
+              <line x1="500" y1="205" x2="700" y2="95" stroke="#ECDFC6" stroke-width="2" fill="none"/>
+              <ellipse cx="722" cy="82" rx="34" ry="22" transform="rotate(30 722 82)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3"/>
+            </g>
+            <!-- center bowl + steam -->
+            <g stroke="#ECDFC6" stroke-width="5" stroke-linecap="round" fill="none">
+              <line x1="525" y1="202" x2="675" y2="202"/>
+              <path d="M 540 202 Q 600 240 660 202"/>
+              <path d="M 580 195 Q 575 185 580 175" stroke-width="3"/>
+              <path d="M 600 192 Q 595 180 600 168" stroke-width="3"/>
+              <path d="M 620 195 Q 625 185 620 175" stroke-width="3"/>
+            </g>
+            <!-- bay laurel side leaves -->
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M 220 215 Q 270 195 320 205"/>
+              <path d="M 232 208 Q 240 198 252 200"/>
+              <path d="M 258 204 Q 266 194 278 196"/>
+              <path d="M 284 200 Q 292 190 304 192"/>
+              <path d="M 880 205 Q 930 195 980 215"/>
+              <path d="M 896 196 Q 908 190 920 200"/>
+              <path d="M 922 192 Q 934 186 946 196"/>
+              <path d="M 948 188 Q 960 182 972 192"/>
+            </g>
+          </g>
+
+          <!-- frieze -->
+          <g transform="translate(0 280)">
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="10" x2="1200" y2="10"/>
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <use href="#tc-herb-set" x="0"/><use href="#tc-herb-set" x="240"/><use href="#tc-herb-set" x="480"/><use href="#tc-herb-set" x="720"/><use href="#tc-herb-set" x="960"/>
+          </g>
+
+          <!-- columns -->
+          <g>
+            <use href="#tc-col" x="120" y="280"/>
+            <use href="#tc-col" x="320" y="280"/>
+            <use href="#tc-col" x="520" y="280"/>
+            <use href="#tc-col" x="720" y="280"/>
+            <use href="#tc-col" x="920" y="280"/>
+          </g>
+
+          <!-- stylobate -->
+          <g stroke="#ECDFC6" stroke-width="5" fill="none">
+            <line x1="0" y1="720" x2="1200" y2="720"/>
+            <line x1="0" y1="740" x2="1200" y2="740"/>
+            <line x1="0" y1="760" x2="1200" y2="760"/>
+          </g>
+
+          <defs>
+            <g id="tc-col">
+              <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                <rect x="20" y="408" width="120" height="28"/>
+                <rect x="32" y="392" width="96" height="16"/>
+                <path d="M 30 392 L 38 360 L 122 360 L 130 392"/>
+                <path d="M 38 360 Q 20 320 38 280 L 122 280 Q 140 320 122 360"/>
+                <rect x="50" y="240" width="60" height="40"/>
+                <path d="M 36 240 L 50 240 L 50 200 L 110 200 L 110 240 L 124 240 Z"/>
+                <rect x="40" y="180" width="80" height="20"/>
+                <path d="M 70 180 Q 80 150 90 180"/>
+                <circle cx="80" cy="140" r="6" fill="#B86A2E" stroke="#ECDFC6" stroke-width="2"/>
+              </g>
+              <g stroke="#B86A2E" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.85">
+                <path d="M 68 130 Q 60 115 68 100 Q 76 88 68 78"/>
+                <path d="M 80 130 Q 88 115 80 100 Q 72 88 80 78"/>
+                <path d="M 92 130 Q 100 115 92 100 Q 84 88 92 78"/>
+              </g>
+            </g>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Sigil -->
+    <div class="sigil-row">
+      <div class="sigil-tile">
+        <svg viewBox="0 0 320 320">
+          <g transform="translate(0 0)">
+            <g stroke="#ECDFC6" stroke-width="5" fill="none" stroke-linejoin="round">
+              <path d="M 30 130 L 160 30 L 290 130"/>
+              <line x1="20" y1="130" x2="300" y2="130"/>
+            </g>
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="110" y1="68" x2="208" y2="120"/>
+              <line x1="210" y1="68" x2="112" y2="120"/>
+              <ellipse cx="104" cy="65" rx="14" ry="10" fill="#B86A2E" stroke="#ECDFC6" stroke-width="2"/>
+              <ellipse cx="216" cy="65" rx="14" ry="10" fill="#B86A2E" stroke="#ECDFC6" stroke-width="2"/>
+              <path d="M 138 118 Q 160 138 182 118"/>
+              <line x1="135" y1="116" x2="185" y2="116"/>
+            </g>
+          </g>
+          <g transform="translate(80 130)">
+            <g stroke="#ECDFC6" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+              <rect x="20" y="140" width="120" height="18"/>
+              <path d="M 30 140 L 38 110 L 122 110 L 130 140"/>
+              <path d="M 38 110 Q 20 80 38 50 L 122 50 Q 140 80 122 110"/>
+              <rect x="50" y="20" width="60" height="30"/>
+              <path d="M 36 20 L 50 20 L 50 4 L 110 4 L 110 20 L 124 20 Z"/>
+            </g>
+            <g stroke="#B86A2E" stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M 70 4 Q 64 -10 70 -22"/>
+              <path d="M 90 4 Q 96 -10 90 -22"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-tile small">
+        <svg viewBox="0 0 80 80">
+          <g stroke="#ECDFC6" stroke-width="1.5" fill="none" stroke-linejoin="round">
+            <path d="M 8 32 L 40 8 L 72 32"/>
+          </g>
+          <g stroke="#ECDFC6" stroke-width="1" fill="none">
+            <line x1="28" y1="18" x2="52" y2="32"/>
+            <line x1="52" y1="18" x2="28" y2="32"/>
+            <circle cx="27" cy="17" r="3" fill="#B86A2E"/>
+            <circle cx="53" cy="17" r="3" fill="#B86A2E"/>
+          </g>
+          <g stroke="#ECDFC6" stroke-width="1" fill="none">
+            <ellipse cx="40" cy="56" rx="12" ry="14"/>
+            <line x1="36" y1="42" x2="44" y2="42"/>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-note">
+        <b>topchef.sigil.svg</b> — bowl-and-spoons crown over a single salt cellar. The whole show in a square. Used on season cards and as the share-image base.
+        <small>at 80×80 · 320×320 — same file</small>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <div class="rationale-label">Color rationale</div>
+      <div>
+        <p><b>Paper · #1B2418</b> is the color of a walk-in pantry at 11pm: deep olive, lit by overhead halogens. It is the calm before service.</p>
+        <p><b>Ink · #ECDFC6</b> is the cream of unbleached linen — the apron, the dish-towel, the napkin. It is what catches the spill.</p>
+        <p><b>Primary · #B86A2E</b> is the copper of a freshly seared crust — the only saturated color in a well-run kitchen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================== DRAG RACE -->
+<section class="show dragrace">
+  <div class="wrap show-inner">
+    <div class="show-head">
+      <div>
+        <div class="show-meta">Benchmark · 03 / 03</div>
+        <h2 class="show-title">Drag Race</h2>
+        <p class="show-blurb">A scallop-pink temple. Sequins from floor to apex. Quiet luxury, loud in the only color it permits itself.</p>
+      </div>
+      <div class="show-pal">
+        <div>
+          <div class="sw" style="background:#2D0B2A"></div>
+          <div class="sw-tag">paper</div>
+          <div class="sw-hex">#2D0B2A</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#F2E1D2"></div>
+          <div class="sw-tag">ink</div>
+          <div class="sw-hex">#F2E1D2</div>
+        </div>
+        <div>
+          <div class="sw" style="background:#E64B86"></div>
+          <div class="sw-tag">primary</div>
+          <div class="sw-hex">#E64B86</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primitives -->
+    <div class="prim-row">
+      <!-- Column: sequin column -->
+      <div class="prim">
+        <div class="prim-stage tall">
+          <svg viewBox="0 0 160 440">
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+              <!-- plinth -->
+              <rect x="20" y="408" width="120" height="28"/>
+              <rect x="32" y="392" width="96" height="16"/>
+              <!-- column body outline -->
+              <path d="M 40 392 L 40 60 Q 40 30 80 30 Q 120 30 120 60 L 120 392 Z"/>
+            </g>
+            <!-- sequin scales: rows of half-circles -->
+            <g stroke="#F2E1D2" stroke-width="2" fill="none">
+              <!-- 14 rows from y=380 up to y=60 -->
+              <g><circle cx="55" cy="380" r="9"/><circle cx="80" cy="380" r="9" fill="#E64B86"/><circle cx="105" cy="380" r="9"/></g>
+              <g><circle cx="55" cy="356" r="9" fill="#E64B86"/><circle cx="80" cy="356" r="9"/><circle cx="105" cy="356" r="9"/></g>
+              <g><circle cx="55" cy="332" r="9"/><circle cx="80" cy="332" r="9"/><circle cx="105" cy="332" r="9" fill="#E64B86"/></g>
+              <g><circle cx="55" cy="308" r="9"/><circle cx="80" cy="308" r="9" fill="#E64B86"/><circle cx="105" cy="308" r="9"/></g>
+              <g><circle cx="55" cy="284" r="9" fill="#E64B86"/><circle cx="80" cy="284" r="9"/><circle cx="105" cy="284" r="9"/></g>
+              <g><circle cx="55" cy="260" r="9"/><circle cx="80" cy="260" r="9"/><circle cx="105" cy="260" r="9" fill="#E64B86"/></g>
+              <g><circle cx="55" cy="236" r="9"/><circle cx="80" cy="236" r="9" fill="#E64B86"/><circle cx="105" cy="236" r="9"/></g>
+              <g><circle cx="55" cy="212" r="9" fill="#E64B86"/><circle cx="80" cy="212" r="9"/><circle cx="105" cy="212" r="9"/></g>
+              <g><circle cx="55" cy="188" r="9"/><circle cx="80" cy="188" r="9"/><circle cx="105" cy="188" r="9" fill="#E64B86"/></g>
+              <g><circle cx="55" cy="164" r="9"/><circle cx="80" cy="164" r="9" fill="#E64B86"/><circle cx="105" cy="164" r="9"/></g>
+              <g><circle cx="55" cy="140" r="9" fill="#E64B86"/><circle cx="80" cy="140" r="9"/><circle cx="105" cy="140" r="9"/></g>
+              <g><circle cx="55" cy="116" r="9"/><circle cx="80" cy="116" r="9"/><circle cx="105" cy="116" r="9" fill="#E64B86"/></g>
+              <g><circle cx="55" cy="92" r="9"/><circle cx="80" cy="92" r="9" fill="#E64B86"/><circle cx="105" cy="92" r="9"/></g>
+              <g><circle cx="68" cy="68" r="9" fill="#E64B86"/><circle cx="92" cy="68" r="9"/></g>
+            </g>
+            <!-- crown disc -->
+            <circle cx="80" cy="30" r="14" fill="#E64B86" stroke="#F2E1D2" stroke-width="3"/>
+            <path d="M 80 14 L 84 26 L 96 27 L 86 35 L 89 47 L 80 40 L 71 47 L 74 35 L 64 27 L 76 26 Z" fill="#F2E1D2"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">column · sequin tower</span>
+          <span class="prim-vb">160 × 440</span>
+        </div>
+      </div>
+
+      <!-- Pediment: pink scallop -->
+      <div class="prim">
+        <div class="prim-stage pediment">
+          <svg viewBox="0 0 1200 240">
+            <!-- triangle base -->
+            <g stroke="#F2E1D2" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <!-- pink scallop -->
+            <path d="M 280 220 Q 600 -40 920 220 Z" fill="#E64B86" stroke="#F2E1D2" stroke-width="5" stroke-linejoin="round"/>
+            <!-- scallop ribs -->
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.95">
+              <path d="M 600 220 L 600 -10"/>
+              <path d="M 600 220 Q 560 130 510 35"/>
+              <path d="M 600 220 Q 640 130 690 35"/>
+              <path d="M 600 220 Q 520 145 420 75"/>
+              <path d="M 600 220 Q 680 145 780 75"/>
+              <path d="M 600 220 Q 480 175 340 155"/>
+              <path d="M 600 220 Q 720 175 860 155"/>
+            </g>
+            <!-- scallop edge frill -->
+            <g fill="none" stroke="#F2E1D2" stroke-width="3" stroke-linejoin="round">
+              <path d="M 280 220 Q 295 200 310 220 Q 325 200 340 220 Q 355 200 370 220 Q 385 200 400 220"/>
+              <path d="M 800 220 Q 815 200 830 220 Q 845 200 860 220 Q 875 200 890 220 Q 905 200 920 220"/>
+            </g>
+            <!-- center jewel -->
+            <circle cx="600" cy="180" r="14" fill="#F2E1D2" stroke="#E64B86" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">pediment · scallop</span>
+          <span class="prim-vb">1200 × 240</span>
+        </div>
+      </div>
+
+      <!-- Frieze: scalloped bunting -->
+      <div class="prim">
+        <div class="prim-stage wide">
+          <svg viewBox="0 0 1200 80">
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <!-- scalloped top edge -->
+            <g fill="none" stroke="#F2E1D2" stroke-width="3" stroke-linejoin="round">
+              <path d="M 0 30 Q 30 70 60 30 Q 90 70 120 30 Q 150 70 180 30 Q 210 70 240 30 Q 270 70 300 30 Q 330 70 360 30 Q 390 70 420 30 Q 450 70 480 30 Q 510 70 540 30 Q 570 70 600 30 Q 630 70 660 30 Q 690 70 720 30 Q 750 70 780 30 Q 810 70 840 30 Q 870 70 900 30 Q 930 70 960 30 Q 990 70 1020 30 Q 1050 70 1080 30 Q 1110 70 1140 30 Q 1170 70 1200 30"/>
+            </g>
+            <!-- pink dots between scallops -->
+            <g fill="#E64B86">
+              <circle cx="30" cy="48" r="4"/><circle cx="90" cy="48" r="4"/><circle cx="150" cy="48" r="4"/>
+              <circle cx="210" cy="48" r="4"/><circle cx="270" cy="48" r="4"/><circle cx="330" cy="48" r="4"/>
+              <circle cx="390" cy="48" r="4"/><circle cx="450" cy="48" r="4"/><circle cx="510" cy="48" r="4"/>
+              <circle cx="570" cy="48" r="4"/><circle cx="630" cy="48" r="4"/><circle cx="690" cy="48" r="4"/>
+              <circle cx="750" cy="48" r="4"/><circle cx="810" cy="48" r="4"/><circle cx="870" cy="48" r="4"/>
+              <circle cx="930" cy="48" r="4"/><circle cx="990" cy="48" r="4"/><circle cx="1050" cy="48" r="4"/>
+              <circle cx="1110" cy="48" r="4"/><circle cx="1170" cy="48" r="4"/>
+            </g>
+            <!-- top tick line -->
+            <line x1="0" y1="6" x2="1200" y2="6" stroke="#F2E1D2" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">frieze · scalloped bunting</span>
+          <span class="prim-vb">1200 × 80</span>
+        </div>
+      </div>
+
+      <!-- Ornament: star sequin -->
+      <div class="prim">
+        <div class="prim-stage">
+          <svg viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="28" fill="#E64B86" stroke="#F2E1D2" stroke-width="2"/>
+            <path d="M 40 14 L 46 32 L 66 32 L 50 44 L 56 64 L 40 52 L 24 64 L 30 44 L 14 32 L 34 32 Z" fill="#F2E1D2"/>
+          </svg>
+        </div>
+        <div class="prim-meta">
+          <span class="prim-name">ornament · star sequin</span>
+          <span class="prim-vb">80 × 80</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facade hero -->
+    <div class="facade-hero">
+      <div class="facade-stage">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+          <!-- pediment -->
+          <g transform="translate(0 40)">
+            <g stroke="#F2E1D2" stroke-width="6" fill="none" stroke-linejoin="round">
+              <path d="M 30 230 L 600 18 L 1170 230 Z"/>
+              <line x1="20" y1="230" x2="1180" y2="230"/>
+              <line x1="14" y1="218" x2="1186" y2="218"/>
+            </g>
+            <path d="M 280 220 Q 600 -40 920 220 Z" fill="#E64B86" stroke="#F2E1D2" stroke-width="5" stroke-linejoin="round"/>
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.95">
+              <path d="M 600 220 L 600 -10"/>
+              <path d="M 600 220 Q 560 130 510 35"/>
+              <path d="M 600 220 Q 640 130 690 35"/>
+              <path d="M 600 220 Q 520 145 420 75"/>
+              <path d="M 600 220 Q 680 145 780 75"/>
+              <path d="M 600 220 Q 480 175 340 155"/>
+              <path d="M 600 220 Q 720 175 860 155"/>
+            </g>
+            <g fill="none" stroke="#F2E1D2" stroke-width="3" stroke-linejoin="round">
+              <path d="M 280 220 Q 295 200 310 220 Q 325 200 340 220 Q 355 200 370 220 Q 385 200 400 220"/>
+              <path d="M 800 220 Q 815 200 830 220 Q 845 200 860 220 Q 875 200 890 220 Q 905 200 920 220"/>
+            </g>
+            <circle cx="600" cy="180" r="14" fill="#F2E1D2" stroke="#E64B86" stroke-width="3"/>
+          </g>
+
+          <!-- frieze -->
+          <g transform="translate(0 280)">
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linecap="round">
+              <line x1="0" y1="70" x2="1200" y2="70"/>
+            </g>
+            <g fill="none" stroke="#F2E1D2" stroke-width="3" stroke-linejoin="round">
+              <path d="M 0 30 Q 30 70 60 30 Q 90 70 120 30 Q 150 70 180 30 Q 210 70 240 30 Q 270 70 300 30 Q 330 70 360 30 Q 390 70 420 30 Q 450 70 480 30 Q 510 70 540 30 Q 570 70 600 30 Q 630 70 660 30 Q 690 70 720 30 Q 750 70 780 30 Q 810 70 840 30 Q 870 70 900 30 Q 930 70 960 30 Q 990 70 1020 30 Q 1050 70 1080 30 Q 1110 70 1140 30 Q 1170 70 1200 30"/>
+            </g>
+            <g fill="#E64B86">
+              <circle cx="30" cy="48" r="4"/><circle cx="90" cy="48" r="4"/><circle cx="150" cy="48" r="4"/>
+              <circle cx="210" cy="48" r="4"/><circle cx="270" cy="48" r="4"/><circle cx="330" cy="48" r="4"/>
+              <circle cx="390" cy="48" r="4"/><circle cx="450" cy="48" r="4"/><circle cx="510" cy="48" r="4"/>
+              <circle cx="570" cy="48" r="4"/><circle cx="630" cy="48" r="4"/><circle cx="690" cy="48" r="4"/>
+              <circle cx="750" cy="48" r="4"/><circle cx="810" cy="48" r="4"/><circle cx="870" cy="48" r="4"/>
+              <circle cx="930" cy="48" r="4"/><circle cx="990" cy="48" r="4"/><circle cx="1050" cy="48" r="4"/>
+              <circle cx="1110" cy="48" r="4"/><circle cx="1170" cy="48" r="4"/>
+            </g>
+          </g>
+
+          <!-- columns -->
+          <g>
+            <use href="#dr-col" x="120" y="280"/>
+            <use href="#dr-col" x="320" y="280"/>
+            <use href="#dr-col" x="520" y="280"/>
+            <use href="#dr-col" x="720" y="280"/>
+            <use href="#dr-col" x="920" y="280"/>
+          </g>
+
+          <!-- stylobate -->
+          <g stroke="#F2E1D2" stroke-width="5" fill="none">
+            <line x1="0" y1="720" x2="1200" y2="720"/>
+            <line x1="0" y1="740" x2="1200" y2="740"/>
+            <line x1="0" y1="760" x2="1200" y2="760"/>
+          </g>
+
+          <defs>
+            <g id="dr-col">
+              <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                <rect x="20" y="408" width="120" height="28"/>
+                <rect x="32" y="392" width="96" height="16"/>
+                <path d="M 40 392 L 40 60 Q 40 30 80 30 Q 120 30 120 60 L 120 392 Z"/>
+              </g>
+              <g stroke="#F2E1D2" stroke-width="2" fill="none">
+                <g><circle cx="55" cy="380" r="9"/><circle cx="80" cy="380" r="9" fill="#E64B86"/><circle cx="105" cy="380" r="9"/></g>
+                <g><circle cx="55" cy="356" r="9" fill="#E64B86"/><circle cx="80" cy="356" r="9"/><circle cx="105" cy="356" r="9"/></g>
+                <g><circle cx="55" cy="332" r="9"/><circle cx="80" cy="332" r="9"/><circle cx="105" cy="332" r="9" fill="#E64B86"/></g>
+                <g><circle cx="55" cy="308" r="9"/><circle cx="80" cy="308" r="9" fill="#E64B86"/><circle cx="105" cy="308" r="9"/></g>
+                <g><circle cx="55" cy="284" r="9" fill="#E64B86"/><circle cx="80" cy="284" r="9"/><circle cx="105" cy="284" r="9"/></g>
+                <g><circle cx="55" cy="260" r="9"/><circle cx="80" cy="260" r="9"/><circle cx="105" cy="260" r="9" fill="#E64B86"/></g>
+                <g><circle cx="55" cy="236" r="9"/><circle cx="80" cy="236" r="9" fill="#E64B86"/><circle cx="105" cy="236" r="9"/></g>
+                <g><circle cx="55" cy="212" r="9" fill="#E64B86"/><circle cx="80" cy="212" r="9"/><circle cx="105" cy="212" r="9"/></g>
+                <g><circle cx="55" cy="188" r="9"/><circle cx="80" cy="188" r="9"/><circle cx="105" cy="188" r="9" fill="#E64B86"/></g>
+                <g><circle cx="55" cy="164" r="9"/><circle cx="80" cy="164" r="9" fill="#E64B86"/><circle cx="105" cy="164" r="9"/></g>
+                <g><circle cx="55" cy="140" r="9" fill="#E64B86"/><circle cx="80" cy="140" r="9"/><circle cx="105" cy="140" r="9"/></g>
+                <g><circle cx="55" cy="116" r="9"/><circle cx="80" cy="116" r="9"/><circle cx="105" cy="116" r="9" fill="#E64B86"/></g>
+                <g><circle cx="55" cy="92" r="9"/><circle cx="80" cy="92" r="9" fill="#E64B86"/><circle cx="105" cy="92" r="9"/></g>
+                <g><circle cx="68" cy="68" r="9" fill="#E64B86"/><circle cx="92" cy="68" r="9"/></g>
+              </g>
+              <circle cx="80" cy="30" r="14" fill="#E64B86" stroke="#F2E1D2" stroke-width="3"/>
+              <path d="M 80 14 L 84 26 L 96 27 L 86 35 L 89 47 L 80 40 L 71 47 L 74 35 L 64 27 L 76 26 Z" fill="#F2E1D2"/>
+            </g>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Sigil -->
+    <div class="sigil-row">
+      <div class="sigil-tile">
+        <svg viewBox="0 0 320 320">
+          <g transform="translate(0 0)">
+            <g stroke="#F2E1D2" stroke-width="5" fill="none" stroke-linejoin="round">
+              <path d="M 30 130 L 160 30 L 290 130"/>
+              <line x1="20" y1="130" x2="300" y2="130"/>
+            </g>
+            <path d="M 80 125 Q 160 -20 240 125 Z" fill="#E64B86" stroke="#F2E1D2" stroke-width="3" stroke-linejoin="round"/>
+            <g stroke="#F2E1D2" stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M 160 125 L 160 -5"/>
+              <path d="M 160 125 Q 140 70 122 20"/>
+              <path d="M 160 125 Q 180 70 198 20"/>
+              <path d="M 160 125 Q 120 90 90 60"/>
+              <path d="M 160 125 Q 200 90 230 60"/>
+            </g>
+            <circle cx="160" cy="100" r="8" fill="#F2E1D2"/>
+          </g>
+          <g transform="translate(80 140)">
+            <g stroke="#F2E1D2" stroke-width="3" fill="none" stroke-linejoin="round">
+              <rect x="20" y="140" width="120" height="18"/>
+              <path d="M 40 140 L 40 28 Q 40 10 80 10 Q 120 10 120 28 L 120 140 Z"/>
+            </g>
+            <g stroke="#F2E1D2" stroke-width="1.5" fill="none">
+              <circle cx="60" cy="120" r="8"/><circle cx="80" cy="120" r="8" fill="#E64B86"/><circle cx="100" cy="120" r="8"/>
+              <circle cx="60" cy="100" r="8" fill="#E64B86"/><circle cx="80" cy="100" r="8"/><circle cx="100" cy="100" r="8"/>
+              <circle cx="60" cy="80" r="8"/><circle cx="80" cy="80" r="8"/><circle cx="100" cy="80" r="8" fill="#E64B86"/>
+              <circle cx="60" cy="60" r="8"/><circle cx="80" cy="60" r="8" fill="#E64B86"/><circle cx="100" cy="60" r="8"/>
+              <circle cx="60" cy="40" r="8" fill="#E64B86"/><circle cx="80" cy="40" r="8"/><circle cx="100" cy="40" r="8"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-tile small">
+        <svg viewBox="0 0 80 80">
+          <g stroke="#F2E1D2" stroke-width="1.5" fill="none" stroke-linejoin="round">
+            <path d="M 8 32 L 40 8 L 72 32"/>
+          </g>
+          <path d="M 22 31 Q 40 -2 58 31 Z" fill="#E64B86"/>
+          <g fill="#F2E1D2"><circle cx="40" cy="48" r="4"/><circle cx="34" cy="62" r="4" stroke="#F2E1D2" stroke-width="0.5"/><circle cx="46" cy="62" r="4" stroke="#F2E1D2" stroke-width="0.5"/></g>
+          <g stroke="#F2E1D2" stroke-width="0.5" fill="none">
+            <circle cx="34" cy="62" r="4"/><circle cx="46" cy="62" r="4"/>
+          </g>
+        </svg>
+      </div>
+      <div class="sigil-note">
+        <b>dragrace.sigil.svg</b> — scallop pediment over a single sequin column. The pink does all the work; the linework keeps it from feeling like a logo.
+        <small>at 80×80 · 320×320 — same file</small>
+      </div>
+    </div>
+
+    <div class="rationale">
+      <div class="rationale-label">Color rationale</div>
+      <div>
+        <p><b>Paper · #2D0B2A</b> is the velvet of an empty workroom: deep aubergine, almost black, the color of the moment before the lights come up.</p>
+        <p><b>Ink · #F2E1D2</b> is the ivory of a freshly powdered face — a touch warmer than the Pantheon default to read on plum.</p>
+        <p><b>Primary · #E64B86</b> is the hot pink of one specific scallop: not bubblegum, not magenta, the exact temperature of a stage-light gel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====================================================== next -->
+<section id="next" style="border-bottom:0">
+  <div class="wrap">
+    <div class="next">
+      <div>
+        <h3>Next, with your approval: the compositions.</h3>
+        <p>Phase 03 places these facades into the three real screens — Home, Show home, and Season page — with vote pairs, comment threads, sentiment shifts, and the full micro-copy set.</p>
+      </div>
+      <div class="stamp">awaiting sign-off</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Pantheon · visual system · v0.1 · 2026</span>
+    <span>the seasons, ranked. no spoilers.</span>
+  </div>
+</footer>
+
+<script>
+  const root = document.documentElement;
+  document.querySelectorAll(".mode-toggle button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.set;
+      root.setAttribute("data-mode", mode);
+      document.querySelectorAll(".mode-toggle button").forEach(b => {
+        b.setAttribute("aria-pressed", b.dataset.set === mode ? "true" : "false");
+      });
+    });
+  });
+</script>
+</body>
+</html>
