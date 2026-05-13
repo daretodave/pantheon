@@ -38,12 +38,16 @@ function loadManifest() {
 const { name: manifestName, data: manifest } = loadManifest()
 
 // Find chunks for the `/` route. The App Router manifest keys pages by
-// app path (`/page` for `/`). Older Pages-router uses `/`.
+// app path (`/page` for `/`). With route groups (e.g. the (default)
+// group introduced in phase 19b), the manifest key includes the group:
+// `/(default)/page`. Match both. Older Pages-router uses `/`.
 function chunksForHome(m) {
   const set = new Set()
-  const pageKey = '/page'
-  if (m.pages && Array.isArray(m.pages[pageKey])) {
-    for (const c of m.pages[pageKey]) set.add(c)
+  const pageKeys = ['/page', '/(default)/page']
+  for (const pageKey of pageKeys) {
+    if (m.pages && Array.isArray(m.pages[pageKey])) {
+      for (const c of m.pages[pageKey]) set.add(c)
+    }
   }
   if (m['/'] && Array.isArray(m['/'])) {
     for (const c of m['/']) set.add(c)

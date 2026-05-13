@@ -1,21 +1,51 @@
 import Link from 'next/link'
-import { Wordmark } from './Wordmark'
+import { BrandMark } from './BrandMark'
 
-export function Header() {
+type HeaderProps = {
+  tinted?: boolean
+}
+
+export function Header({ tinted = false }: HeaderProps) {
+  const rootClass = tinted ? 'site-header tinted' : 'site-header'
   return (
-    <header className="border-b border-line-soft bg-paper-1">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Wordmark />
-        <nav aria-label="Primary" className="flex items-center gap-4 text-sm text-ink-2">
-          <Link
-            href="/search"
-            prefetch={false}
-            className="text-ink-1 hover:text-ink-0"
-            data-testid="header-search-link"
-          >
-            Search
-          </Link>
-        </nav>
+    <header data-testid="site-header" data-tinted={tinted ? 'true' : undefined} className={rootClass}>
+      <Link
+        href="/"
+        className="site-header-brand"
+        aria-label="Pantheon home"
+        data-testid="site-header-brand"
+      >
+        <BrandMark size={22} />
+        <span>Pantheon</span>
+      </Link>
+      <nav aria-label="Primary" className="site-header-links">
+        <Link href="/shows" prefetch={false}>
+          Shows
+        </Link>
+        <Link href="/themes" prefetch={false}>
+          Lists
+        </Link>
+        <Link href="/about" prefetch={false}>
+          About
+        </Link>
+      </nav>
+      <div className="site-header-right">
+        <Link
+          className="site-header-search"
+          href="/search"
+          prefetch={false}
+          data-testid="site-header-search-link"
+        >
+          <span aria-hidden="true">⌕</span> Search
+        </Link>
+        <Link
+          className="site-header-signin"
+          href="/sign-in"
+          prefetch={false}
+          data-testid="site-header-signin-link"
+        >
+          Sign in
+        </Link>
       </div>
     </header>
   )

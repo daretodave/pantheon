@@ -9,6 +9,15 @@ export type PageReadAssertion = {
   expectJsonLdType?: string
 }
 
+// Chrome assertions that hold for every URL — phase 19b contract.
+// One <header> + one <footer> + brand mark + "Pantheon" wordmark in
+// both + theme toggle in footer + the "an experiment" line is gone.
+const chromeVisible = [
+  '[data-testid=site-header]',
+  '[data-testid=site-footer]',
+  '[data-testid=site-footer-promise]',
+]
+
 export const pageReads: Record<string, PageReadAssertion> = {
   '/': {
     expectH1Pattern: /The seasons.*ranked.*No spoilers/i,
@@ -17,6 +26,7 @@ export const pageReads: Record<string, PageReadAssertion> = {
       '[data-testid=home-hero]',
       '[data-testid=home-show-grid]',
       '[data-testid=home-list-grid]',
+      ...chromeVisible,
     ],
   },
   '/shows': {

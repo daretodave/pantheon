@@ -60,7 +60,7 @@ test.describe('/search', () => {
 test.describe('header search affordance', () => {
   test('the Search link in the header navigates to /search', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    const headerLink = page.getByTestId('header-search-link')
+    const headerLink = page.getByTestId('site-header-search-link')
     await expect(headerLink).toBeVisible()
     await headerLink.click()
     await page.waitForURL(/\/search$/)

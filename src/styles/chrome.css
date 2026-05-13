@@ -1,0 +1,247 @@
+/* ========================================================================
+   CHROME — Header + Footer + page-width Wrap.
+
+   Spec: design/Pantheon · Brand.html §04 (header) + §05 (footer).
+   Phase 19b ports the design's header / footer lockup into the
+   production chrome. Per-show palette flows in through CSS vars
+   (--show-paper / --show-ink / --show-primary) set by a wrapping
+   [data-show=<slug>] ancestor on tinted pages.
+   ======================================================================== */
+
+/* ---- WRAP: page-width container for bounded routes ------------------- */
+/* `width: 100%` is non-redundant when .wrap sits inside a flex column
+   container (the root <body>): without it the flex-item default of
+   `min-width: auto` lets descendant min-content widen the wrap past
+   the viewport. */
+.wrap {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .wrap { padding: 0 20px; }
+}
+
+/* ---- HEADER ---------------------------------------------------------- */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in oklab, var(--color-paper-0) 92%, transparent);
+  border-bottom: 1px solid var(--color-line-soft);
+  color: var(--color-ink-0);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.site-header.tinted {
+  background: color-mix(in oklab, var(--show-paper) 90%, var(--color-paper-0));
+  border-bottom-color: color-mix(in oklab, var(--show-ink) 14%, transparent);
+  color: var(--show-ink);
+}
+
+.site-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-family-serif);
+  font-weight: 600;
+  font-size: 18px;
+  color: inherit;
+}
+.site-header-brand:hover { color: inherit; }
+
+.site-header-links {
+  display: flex;
+  gap: 28px;
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  color: inherit;
+  opacity: 0.78;
+}
+.site-header-links a { color: inherit; }
+.site-header-links a:hover { opacity: 1; color: inherit; }
+
+.site-header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.site-header-search {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  color: inherit;
+}
+.site-header-search:hover { opacity: 1; color: inherit; }
+
+.site-header-signin {
+  font-family: var(--font-family-sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--color-ink-0);
+  color: var(--color-paper-0);
+}
+.site-header-signin:hover { color: var(--color-paper-0); }
+.site-header.tinted .site-header-signin {
+  background: var(--show-ink);
+  color: var(--show-paper);
+}
+.site-header.tinted .site-header-signin:hover { color: var(--show-paper); }
+
+@media (max-width: 720px) {
+  .site-header { padding: 14px 16px; }
+  .site-header-links,
+  .site-header-search { display: none; }
+}
+
+/* ---- FOOTER ---------------------------------------------------------- */
+.site-footer {
+  margin-top: 64px;
+  background: var(--color-paper-0);
+  border-top: 1px solid var(--color-line-soft);
+  color: var(--color-ink-1);
+}
+.site-footer.tinted {
+  background: color-mix(in oklab, var(--show-paper) 90%, var(--color-paper-0));
+  border-top-color: color-mix(in oklab, var(--show-ink) 14%, transparent);
+  color: var(--show-ink);
+}
+
+.site-footer-cols {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 32px;
+  padding: 36px 32px 32px;
+}
+
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.site-footer-brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-family-serif);
+  font-weight: 600;
+  font-size: 18px;
+  color: inherit;
+  letter-spacing: -0.01em;
+}
+.site-footer-promise {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--color-ink-2);
+  margin: 0;
+}
+.site-footer-promise em {
+  color: var(--color-primary-base);
+  font-style: italic;
+}
+.site-footer.tinted .site-footer-promise {
+  color: color-mix(in oklab, var(--show-ink) 75%, transparent);
+}
+.site-footer.tinted .site-footer-promise em {
+  color: var(--show-primary);
+}
+
+.site-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.site-footer-col-head {
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  margin: 0;
+}
+.site-footer.tinted .site-footer-col-head {
+  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
+}
+.site-footer-col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.site-footer-col a {
+  font-family: var(--font-family-sans);
+  font-size: 13px;
+  color: var(--color-ink-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.site-footer-col a:hover { color: var(--color-ink-0); }
+.site-footer.tinted .site-footer-col a { color: var(--show-ink); }
+.site-footer.tinted .site-footer-col a:hover { color: var(--show-ink); }
+
+.site-footer-col-link-meta {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.site-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 32px 24px;
+  border-top: 1px solid var(--color-line-soft);
+  font-family: var(--font-family-mono);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+}
+.site-footer.tinted .site-footer-meta {
+  border-top-color: color-mix(in oklab, var(--show-ink) 14%, transparent);
+  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
+}
+.site-footer-meta-rebellion {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.site-footer-meta-version { opacity: 0.85; flex: 0 0 auto; }
+.site-footer-meta-toggle { display: inline-flex; flex: 0 0 auto; }
+
+@media (max-width: 720px) {
+  .site-footer-cols {
+    grid-template-columns: 1fr;
+    padding: 28px 20px;
+  }
+  .site-footer-meta { padding: 16px 20px 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* keep the blur — design ships single rule disabling only transforms */
+  .site-header { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+}
