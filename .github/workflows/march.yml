@@ -4,21 +4,17 @@ name: march
 # one /march tick. State of truth is the repo on origin/main;
 # every tick reads it fresh, no memory between runs.
 #
-# Schedule is intentionally MANUAL ONLY (workflow_dispatch) until
-# the user vets a few cloud ticks locally first. To enable the
-# cron after vetting, uncomment the `schedule:` block below.
-# Recommended starting cadence per nexus cloud-loop playbook:
-#   - cron: '0 1,3,5,7,9,11,23 * * *'   # every 2h, off-peak UTC
-# Or hourly once the local /loop /march has run cleanly for a
-# week:
-#   - cron: '0 * * * *'
+# Schedule: hourly cron + manual dispatch. Enabled 2026-05-13 after
+# vetting the first Opus tick (phase 19a shipped clean in 30m).
+# Concurrency group below serializes overlapping ticks. Daily
+# commit ceiling (12 cloud-shipped / 24h) bounds runaway volume.
 #
 # See .github/CLOUD_LOOP.md for setup, debugging, and the upgrade
 # path.
 
 on:
-  # schedule:
-  #   - cron: '0 1,3,5,7,9,11,23 * * *'   # uncomment after vetting
+  schedule:
+    - cron: '0 * * * *'   # hourly, on the hour UTC
   workflow_dispatch:
 
 concurrency:
