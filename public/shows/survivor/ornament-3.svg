@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="survivor-ornament-3-title">
+  <title id="survivor-ornament-3-title">Survivor ornament — wooden torch stake</title>
+  <rect x="36" y="36" width="8" height="36" fill="#EFE2BD"/>
+  <rect x="28" y="33" width="24" height="6" fill="#EFE2BD"/>
+  <path d="M 40 8 Q 26 20 30 36 Q 34 28 40 30 Q 46 28 50 36 Q 54 20 40 8 Z" fill="#D55E36" stroke="#EFE2BD" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>

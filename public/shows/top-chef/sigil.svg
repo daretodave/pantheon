@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" role="img" aria-labelledby="sigil-title">
+  <title id="sigil-title">Pantheon sigil for Top Chef — pediment gable, crossed knives with chef-hat ends, and a tall vessel.</title>
+  <rect width="320" height="320" fill="#1B2418"/>
+  <g stroke="#ECDFC6" stroke-width="6" fill="none" stroke-linejoin="round">
+    <path d="M 32 128 L 160 32 L 288 128"/>
+  </g>
+  <g stroke-linecap="round">
+    <line x1="208" y1="128" x2="112" y2="56" stroke="#B86A2E" stroke-width="16"/>
+    <line x1="112" y1="128" x2="208" y2="56" stroke="#B86A2E" stroke-width="16"/>
+    <ellipse cx="104" cy="52" rx="20" ry="12" transform="rotate(-30 104 52)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3.2"/>
+    <ellipse cx="216" cy="52" rx="20" ry="12" transform="rotate(30 216 52)" fill="#B86A2E" stroke="#ECDFC6" stroke-width="3.2"/>
+  </g>
+  <g stroke="#ECDFC6" stroke-width="4" fill="none">
+    <ellipse cx="160" cy="224" rx="48" ry="56"/>
+    <line x1="128" y1="168" x2="192" y2="168"/>
+    <line x1="136" y1="200" x2="184" y2="200" opacity="0.5"/>
+  </g>
+</svg>

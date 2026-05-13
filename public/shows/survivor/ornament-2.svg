@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="survivor-ornament-2-title">
+  <title id="survivor-ornament-2-title">Survivor ornament — palm frond</title>
+  <g stroke="#EFE2BD" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M 40 72 Q 40 40 40 8"/>
+    <path d="M 40 56 Q 28 50 16 40"/>
+    <path d="M 40 56 Q 52 50 64 40"/>
+    <path d="M 40 44 Q 26 36 12 22"/>
+    <path d="M 40 44 Q 54 36 68 22"/>
+    <path d="M 40 32 Q 28 22 18 8"/>
+    <path d="M 40 32 Q 52 22 62 8"/>
+  </g>
+  <circle cx="40" cy="72" r="4" fill="#D55E36"/>
+</svg>

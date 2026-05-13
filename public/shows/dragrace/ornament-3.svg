@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="orn3-title">
+  <title id="orn3-title">Drag Race ornament — lash fan with radiating blades</title>
+  <path d="M 8 58 Q 40 38 72 58" fill="none" stroke="#F2E1D2" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#E64B86" stroke-width="2" stroke-linecap="round">
+    <path d="M 14 56 L 10 30"/>
+    <path d="M 24 50 L 22 22"/>
+    <path d="M 34 46 L 32 18"/>
+    <path d="M 46 46 L 48 18"/>
+    <path d="M 56 50 L 58 22"/>
+    <path d="M 66 56 L 70 30"/>
+  </g>
+  <path d="M 40 44 L 40 14" stroke="#F2E1D2" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="40" cy="46" r="2.4" fill="#F2E1D2"/>
+</svg>

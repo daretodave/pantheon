@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="orn3-title">
+  <title id="orn3-title">Top Chef ornament — peppercorn cluster.</title>
+  <g>
+    <!-- three filled peppercorns, primary -->
+    <circle cx="28" cy="34" r="10" fill="#B86A2E" stroke="#ECDFC6" stroke-width="1.5"/>
+    <circle cx="52" cy="32" r="11" fill="#B86A2E" stroke="#ECDFC6" stroke-width="1.5"/>
+    <circle cx="40" cy="54" r="12" fill="#B86A2E" stroke="#ECDFC6" stroke-width="1.5"/>
+    <!-- highlights -->
+    <circle cx="25" cy="31" r="2.2" fill="#ECDFC6" opacity="0.55"/>
+    <circle cx="48" cy="28" r="2.4" fill="#ECDFC6" opacity="0.55"/>
+    <circle cx="36" cy="50" r="2.6" fill="#ECDFC6" opacity="0.55"/>
+  </g>
+</svg>

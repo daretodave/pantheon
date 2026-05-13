@@ -5,9 +5,9 @@ network: CBS
 format: outwit-outplay-outlast
 hero_motifs: [palm-column, torch-pediment, woven-frieze]
 palette:
-  primary: "#C9551A"
-  ink: "#1A1410"
-  paper: "#F5EFE6"
+  primary: "#D55E36"
+  ink: "#EFE2BD"
+  paper: "#0E2A2A"
 status: airing
 first_aired: 2000-05-31
 tagline: The mother format. Forty-plus seasons of strangers, beaches, and the long argument about the social game.

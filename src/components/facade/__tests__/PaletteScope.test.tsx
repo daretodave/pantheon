@@ -29,7 +29,19 @@ describe('<PaletteScope>', () => {
     render(<PaletteScope show="survivor">x</PaletteScope>)
     const div = screen.getByTestId('palette-scope')
     expect(div.getAttribute('data-show')).toBe('survivor')
-    expect(div.style.getPropertyValue('--show-primary').toLowerCase()).toBe('#c9551a')
+    expect(div.style.getPropertyValue('--show-primary').toLowerCase()).toBe('#d55e36')
+  })
+
+  it('resolves Top Chef and Drag Race palettes from content/ as well', () => {
+    const { rerender } = render(<PaletteScope show="top-chef">x</PaletteScope>)
+    let div = screen.getByTestId('palette-scope')
+    expect(div.style.getPropertyValue('--show-primary').toLowerCase()).toBe('#b86a2e')
+    expect(div.style.getPropertyValue('--show-paper').toLowerCase()).toBe('#1b2418')
+
+    rerender(<PaletteScope show="dragrace">x</PaletteScope>)
+    div = screen.getByTestId('palette-scope')
+    expect(div.style.getPropertyValue('--show-primary').toLowerCase()).toBe('#e64b86')
+    expect(div.style.getPropertyValue('--show-paper').toLowerCase()).toBe('#2d0b2a')
   })
 
   it('falls back to ceremonial tokens for an unknown show but still sets data-show', () => {

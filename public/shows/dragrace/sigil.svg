@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" role="img" aria-labelledby="sigil-title">
+  <title id="sigil-title">Pantheon sigil for RuPaul's Drag Race — scallop-pink crown gable with jewel-strand</title>
+  <rect width="320" height="320" fill="#2D0B2A"/>
+  <g stroke="#F2E1D2" stroke-width="6" fill="none" stroke-linejoin="round">
+    <path d="M 32 128 L 160 32 L 288 128"/>
+  </g>
+  <path d="M 88 124 Q 160 -8 232 124 Z" fill="#E64B86"/>
+  <g stroke="#F2E1D2" stroke-width="2.4" fill="none" opacity="0.85">
+    <path d="M 160 124 L 160 16"/>
+    <path d="M 160 124 Q 128 72 112 32"/>
+    <path d="M 160 124 Q 192 72 208 32"/>
+  </g>
+  <circle cx="160" cy="88" r="8" fill="#F2E1D2"/>
+  <g fill="none" stroke="#F2E1D2" stroke-width="4">
+    <circle cx="160" cy="176" r="16" fill="#E64B86"/>
+    <circle cx="128" cy="224" r="16"/>
+    <circle cx="192" cy="224" r="16" fill="#E64B86"/>
+    <circle cx="160" cy="272" r="16"/>
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-labelledby="orn2-title">
+  <title id="orn2-title">Drag Race ornament — jewel teardrop</title>
+  <path d="M 40 14 Q 24 38 24 52 Q 24 68 40 68 Q 56 68 56 52 Q 56 38 40 14 Z" fill="#E64B86" stroke="#F2E1D2" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M 34 32 Q 30 40 32 50" stroke="#F2E1D2" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+  <circle cx="40" cy="54" r="2.4" fill="#F2E1D2"/>
+</svg>
