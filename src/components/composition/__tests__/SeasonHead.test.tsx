@@ -22,4 +22,14 @@ describe('<SeasonHead>', () => {
     render(<SeasonHead crumb="x" title="t" />)
     expect(screen.queryByTestId('season-sigil')).not.toBeInTheDocument()
   })
+
+  it('renders the optional eyebrow when provided', () => {
+    render(<SeasonHead crumb="x" title="t" eyebrow="Returnees Showcase" />)
+    expect(screen.getByTestId('season-eyebrow')).toHaveTextContent('Returnees Showcase')
+  })
+
+  it('omits the eyebrow slot when not provided', () => {
+    render(<SeasonHead crumb="x" title="t" />)
+    expect(screen.queryByTestId('season-eyebrow')).not.toBeInTheDocument()
+  })
 })

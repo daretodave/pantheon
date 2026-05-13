@@ -82,7 +82,8 @@ export default function CanonPage({ params }: { params: Params }) {
             </>
           }
           title="Editor's Canon"
-          lede={`${show.name}, ranked with confidence. Every placement is spoiler-safe, every rationale is on the record.`}
+          blurb={`${show.name}, ranked with confidence.`}
+          tagline="Every placement is spoiler-safe, every rationale is on the record."
           shield={<ShieldBadge />}
         />
 

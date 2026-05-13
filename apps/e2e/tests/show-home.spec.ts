@@ -21,9 +21,20 @@ for (const url of showHomeUrls) {
 
       await expect(page.getByTestId('show-home-screen')).toBeVisible()
       await expect(page.getByTestId('show-hero')).toBeVisible()
+      await expect(page.getByTestId('show-hero-cover')).toBeVisible()
+      await expect(page.getByTestId('show-hero-stats')).toBeVisible()
       await expect(page.getByTestId('bullet').first()).toBeVisible()
       await expect(page.getByTestId('show-split')).toBeVisible()
+      await expect(page.getByTestId('shifts-row')).toBeVisible()
+      await expect(page.getByTestId('shifts-empty')).toBeVisible()
+      await expect(page.getByTestId('filter-bar')).toBeVisible()
       await expect(page.getByTestId('shield-badge').first()).toBeVisible()
+
+      // Phase 19c: ShowHero is full-bleed, sits at the top of <main>.
+      // The cover holds the wordmark; the meta column carries stats +
+      // tagline. No facade art testid in the entire DOM.
+      const wordmark = page.locator('.wordmark').first()
+      await expect(wordmark).toBeVisible()
 
       const facadeCount = await page.getByTestId('facade').count()
       expect(facadeCount).toBe(0)

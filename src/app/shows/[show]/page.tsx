@@ -4,11 +4,14 @@ import { getAllSeasons, getAllShows, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import { Bullet } from '@/components/atoms/Bullet'
 import {
+  FilterBar,
   SeasonCard,
   SeasonGrid,
+  ShiftsRow,
   ShieldBadge,
   ShowHero,
   ShowSplit,
+  type ShowHeroStat,
 } from '@/components/composition'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
 import { FeaturedThemes } from '@/components/featured-themes/FeaturedThemes'
@@ -39,10 +42,24 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
 function seasonTag(
   season: ReturnType<typeof getAllSeasons>[number],
 ): string {
+  if (season.tag) return season.tag
   if (season.premiere_date) {
     return new Date(season.premiere_date).getUTCFullYear().toString()
   }
   return `Season ${season.number}`
+}
+
+function computeYearsOnAir(
+  seasons: ReturnType<typeof getAllSeasons>,
+): string {
+  const years = seasons
+    .map((s) => (s.premiere_date ? new Date(s.premiere_date).getUTCFullYear() : null))
+    .filter((y): y is number => typeof y === 'number')
+  if (years.length === 0) return '—'
+  const min = Math.min(...years)
+  const max = Math.max(...years)
+  if (min === max) return String(min)
+  return `${min}–${max}`
 }
 
 export default function ShowHomePage({ params }: { params: Params }) {
@@ -65,6 +82,11 @@ export default function ShowHomePage({ params }: { params: Params }) {
   })
 
   const seasonsSorted = [...seasons].sort((a, b) => a.number - b.number)
+  const years = computeYearsOnAir(seasons)
+  const stats: ShowHeroStat[] = [
+    { value: show.seasons, key: 'seasons aired' },
+    { value: years, key: 'on the air' },
+  ]
 
   return (
     <ShowPaletteScope show={show.slug}>
@@ -72,15 +94,18 @@ export default function ShowHomePage({ params }: { params: Params }) {
       <script {...jsonLdScriptProps({ id: 'ld-show-breadcrumb', data: crumbsLd })} />
       <div className="screen show-home" data-testid="show-home-screen">
         <ShowHero
+          title={show.name}
+          blurb={show.blurb}
           crumb={
             <>
-              <Bullet color={show.palette.primary} />
-              {' '}
-              <a href="/shows">Pantheons</a> / {show.name}
+              <Bullet color="var(--show-primary)" size={10} />
+              <span>
+                <a href="/shows">Pantheons</a> / {show.name}
+              </span>
             </>
           }
-          title={show.name}
-          lede={show.tagline}
+          stats={stats}
+          tagline={show.tagline}
           shield={<ShieldBadge />}
         />
         <ShowSplit
@@ -99,10 +124,15 @@ export default function ShowHomePage({ params }: { params: Params }) {
             go: 'See the vote →',
           }}
         />
+        <ShiftsRow />
         <section className="show-seasons" aria-labelledby="seasons-heading">
           <div className="section-head">
             <h2 id="seasons-heading">All seasons, ranked</h2>
+            <span className="sec-meta">
+              Sorted by Editor&rsquo;s Canon · spoilers shielded
+            </span>
           </div>
+          <FilterBar />
           {seasonsSorted.length === 0 ? (
             <p
               data-testid="season-grid"

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getSeason, getShow } from '@/content'
+import { getCanon, getSeason, getShow } from '@/content'
 import { buildOgImage } from '@/lib/og/template'
 
 export const runtime = 'nodejs'
@@ -9,20 +9,35 @@ export const contentType = 'image/png'
 
 type Params = { show: string; n: string }
 
-export default async function OpenGraphImage({ params }: { params: Promise<Params> }) {
+function padRank(n: number | null | undefined): string {
+  if (n == null) return ''
+  return `#${String(n).padStart(2, '0')}`
+}
+
+export default async function OpenGraphImage({
+  params,
+}: {
+  params: Promise<Params>
+}) {
   const { show: slug, n } = await params
   const num = Number.parseInt(n, 10)
   const show = getShow(slug)
   if (!show || !Number.isFinite(num)) notFound()
   const season = getSeason(slug, num)
   if (!season) notFound()
-  const meta = season.location
-    ? `${season.location}${season.host ? ` · ${season.host}` : ''}`
-    : (season.host ?? `${show.name} · Season ${season.number}`)
+
+  const canonFile = getCanon(slug)
+  const canonHit = canonFile?.entries.find((e) => e.season === season.number)
+  const canonRank = canonHit?.rank ?? season.canonical_position ?? null
+  const eyebrow = canonRank
+    ? `Pantheons / ${show.name} · Editor's Canon ${padRank(canonRank)}`
+    : `Pantheons / ${show.name} · Season ${season.number}`
+
   return buildOgImage({
-    eyebrow: `Pantheon · ${show.name} · Season ${season.number}`,
+    eyebrow,
     title: season.title,
-    blurb: meta,
+    blurb:
+      season.lede ?? season.tag ?? `${show.name}, season ${season.number}.`,
     palette: {
       paper: show.palette.paper,
       ink: show.palette.ink,

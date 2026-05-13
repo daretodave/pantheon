@@ -65,6 +65,18 @@ export const seasonFrontmatterSchema = z.object({
   host: z.string().min(1).optional(),
   format_changes: z.array(z.string().min(1)).default([]),
   canonical_position: z.number().int().positive().optional(),
+  // 19c: optional editorial fields for the rebuilt season page.
+  // Render conditionally — absent fields collapse the corresponding
+  // surface (eyebrow, pull quote, details strip).
+  eyebrow: z.string().min(1).max(80).optional(),
+  lede: z.string().min(1).max(280).optional(),
+  body: z.string().min(1).optional(),
+  pull: z.string().min(1).max(240).optional(),
+  vote_question: z.string().min(1).max(120).optional(),
+  aired_year: z.number().int().min(1900).max(2100).optional(),
+  episodes: z.number().int().positive().optional(),
+  cast_note: z.string().min(1).max(80).optional(),
+  tag: z.string().min(1).max(80).optional(),
 })
 
 export type SeasonFrontmatter = z.infer<typeof seasonFrontmatterSchema>

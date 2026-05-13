@@ -164,6 +164,34 @@ describe('seasonSchema', () => {
       seasonSchema.parse({ ...base, number: 0, blurb_md: validSeasonBlurb(60) }),
     ).toThrow()
   })
+
+  it('accepts the new 19c optional editorial fields', () => {
+    expect(() =>
+      seasonSchema.parse({
+        ...base,
+        blurb_md: validSeasonBlurb(60),
+        eyebrow: 'Returnees Showcase',
+        lede: 'A returnees season that finally let the format show what it could do.',
+        body: 'Paragraph one.\n\nParagraph two.',
+        pull: 'We would defend it without footnotes.',
+        vote_question: 'Does this belong in the canon top 10?',
+        aired_year: 2010,
+        episodes: 14,
+        cast_note: '20 returnees',
+        tag: 'the format at its loudest',
+      }),
+    ).not.toThrow()
+  })
+
+  it('rejects a non-numeric aired_year', () => {
+    expect(() =>
+      seasonSchema.parse({
+        ...base,
+        blurb_md: validSeasonBlurb(60),
+        aired_year: '2010',
+      }),
+    ).toThrow()
+  })
 })
 
 describe('themeSchema', () => {

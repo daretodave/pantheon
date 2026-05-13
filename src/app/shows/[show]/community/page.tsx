@@ -85,7 +85,8 @@ export default function CommunityPage({ params }: { params: Params }) {
             </>
           }
           title="Community Rank"
-          lede={`Voted by people who've watched it. ${show.name}'s ranking shifts as the community weighs in — be the first to push it.`}
+          blurb={`Voted by people who've watched ${show.name}.`}
+          tagline="Rankings shift as the community weighs in — be the first to push it."
           shield={<ShieldBadge />}
         />
 

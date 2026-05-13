@@ -195,83 +195,147 @@
 .list-tile-meta  { font: 400 12px/1.4 var(--mono); color: var(--ink-3); margin-top: 4px; letter-spacing: 0.04em; }
 .list-tile-arrow { color: var(--ink-3); font-size: 18px; }
 
-/* ============================================================ SHOW HOME */
+/* ============================================================ SHOW HOME
+   Ported verbatim from design/Pantheon · Survivor.html as part of
+   phase 19c — full-bleed, no facade art, color + type only. */
 .show-home { background: var(--show-paper); color: var(--show-ink); }
 .show-hero {
   display: grid; grid-template-columns: 1.4fr 1fr; gap: 0;
   border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
 }
-.show-hero-art {
-  min-height: 520px;
-  display: flex; align-items: center; justify-content: center;
+.show-hero-cover {
+  padding: 96px 64px 80px;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 28px;
+  min-height: 560px;
+  border-right: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
 }
-.show-hero-art svg { width: 100%; height: 100%; }
+.wordmark {
+  font-family: var(--serif); font-weight: 500;
+  font-size: 144px; line-height: 0.92; letter-spacing: -0.04em;
+  color: var(--show-ink); margin: 0; text-wrap: balance;
+}
+.show-hero-sub {
+  font-family: var(--serif); font-style: italic;
+  font-size: 24px; line-height: 1.4;
+  color: color-mix(in oklab, var(--show-ink) 82%, transparent);
+  margin: 0; max-width: 560px; text-wrap: pretty;
+}
 .show-hero-meta {
-  padding: 56px 48px;
-  display: flex; flex-direction: column; justify-content: center;
-  border-left: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  padding: 64px 56px;
+  display: flex; flex-direction: column; justify-content: center; gap: 32px;
+  background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper));
 }
-.show-hero-crumb { font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); margin-bottom: 20px; }
-.show-hero-title { font-family: var(--serif); font-weight: 500; font-size: 80px; line-height: 1; letter-spacing: -0.025em; color: var(--show-ink); margin: 0 0 24px; overflow-wrap: anywhere; }
-.show-hero-line { font-family: var(--serif); font-size: 19px; line-height: 1.55; color: color-mix(in oklab, var(--show-ink) 80%, transparent); margin: 0 0 32px; }
+.show-hero-crumb {
+  display: flex; align-items: center; gap: 10px;
+  font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
+}
+.show-hero-stats {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  padding: 0 0 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+}
+.stat { display: flex; flex-direction: column; gap: 6px; }
+.stat-val { font-family: var(--serif); font-weight: 500; font-size: 28px; color: var(--show-ink); letter-spacing: -0.015em; line-height: 1; }
+.stat-key { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); }
+.show-hero-line {
+  font-family: var(--serif); font-size: 19px; line-height: 1.55;
+  color: color-mix(in oklab, var(--show-ink) 86%, transparent);
+  margin: 0; text-wrap: pretty;
+}
 
 /* two-button split */
 .show-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
-.split-btn { padding: 40px 48px; border-right: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); display: block; transition: background 240ms cubic-bezier(.4,0,.2,1); }
+.split-btn { padding: 48px 56px; border-right: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); display: block; transition: background 240ms cubic-bezier(.4,0,.2,1); }
 .split-btn:last-child { border-right: 0; }
 .split-btn:hover { background: color-mix(in oklab, var(--show-ink) 6%, transparent); }
-.split-btn-tag { font: 600 11px/1 var(--mono); letter-spacing: 0.16em; color: var(--show-primary); margin-bottom: 12px; }
-.split-btn-title { font-family: var(--serif); font-weight: 500; font-size: 32px; letter-spacing: -0.015em; color: var(--show-ink); margin-bottom: 8px; }
-.split-btn-blurb { font-family: var(--serif); font-size: 16px; color: color-mix(in oklab, var(--show-ink) 70%, transparent); margin-bottom: 20px; }
+.split-btn-tag { font: 600 11px/1 var(--mono); letter-spacing: 0.16em; color: var(--show-primary); margin-bottom: 14px; }
+.split-btn-title { font-family: var(--serif); font-weight: 500; font-size: 36px; letter-spacing: -0.02em; color: var(--show-ink); margin-bottom: 10px; }
+.split-btn-blurb { font-family: var(--serif); font-size: 16px; color: color-mix(in oklab, var(--show-ink) 70%, transparent); margin-bottom: 24px; line-height: 1.5; max-width: 380px; text-wrap: pretty; }
 .split-btn-go { font: 500 12px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--show-primary); }
 
-/* show home seasons */
-.show-seasons .section-head h2 { color: var(--show-ink); }
-.season-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 0 32px 56px; background: color-mix(in oklab, var(--show-ink) 12%, transparent); border-radius: 8px; overflow: hidden; }
+/* shifts row (stub for 19c) */
+.show-shifts { padding: 80px 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 10%, transparent); }
+.show-shifts .section-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 0 0 32px; padding: 0 56px; gap: 24px; flex-wrap: wrap; }
+.show-shifts .section-head h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 1.1; color: var(--show-ink); margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+.sec-meta { font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); }
+.shifts-empty { margin: 0 56px; padding: 24px; border: 1px dashed color-mix(in oklab, var(--show-ink) 18%, transparent); border-radius: 8px; color: color-mix(in oklab, var(--show-ink) 65%, transparent); font-family: var(--serif); font-style: italic; font-size: 15px; }
+.shifts-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 0 56px; background: color-mix(in oklab, var(--show-ink) 12%, transparent); border: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); border-radius: 8px; overflow: hidden; }
+
+/* show home seasons + filter bar */
+.show-seasons { padding: 80px 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 10%, transparent); }
+.show-seasons .section-head { display: flex; align-items: flex-end; justify-content: space-between; margin: 0 0 32px; padding: 0 56px; gap: 24px; flex-wrap: wrap; }
+.show-seasons .section-head h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 1.1; color: var(--show-ink); margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+.filter-bar { display: flex; align-items: center; gap: 24px; justify-content: space-between; padding: 0 56px; margin-bottom: 32px; flex-wrap: wrap; }
+.filter-set { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-bar .chip { appearance: none; background: transparent; border: 1px solid color-mix(in oklab, var(--show-ink) 18%, transparent); color: color-mix(in oklab, var(--show-ink) 70%, transparent); font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border-radius: 999px; cursor: pointer; transition: all 240ms cubic-bezier(.4,0,.2,1); }
+.filter-bar .chip:hover { color: var(--show-ink); border-color: color-mix(in oklab, var(--show-ink) 30%, transparent); }
+.filter-bar .chip.on { background: var(--show-ink); color: var(--show-paper); border-color: var(--show-ink); }
+.filter-mode { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); }
+
+.season-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  margin: 0 56px; background: color-mix(in oklab, var(--show-ink) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  border-radius: 8px; overflow: hidden;
+}
 
 .season-card {
-  display: grid; grid-template-columns: 60px 1fr; gap: 16px;
+  display: grid; grid-template-columns: 64px 1fr; gap: 18px;
   background: var(--show-paper);
-  padding: 20px 24px;
+  padding: 22px 24px;
   align-items: start;
   transition: background 240ms cubic-bezier(.4,0,.2,1);
 }
 .season-card:hover { background: color-mix(in oklab, var(--show-ink) 5%, var(--show-paper)); }
 .season-rank { font: 500 22px/1 var(--mono); color: var(--show-primary); padding-top: 4px; letter-spacing: -0.02em; }
-.season-title { font-family: var(--serif); font-weight: 500; font-size: 18px; color: var(--show-ink); letter-spacing: -0.01em; }
-.season-tag { font-family: var(--serif); font-size: 14px; color: color-mix(in oklab, var(--show-ink) 70%, transparent); margin-top: 4px; font-style: italic; }
-.season-bottom { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.season-title { font-family: var(--serif); font-weight: 500; font-size: 19px; color: var(--show-ink); letter-spacing: -0.012em; line-height: 1.2; }
+.season-tag { font-family: var(--serif); font-style: italic; font-size: 14px; color: color-mix(in oklab, var(--show-ink) 70%, transparent); margin-top: 6px; line-height: 1.45; text-wrap: pretty; }
+.season-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
 .season-num { font: 400 11px/1 var(--mono); color: color-mix(in oklab, var(--show-ink) 55%, transparent); letter-spacing: 0.08em; text-transform: uppercase; }
 
-/* ============================================================ SEASON PAGE */
+/* ============================================================ SEASON PAGE
+   Ported from design/Pantheon · Heroes vs. Villains.html as part of
+   phase 19c — full-bleed, 2-col shell, eyebrow + h1 + rank row,
+   body + pull-quote + 4-cell details strip, vote block, adjacent
+   pair, appears-in stack, sticky aside thread on desktop. */
 .season-page { background: var(--show-paper); color: var(--show-ink); }
 .season-shell {
-  display: grid; grid-template-columns: 1fr 380px; gap: 0;
+  display: grid; grid-template-columns: 1fr 420px; gap: 0;
   border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  min-height: calc(100vh - 64px);
 }
 
-.season-main { padding: 64px 64px 80px; max-width: 720px; margin-left: auto; }
+.season-main { padding: 80px 80px 96px; max-width: 780px; margin-left: auto; width: 100%; }
 
 .season-head { margin-bottom: 40px; }
-.season-crumb { font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); margin-bottom: 24px; }
+.season-crumb { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 500 11px/1.5 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); margin-bottom: 36px; }
 .season-crumb a { color: inherit; }
 .season-crumb a:hover { color: var(--show-ink); }
-.season-sigil { margin-bottom: 24px; }
-.season-h1 { font-family: var(--serif); font-weight: 500; font-size: 52px; line-height: 1.04; letter-spacing: -0.02em; color: var(--show-ink); margin: 0 0 24px; overflow-wrap: anywhere; }
+.season-crumb > span:not([data-testid="bullet"]) { color: color-mix(in oklab, var(--show-ink) 80%, transparent); }
+.season-eyebrow { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--show-primary); margin-bottom: 20px; }
+.season-h1 { font-family: var(--serif); font-weight: 500; font-size: 80px; line-height: 1; letter-spacing: -0.03em; color: var(--show-ink); margin: 0 0 32px; text-wrap: balance; overflow-wrap: anywhere; }
 
-.season-rankrow { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-.season-rank-tag {
+.season-rankrow { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 0; }
+.rank-tag, .season-rank-tag {
   display: inline-flex; gap: 10px; align-items: center;
-  padding: 8px 14px;
-  border: 1px solid color-mix(in oklab, var(--show-ink) 16%, transparent);
+  padding: 10px 16px;
+  border: 1px solid color-mix(in oklab, var(--show-ink) 18%, transparent);
   border-radius: 999px;
 }
-.season-rank-label { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; color: color-mix(in oklab, var(--show-ink) 65%, transparent); text-transform: uppercase; }
-.season-rank-num { font: 500 14px/1 var(--mono); color: var(--show-ink); }
+.rank-label, .season-rank-label { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; color: color-mix(in oklab, var(--show-ink) 65%, transparent); text-transform: uppercase; }
+.rank-num, .season-rank-num { font: 500 15px/1 var(--mono); color: var(--show-ink); }
 
-.season-body { margin-top: 40px; }
-.season-lede { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--show-ink); margin: 0 0 20px; text-wrap: pretty; }
-.season-body p { font-family: var(--serif); font-size: 17px; line-height: 1.65; color: color-mix(in oklab, var(--show-ink) 86%, transparent); margin: 0 0 18px; text-wrap: pretty; }
+.season-body { margin-top: 48px; border-top: 1px solid color-mix(in oklab, var(--show-ink) 10%, transparent); padding-top: 48px; }
+.season-lede { font-family: var(--serif); font-size: 24px; line-height: 1.45; color: var(--show-ink); margin: 0 0 28px; text-wrap: pretty; letter-spacing: -0.01em; }
+.season-body p { font-family: var(--serif); font-size: 18px; line-height: 1.7; color: color-mix(in oklab, var(--show-ink) 86%, transparent); margin: 0 0 22px; text-wrap: pretty; }
+.season-pull { font-family: var(--serif); font-style: italic; font-size: 24px; line-height: 1.4; color: var(--show-ink); border-left: 3px solid var(--show-primary); padding: 8px 0 8px 24px; margin: 36px 0; text-wrap: pretty; }
+
+.season-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 48px; border: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent); border-radius: 8px; overflow: hidden; }
+.season-details .detail { padding: 18px 20px; border-right: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); background: color-mix(in oklab, var(--show-ink) 3%, var(--show-paper)); }
+.season-details .detail:last-child { border-right: 0; }
+.detail-key { font: 500 10px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); margin-bottom: 8px; }
+.detail-val { font-family: var(--serif); font-weight: 500; font-size: 18px; color: var(--show-ink); letter-spacing: -0.01em; }
 
 .season-vote-block {
   margin-top: 48px;
@@ -362,19 +426,34 @@
   margin-top: 64px;
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: color-mix(in oklab, var(--show-ink) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
   border-radius: 8px; overflow: hidden;
 }
-.season-related a { padding: 24px; background: var(--show-paper); display: block; }
-.season-related a:hover { background: color-mix(in oklab, var(--show-ink) 5%, var(--show-paper)); }
-.season-related .related-next { text-align: right; }
+.season-related a, .related-link { padding: 24px; background: var(--show-paper); display: block; transition: background 240ms cubic-bezier(.4,0,.2,1); }
+.season-related a:hover, .related-link:hover { background: color-mix(in oklab, var(--show-ink) 5%, var(--show-paper)); }
+.season-related .related-next, .related-link.related-next { text-align: right; }
 .related-tag { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--show-primary); margin-bottom: 8px; }
-.related-title { font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--show-ink); }
+.related-title { font-family: var(--serif); font-weight: 500; font-size: 22px; color: var(--show-ink); letter-spacing: -0.015em; }
+.related-cap { font-family: var(--serif); font-style: italic; font-size: 14px; color: color-mix(in oklab, var(--show-ink) 70%, transparent); margin-top: 6px; }
 
-/* aside (comments) */
+/* appears-in stack */
+.appears-in { margin-top: 64px; }
+.appears-head { font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in oklab, var(--show-ink) 55%, transparent); margin-bottom: 16px; }
+.appears-list { display: flex; flex-direction: column; gap: 0; border: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent); border-radius: 8px; overflow: hidden; }
+.appears-row { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 16px 20px; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 10%, transparent); background: var(--show-paper); transition: background 240ms cubic-bezier(.4,0,.2,1); }
+.appears-row:last-child { border-bottom: 0; }
+.appears-row:hover { background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper)); cursor: pointer; }
+.appears-row .name { font-family: var(--serif); font-size: 17px; color: var(--show-ink); letter-spacing: -0.01em; }
+.appears-row .meta { font: 500 11px/1 var(--mono); color: color-mix(in oklab, var(--show-ink) 55%, transparent); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* aside (comments) — sticky on desktop, stacks below article on mobile */
 .season-aside {
-  padding: 64px 32px 80px;
-  background: color-mix(in oklab, var(--show-paper) 88%, #000);
+  padding: 80px 36px 96px;
+  background: color-mix(in oklab, var(--show-paper) 90%, #000);
   border-left: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  display: flex; flex-direction: column; gap: 24px;
+  position: sticky; top: 64px; align-self: start;
+  max-height: calc(100vh - 64px); overflow-y: auto;
 }
 .aside-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
 .aside-head h3 { font-family: var(--serif); font-weight: 500; font-size: 22px; margin: 0; color: var(--show-ink); letter-spacing: -0.01em; }
@@ -528,6 +607,23 @@
   font: 600 11px/1 var(--mono); letter-spacing: 0.08em;
 }
 
+/* Intermediate (≤1024px) breakpoint matching the design source:
+   the wordmark drops from 144px to 96px and the season-main shell
+   loses its right-edge constraint so reading column flows wider. */
+@media (max-width: 1024px) {
+  .wordmark { font-size: 96px; }
+  .season-shell { grid-template-columns: 1fr; min-height: auto; }
+  .season-main { margin-left: 0; max-width: none; padding: 64px 56px 80px; }
+  .season-h1 { font-size: 64px; }
+  .season-aside {
+    border-left: 0;
+    border-top: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+    padding: 48px 32px 64px;
+    position: static; max-height: none; overflow-y: visible;
+  }
+  .shifts-row { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* =========================================================================
    Mobile reflow — anything that needed `.screen.mobile X` in the design
    source becomes a viewport media query in production.
@@ -554,15 +650,26 @@
   .home-list-grid { margin: 0 16px 32px; }
 
   .show-hero { grid-template-columns: 1fr; }
-  .show-hero-art { min-height: 300px; }
-  .show-hero-meta { padding: 32px 16px; border-left: 0; border-top: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
-  .show-hero-title { font-size: 48px; }
+  .show-hero-cover { padding: 64px 24px 40px; min-height: 0; border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
+  .wordmark { font-size: 64px; }
+  .show-hero-sub { font-size: 18px; }
+  .show-hero-meta { padding: 40px 24px; border-left: 0; }
   .show-hero-line { font-size: 16px; }
 
   .show-split { grid-template-columns: 1fr; }
-  .split-btn { padding: 24px 16px; border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
-  .split-btn-title { font-size: 24px; }
+  .split-btn { padding: 32px 24px; border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
+  .split-btn:last-child { border-bottom: 0; }
+  .split-btn-title { font-size: 26px; }
 
+  .show-shifts { padding: 56px 0; }
+  .show-shifts .section-head { padding: 0 16px; }
+  .shifts-empty { margin: 0 16px; }
+
+  .show-seasons { padding: 56px 0; }
+  .show-seasons .section-head { padding: 0 16px; }
+  .show-seasons .section-head h2,
+  .show-shifts .section-head h2 { font-size: 22px; }
+  .filter-bar { padding: 0 16px; }
   .season-grid { grid-template-columns: 1fr; margin: 0 16px 32px; }
 
   .canon-list { margin: 0 16px 32px; }
@@ -579,14 +686,19 @@
   .community-page .show-hero-art { min-height: 220px; padding: 24px; }
   .community-page .show-hero-art svg { max-height: 180px; }
 
-  .season-shell { grid-template-columns: 1fr; }
-  .season-main { padding: 32px 16px 48px; max-width: 100%; margin: 0; }
-  .season-h1 { font-size: 32px; }
-  .season-lede { font-size: 18px; }
-  .season-body p { font-size: 15px; }
+  .season-shell { grid-template-columns: 1fr; min-height: auto; }
+  .season-main { padding: 40px 20px 56px; max-width: 100%; margin: 0; }
+  .season-h1 { font-size: 44px; }
+  .season-lede { font-size: 19px; }
+  .season-body p { font-size: 16px; }
+  .season-details { grid-template-columns: repeat(2, 1fr); }
+  .season-details .detail:nth-child(2n) { border-right: 0; }
   .season-related { grid-template-columns: 1fr; }
-
-  .season-aside { padding: 32px 16px 48px; border-left: 0; border-top: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
+  .season-aside {
+    padding: 32px 20px 48px;
+    border-left: 0; border-top: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+    position: static; max-height: none; overflow-y: visible;
+  }
 
   .pf-footer { padding: 16px; }
 }
