@@ -7,7 +7,7 @@ name: march
 # Schedule: hourly cron + manual dispatch. Enabled 2026-05-13 after
 # vetting the first Opus tick (phase 19a shipped clean in 30m).
 # Concurrency group below serializes overlapping ticks. Daily
-# commit ceiling (12 cloud-shipped / 24h) bounds runaway volume.
+# commit ceiling (24 cloud-shipped / 24h) bounds runaway volume.
 #
 # See .github/CLOUD_LOOP.md for setup, debugging, and the upgrade
 # path.
@@ -100,10 +100,11 @@ jobs:
           since="$(date -u -d '24 hours ago' '+%Y-%m-%d %H:%M:%S')"
           count=$(git log --since="$since" --grep='Cloud-Run:' --oneline | wc -l | tr -d ' ')
           echo "Cloud-shipped commits in last 24h: $count"
-          # Conservative starting ceiling: 12. Bump once we've
-          # measured a week of clean cloud ticks.
-          if [ "$count" -ge 12 ]; then
-            echo "Cloud ceiling reached (12 cloud-shipped commits / 24h). Exiting cleanly — no work this tick."
+          # Ceiling: 24/day — matches the hourly cron cadence so
+          # every scheduled tick has headroom. Reduce if the
+          # weekly cap pinches.
+          if [ "$count" -ge 24 ]; then
+            echo "Cloud ceiling reached (24 cloud-shipped commits / 24h). Exiting cleanly — no work this tick."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
