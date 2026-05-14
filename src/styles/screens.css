@@ -629,34 +629,65 @@
 }
 .comment-post:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ============================================================ FEATURED THEMES
-   The cross-link strip below the season grid on a show home. Lives in
-   the show segment so it inherits the show palette via CSS vars —
-   transparent background + show-ink border keeps the show paper
-   visible end-to-end (no dark tiered.tv paper island). */
-.featured-themes {
-  display: flex; flex-direction: column; gap: 12px;
-  padding: 24px 28px;
-  border: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent);
-  border-radius: 8px;
-  background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper));
+/* ============================================================ THEMED LISTS
+   The "Themed lists for {show}." section below the season grid on a
+   show home. Mirrors the .show-seasons section pattern — full-bleed
+   padding + bottom rule — so the spacing reads as one editorial
+   rhythm with the rest of the page. Card grid follows the design
+   reference in design/tiered.tv · Survivor.html. */
+.show-themes {
+  padding: 80px 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 10%, transparent);
+}
+.show-themes .section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin: 0 0 32px; padding: 0 56px;
+  gap: 24px; flex-wrap: wrap;
+}
+.show-themes .section-head h2 {
+  font-family: var(--serif); font-weight: 500; font-size: 34px;
+  line-height: 1.1; color: var(--show-ink); margin: 0;
+  letter-spacing: -0.02em; text-wrap: balance;
+}
+
+.lists-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  margin: 0 56px;
+  border: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  border-radius: 8px; overflow: hidden;
+}
+.list-card {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 28px 28px 24px;
+  border-right: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
+  transition: background 240ms cubic-bezier(.4,0,.2,1);
   color: var(--show-ink);
 }
-.featured-themes-head {
-  font-family: var(--serif); font-weight: 500; font-size: 20px;
-  letter-spacing: -0.01em; color: var(--show-ink);
-  margin: 0;
+.list-card:last-child { border-right: 0; }
+.list-card:hover { background: color-mix(in oklab, var(--show-ink) 5%, transparent); }
+.list-card-tag {
+  font: 500 11px/1 var(--mono); letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
+  display: flex; align-items: center; gap: 10px;
 }
-.featured-themes-list {
-  margin: 0; padding: 0; list-style: none;
-  display: flex; flex-direction: column; gap: 6px;
+.list-card h4 {
+  font-family: var(--serif); font-weight: 500; font-size: 22px;
+  color: var(--show-ink); margin: 0;
+  letter-spacing: -0.015em; line-height: 1.2; text-wrap: balance;
 }
-.featured-themes-link {
-  font-family: var(--serif); font-size: 16px; line-height: 1.55;
-  color: var(--show-primary);
-  text-decoration: underline; text-underline-offset: 3px;
+.list-card-blurb {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  color: color-mix(in oklab, var(--show-ink) 70%, transparent);
+  margin: 0; line-height: 1.45;
 }
-.featured-themes-link:hover { opacity: 0.8; }
+.list-card-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 8px;
+  font: 500 11px/1 var(--mono); letter-spacing: 0.06em;
+  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
+}
+.list-card-foot b { color: var(--show-primary); font-weight: 500; }
 
 .season-related {
   margin-top: 64px;
@@ -868,6 +899,9 @@
     position: static; max-height: none; overflow-y: visible;
   }
   .shifts-row { grid-template-columns: repeat(2, 1fr); }
+  .lists-grid { grid-template-columns: 1fr; margin: 0 24px; }
+  .list-card { border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent); }
+  .list-card:last-child { border-bottom: 0; }
 }
 
 @media (max-width: 980px) {
@@ -948,6 +982,11 @@
   .show-shifts .section-head h2 { font-size: 22px; }
   .filter-bar { padding: 0 16px; }
   .season-grid { grid-template-columns: 1fr; margin: 0 16px 32px; }
+
+  .show-themes { padding: 56px 0; }
+  .show-themes .section-head { padding: 0 16px; }
+  .show-themes .section-head h2 { font-size: 22px; }
+  .lists-grid { margin: 0 16px; }
 
   .canon-list { margin: 0 16px 32px; }
   .canon-entry { padding: 20px 16px; }

@@ -144,9 +144,7 @@ export default function ShowHomePage({ params }: { params: Params }) {
             </SeasonGrid>
           )}
         </section>
-        <div style={{ margin: '0 32px 56px' }}>
-          <FeaturedThemes show={show.slug} />
-        </div>
+        <FeaturedThemes show={show.slug} showName={show.name} />
       </div>
     </ShowPaletteScope>
   )

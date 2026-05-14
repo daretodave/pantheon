@@ -1,45 +1,69 @@
 import Link from 'next/link'
+import { Bullet } from '@/components/atoms/Bullet'
 import { themesContainingShow } from '@/lib/themes/byShow'
 
 type FeaturedThemesProps = {
   show: string
+  showName?: string
 }
 
-// Renders an "Appears in" cross-link block on a show page,
-// listing every themed list that contains at least one of the
-// show's seasons. Returns null when no themes reference the
-// show — the show page renders nothing extra in that case.
+function formatRevised(iso: string | undefined): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d
+    .toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    .toLowerCase()
+}
 
-export function FeaturedThemes({ show }: FeaturedThemesProps) {
+export function FeaturedThemes({ show, showName }: FeaturedThemesProps) {
   const themes = themesContainingShow(show)
   if (themes.length === 0) return null
 
+  const headingId = `show-themes-${show}`
+  const title = showName ?? show
+
   return (
-    <aside
-      className="featured-themes"
-      data-testid="featured-themes"
-      aria-labelledby={`featured-themes-${show}`}
+    <section
+      className="show-themes"
+      aria-labelledby={headingId}
     >
-      <h2
-        id={`featured-themes-${show}`}
-        className="featured-themes-head"
-      >
-        Featured in themes
-      </h2>
-      <ul className="featured-themes-list">
-        {themes.map((theme) => (
-          <li key={theme.slug}>
+      <div className="section-head">
+        <h2 id={headingId}>Themed lists for {title}.</h2>
+        <span className="sec-meta">
+          Cross-canon &middot; curated by tiered.tv editors
+        </span>
+      </div>
+      <div className="lists-grid" data-testid="featured-themes">
+        {themes.map((theme) => {
+          const count = theme.entries?.length ?? 0
+          const revised = formatRevised(theme.last_revised)
+          return (
             <Link
+              key={theme.slug}
               href={`/themes/${theme.slug}`}
               prefetch={false}
-              className="featured-themes-link"
+              className="list-card"
               data-testid="featured-theme-link"
             >
-              {theme.title}
+              <div className="list-card-tag">
+                <Bullet color="var(--show-primary)" size={9} />
+                <span>
+                  list &middot; {count} {count === 1 ? 'entry' : 'entries'}
+                </span>
+              </div>
+              <h4>{theme.title}</h4>
+              {theme.description ? (
+                <p className="list-card-blurb">{theme.description}</p>
+              ) : null}
+              <div className="list-card-foot">
+                <span>{revised ? `updated ${revised}` : ''}</span>
+                <b>read the list &rarr;</b>
+              </div>
             </Link>
-          </li>
-        ))}
-      </ul>
-    </aside>
+          )
+        })}
+      </div>
+    </section>
   )
 }
