@@ -23,90 +23,6 @@
 **Scope sketch:** <2-3 lines of what would ship>
 -->
 
-### 01. RSS feeds (`/feed.xml` + `/feed/<show>.xml`)
-
-**Score:** 5.5 (impact: 5, ease: 5, +2 multi, +1 cheap)
-**Source pass:** 1
-**Filed:** 2026-05-14
-**Source signals:**
-- `spec.md:281` — spec lists "RSS + newsletter" as phase 18, but
-  the build plan's phase 18 became "Performance + a11y polish"
-  (spec phase 17). RSS never landed; spec/plan drift.
-- Seed S4 — user-emptied seed for "Newsletter + RSS" with
-  trigger "when content velocity exceeds ~15 published canons +
-  5 themes." Current state: 13 shows, 12 themes, 8+ canons —
-  trigger is reached.
-- bearings Rules 1 + 3 quotas both cleared (phases 22 + 24
-  shipped 13 shows + 12 themes); regular readers now have
-  enough to subscribe to.
-
-**Why:** RSS is the lowest-friction return-reader channel and
-the only spec-promised feature still missing from the build
-plan. It's also a SEO signal — feed-discovery surfaces on
-aggregators that don't index regular HTML. The catalog is large
-enough that "new canon, new list, new season blurb" updates
-benefit from a stream. Scope is genuinely small (handwritten
-XML route; no SDK; no auth) and orthogonal to other surfaces.
-
-**Scope sketch:**
-- `app/feed.xml/route.ts` — global RSS 2.0: latest items across
-  shows / themed lists / canon revisions, sorted by file mtime
-  or a `published` frontmatter field.
-- `app/feed/[show]/route.ts` — per-show feed: that show's
-  seasons + canon updates only.
-- Add feed discovery `<link rel="alternate" type="application/rss+xml">`
-  to relevant page heads.
-- Sitemap entries for both feed routes.
-- e2e: fetch `/feed.xml`, assert content-type + RSS 2.0 root +
-  `<channel><item>` shape + `<link>` matches canonical URL.
-
-**Estimated phases:** 1.
-**Conflicts:** none. Spec-aligned; design has no opinion on
-feeds (no UI impact beyond the discovery `<link>`).
-
-### 02. Inline search takeover (replace `/search` route page)
-
-**Score:** 4.0 (impact: 6, ease: 5, +1 multi, -1 scope risk)
-**Source pass:** 1
-**Filed:** 2026-05-14
-**Source signals:**
-- Seed S7 — user direction 2026-05-13 ("Search needs to be
-  inline (or takeover) — not a new page"). Detailed scope
-  sketch already filed.
-- Design landing — phase 19b shipped the new chrome with a
-  `⌕ Search` icon in the header; the icon currently links to
-  the standalone `/search` route, which contradicts the user's
-  brief.
-- bearings "Content velocity & editorial cadence" — content
-  catalog now warrants frictionless cross-show search; route
-  navigation breaks the browsing flow.
-
-**Why:** The chrome already ships the search icon; the
-behavior behind it is the gap. A takeover is the lowest-cost,
-highest-coherence pattern with the new header — no route
-change, no page transition, results highlighted in place. The
-local index built in phase 15 (`src/lib/search.ts`) is reused
-as-is. Risk is mostly UI affordance (keyboard, ARIA combobox
-pattern, no-JS fallback) — manageable for one phase.
-
-**Scope sketch:**
-- New `<SearchTakeover>` in `src/components/chrome/`: panel
-  slides down under `<TopNav>`, ARIA combobox, `<input
-  type="search">` + grouped results.
-- Header `⌕ Search` becomes a button toggling the takeover (no
-  navigation).
-- Per-keystroke local search; `<mark>` highlights in result
-  titles + first blurb line.
-- Keyboard: ↑/↓ navigate, Enter activate, Esc close; click
-  outside closes.
-- `/search?q=…` deep-link opens takeover pre-populated;
-  `app/search/page.tsx` becomes the no-JS fallback.
-- e2e: open via icon, type → results, keyboard nav, deep-link.
-
-**Estimated phases:** 1.
-**Conflicts:** none. The standalone `/search` page survives as
-a fallback so the URL contract isn't broken.
-
 ### 03. Newsletter subscribe (Buttondown embed)
 
 **Score:** 3.0 (impact: 4, ease: 5, +1 multi, -1 vendor)
@@ -157,7 +73,100 @@ loop can pattern from.
 <!-- Same format with **Promoted in:** <oversight commit hash>
      and **Build-plan row:** <link to row in 01_build_plan.md> -->
 
-_(empty)_
+### 01. RSS feeds (`/feed.xml` + `/feed/<show>.xml`)
+
+**Score:** 5.5 (impact: 5, ease: 5, +2 multi, +1 cheap)
+**Source pass:** 1
+**Filed:** 2026-05-14
+**Source signals:**
+- `spec.md:281` — spec lists "RSS + newsletter" as phase 18, but
+  the build plan's phase 18 became "Performance + a11y polish"
+  (spec phase 17). RSS never landed; spec/plan drift.
+- Seed S4 — user-emptied seed for "Newsletter + RSS" with
+  trigger "when content velocity exceeds ~15 published canons +
+  5 themes." Current state: 13 shows, 12 themes, 8+ canons —
+  trigger is reached.
+- bearings Rules 1 + 3 quotas both cleared (phases 22 + 24
+  shipped 13 shows + 12 themes); regular readers now have
+  enough to subscribe to.
+
+**Why:** RSS is the lowest-friction return-reader channel and
+the only spec-promised feature still missing from the build
+plan. It's also a SEO signal — feed-discovery surfaces on
+aggregators that don't index regular HTML. The catalog is large
+enough that "new canon, new list, new season blurb" updates
+benefit from a stream. Scope is genuinely small (handwritten
+XML route; no SDK; no auth) and orthogonal to other surfaces.
+
+**Scope sketch:**
+- `app/feed.xml/route.ts` — global RSS 2.0: latest items across
+  shows / themed lists / canon revisions, sorted by file mtime
+  or a `published` frontmatter field.
+- `app/feed/[show]/route.ts` — per-show feed: that show's
+  seasons + canon updates only.
+- Add feed discovery `<link rel="alternate" type="application/rss+xml">`
+  to relevant page heads.
+- Sitemap entries for both feed routes.
+- e2e: fetch `/feed.xml`, assert content-type + RSS 2.0 root +
+  `<channel><item>` shape + `<link>` matches canonical URL.
+
+**Estimated phases:** 1.
+**Conflicts:** none. Spec-aligned; design has no opinion on
+feeds (no UI impact beyond the discovery `<link>`).
+**Promoted in:** oversight 2026-05-14 (queued behind phase 26 per user direction)
+**Build-plan row:** Phase 32 — RSS feeds (`01_build_plan.md`)
+
+### 02. Inline search takeover (replace `/search` route page)
+
+**Score:** 4.0 (impact: 6, ease: 5, +1 multi, -1 scope risk)
+**Source pass:** 1
+**Filed:** 2026-05-14
+**Status:** shipped before promotion — phase 29 (commit c4ed547,
+"feat: inline search overlay; retire /search — phase 29") landed
+the cmd+K overlay with filter chips + keyboard nav, retired the
+`/search` route as a 308, and reuses the phase 15 local index
+exactly as the candidate sketched. Recording here for audit
+trail; no new build-plan row needed.
+
+**Source signals:**
+- Seed S7 — user direction 2026-05-13 ("Search needs to be
+  inline (or takeover) — not a new page"). Detailed scope
+  sketch already filed.
+- Design landing — phase 19b shipped the new chrome with a
+  `⌕ Search` icon in the header; the icon currently links to
+  the standalone `/search` route, which contradicts the user's
+  brief.
+- bearings "Content velocity & editorial cadence" — content
+  catalog now warrants frictionless cross-show search; route
+  navigation breaks the browsing flow.
+
+**Scope sketch (as filed; matches what shipped):**
+- New `<SearchTakeover>` in `src/components/chrome/`: panel
+  slides down under `<TopNav>`, ARIA combobox, `<input
+  type="search">` + grouped results.
+- Header `⌕ Search` becomes a button toggling the takeover (no
+  navigation).
+- Per-keystroke local search; `<mark>` highlights in result
+  titles + first blurb line.
+- Keyboard: ↑/↓ navigate, Enter activate, Esc close; click
+  outside closes.
+- `/search?q=…` deep-link opens takeover pre-populated;
+  `app/search/page.tsx` becomes the no-JS fallback.
+- e2e: open via icon, type → results, keyboard nav, deep-link.
+
+**Promoted in:** oversight 2026-05-14 (retroactive — phase 29 already shipped the scope)
+**Build-plan row:** Phase 29 — Inline search overlay; retire `/search` (`01_build_plan.md` line 101)
+
+### S7. Inline / takeover search (seed) — superseded by candidate #02
+
+**Status:** shipped via phase 29 (commit c4ed547). Seed and
+candidate #02 describe the same scope; both moved here together
+so the audit trail is complete. The seed's accessibility
+contract (ARIA combobox, `aria-live="polite"`, Esc/click-out
+close, ↑/↓ navigation) matches what phase 29 e2e covers.
+
+**Promoted in:** oversight 2026-05-14 (retroactive)
+**Build-plan row:** Phase 29 — Inline search overlay; retire `/search` (`01_build_plan.md` line 101)
 
 ## Rejected
 
@@ -228,45 +237,4 @@ Analytics dashboard; surfaces top-N pages, drop-off points,
 404s; files audit rows for any URL with >5% bounce. Lightweight
 human-in-loop ritual.
 
-### S7. Inline / takeover search (replace the `/search` route page)
-
-**Trigger:** after phase 19b ships (search icon lives in the
-new header).
-**Source:** user direction 2026-05-13 — "Search needs to be
-inline (or takeover) — not a new page. you click the icon
-(thats in the style of "Show identity, tokens and
-compositions" from the design, the search expands and you can
-type right there. the index is local so we don't care that we
-are hitting the service per keystroke. highlight the content
-that comes up with the keystroke (if we can)."
-
-**Scope sketch:**
-
-- Click `⌕ Search` in the header → an inline takeover slides
-  down from under the topnav. No route change.
-- The takeover holds a single `<input type="search">` + a
-  results list below.
-- Per-keystroke query against the local index built in phase
-  15 (`src/lib/search.ts`). Fast — no Supabase round-trip for
-  the index, since the index is content-only and built at
-  request-time from the content loader.
-- Highlight matching substrings in the results titles + first
-  blurb line (use `<mark>` spans).
-- Results group by kind: shows, seasons, themed lists.
-- Escape closes the takeover. Click outside also closes.
-- Keyboard: ↑/↓ navigates results; Enter activates the
-  highlighted result.
-- `/search?q=…` deep-link remains valid and opens the
-  takeover pre-populated. The standalone `/search` page can
-  redirect to `/?search=…` or simply continue to live as a
-  fallback for users without JS.
-- Accessibility: ARIA combobox pattern; results have
-  `aria-live="polite"`.
-
-Phase work: rewire `<Header>` (19b ships the icon link as a
-stub) so the icon toggles a `<SearchTakeover>` rather than
-navigating; create `<SearchTakeover>` under
-`src/components/chrome/`; deprecate `src/app/search/page.tsx`
-or render it as the no-JS fallback.
-
-**Filed:** 2026-05-13. Awaiting `/oversight` promotion.
+_(S7 promoted retroactively — see ## Promoted above. Phase 29 (c4ed547) shipped the scope.)_
