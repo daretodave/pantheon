@@ -5,6 +5,7 @@ export type RouteEntry = {
   path: string
   show?: string
   season?: number
+  seasonSlug?: string
   theme?: string
 }
 
@@ -34,10 +35,11 @@ export function getAllRoutes(): RouteEntry[] {
     })
     for (const season of getAllSeasons(show.slug)) {
       out.push({
-        pattern: '/shows/[show]/season/[n]',
-        path: `/shows/${show.slug}/season/${season.number}`,
+        pattern: '/shows/[show]/season/[slug]',
+        path: `/shows/${show.slug}/season/${season.slug}`,
         show: show.slug,
         season: season.number,
+        seasonSlug: season.slug,
       })
     }
   }

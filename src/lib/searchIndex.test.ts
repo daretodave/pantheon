@@ -122,7 +122,7 @@ entries:
     const seasons = getSearchIndex().filter((i) => i.type === 'season')
     const heroes = seasons.find((s) => s.name === 'Heroes vs. Villains')
     expect(heroes?.meta).toBe('Survivor · season 20')
-    expect(heroes?.href).toBe('/shows/survivor/season/20')
+    expect(heroes?.href).toBe('/shows/survivor/season/heroes-vs-villains')
     expect(heroes?.tier).toBe('S')
   })
 

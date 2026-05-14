@@ -19,6 +19,7 @@ export type CanonicalUrl = {
   path: string
   show?: string
   season?: number
+  seasonSlug?: string
   theme?: string
   seasonsCount?: number
 }
@@ -30,19 +31,26 @@ function listDir(dir: string): string[] {
     .map((e) => e.name.replace(/\.md$/, ''))
 }
 
-function listSeasons(showSlug: string): number[] {
+type SeasonRow = { number: number; slug: string }
+
+// 31a: walk every season filename in the show's seasons/ directory
+// matching the `NN-<slug>.md` convention; both the number and the
+// slug travel through so the smoke walker hits the slug-form URL
+// (canonical) and the redirect fixture hits the digit-form (legacy).
+function listSeasons(showSlug: string): SeasonRow[] {
   const dir = resolve(SHOWS_DIR, showSlug, 'seasons')
   if (!existsSync(dir)) return []
-  const numbers: number[] = []
+  const rows: SeasonRow[] = []
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (!entry.isFile()) continue
     if (!entry.name.endsWith('.md')) continue
-    const match = entry.name.match(/^(\d+)/)
+    const match = entry.name.match(/^(\d+)-(.+)\.md$/)
     if (!match) continue
     const n = Number.parseInt(match[1] ?? '', 10)
-    if (Number.isFinite(n)) numbers.push(n)
+    const slug = match[2] ?? ''
+    if (Number.isFinite(n) && slug.length > 0) rows.push({ number: n, slug })
   }
-  return numbers.sort((a, b) => a - b)
+  return rows.sort((a, b) => a.number - b.number)
 }
 
 function build(): CanonicalUrl[] {
@@ -58,7 +66,7 @@ function build(): CanonicalUrl[] {
   ]
 
   for (const showSlug of listDir(SHOWS_DIR)) {
-    const seasonNumbers = listSeasons(showSlug)
+    const seasonRows = listSeasons(showSlug)
     out.push({ pattern: '/shows/[show]', path: `/shows/${showSlug}`, show: showSlug })
     out.push({
       pattern: '/shows/[show]/canon',
@@ -69,14 +77,15 @@ function build(): CanonicalUrl[] {
       pattern: '/shows/[show]/community',
       path: `/shows/${showSlug}/community`,
       show: showSlug,
-      seasonsCount: seasonNumbers.length,
+      seasonsCount: seasonRows.length,
     })
-    for (const n of seasonNumbers) {
+    for (const row of seasonRows) {
       out.push({
-        pattern: '/shows/[show]/season/[n]',
-        path: `/shows/${showSlug}/season/${n}`,
+        pattern: '/shows/[show]/season/[slug]',
+        path: `/shows/${showSlug}/season/${row.slug}`,
         show: showSlug,
-        season: n,
+        season: row.number,
+        seasonSlug: row.slug,
       })
     }
   }

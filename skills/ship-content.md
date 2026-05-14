@@ -39,6 +39,44 @@ Called from:
   is `category: content-gaps`)
 - Direct user invocation when biasing toward content velocity
 
+## 2.5 Canon discipline (31a)
+
+The **always-working rule:** every show with one or more
+seeded seasons should ALWAYS carry a `canon.md` ranking those
+seasons. A new show ships with at least one season AND a
+`canon.md` placing that season at #1 in the same commit. A
+season backfill batch updates `canon.md` to slot every new
+season at its correct rank, shifts the surrounding entries by
+±1, and rewrites every shifted season's `canonical_position`
+to match. The lax-mode invariant in `scripts/content-check.ts`
+fails on conflict (mismatched ranks, dangling refs, duplicate
+slugs); the strict-mode flip at the end of 31b makes the
+canon-presence requirement binding.
+
+The **filename-as-slug** convention: every season file is
+named `NN-<slug>.md` (e.g. `04-marquesas.md`). The `<slug>`
+suffix becomes the canonical URL slug — the site routes every
+season at `/shows/<show>/season/<slug>`, and a digit-form URL
+(`/season/4`) 308s to the slug form. Slugs are kebab-case
+ASCII; transliterate accents (`kaoh-rong`, not `kaôh-rōng`).
+Rename the file when you'd rename the URL — the override
+field on the schema is reserved for cases where renaming
+would break a legacy URL already in the wild.
+
+Pre-flight checklist before committing a content tick:
+
+```
+[ ] every new/updated season has canonical_position set
+[ ] every new/updated season's canonical_position matches its
+    canon entry's rank (or the canon was updated to match)
+[ ] canon.md was opened, the new season was inserted at the
+    editorially-correct slot, and surrounding ranks shifted
+[ ] every season filename is `NN-<slug>.md` with kebab-case
+    ASCII slug; no spaces, no unicode
+[ ] pnpm content:check passes (slug uniqueness + canon-rank
+    sync; lax mode tolerates absence of canon)
+```
+
 ## 3. Autonomy contract
 
 - **Empty queue → exit cleanly.** Log "no content queue" and
@@ -48,15 +86,25 @@ Called from:
 - **Show coverage gap (Rule 1) → ship one full show per tick.**
   Show metadata (twelve fields per `CLAUDE.md` — seven core +
   the editorial block `tier` / `network` / `est_year` /
-  `genre_tag` / `featured`) + initial canon stub + 3 seed
-  season blurbs. ~5-7 files in one commit. New shows default
-  `tier: B`, `featured: false`; promotion to A happens inline
-  with phase 26 when canon + season coverage clears the floor.
-  **No facade work** — the visual identity is color + typography
-  + the shared brand mark; per-show illustration is prohibited.
+  `genre_tag` / `featured`) + a populated `canon.md` ranking
+  every seeded season + the seeded season blurbs themselves.
+  31a's always-working rule: the new show ships with at least
+  one season AND a `canon.md` placing that season at #1 with a
+  full 80-120 word rationale, all in the same commit. ~5-7
+  files in one commit. New shows default `tier: B`,
+  `featured: false`; promotion to A happens inline with phase
+  26 when canon + season coverage clears the floor. **No
+  facade work** — the visual identity is color + typography +
+  the shared brand mark; per-show illustration is prohibited.
 - **Canon completeness (Rule 2) → ship a batch of 3-5 season
   blurbs.** Amortize the show context lookup across multiple
-  blurbs in one tick.
+  blurbs in one tick. **Per 31a's canon discipline:** every
+  blurbed season gets `canonical_position` filled at the rank
+  it deserves, and the show's `canon.md` is opened in the
+  same commit to insert each new season at the
+  editorially-correct slot — surrounding ranks shift, every
+  shifted season's `canonical_position` is rewritten to
+  match. The pre-flight check (§2.5) gates the commit.
 - **Themed list (Rule 3) → ship one themed list per tick** at
   the 19f schema — `title`, `description`, `tagline`,
   `category` (one of `tone` / `craft` / `era` / `single`),
@@ -149,13 +197,17 @@ Both run concurrently; their inputs are independent.
 **`content-curator` brief** (twelve-field contract per
 `CLAUDE.md`):
 
-- Target paths — frontmatter file is the minimum unit:
+- Target paths — Rule 1 ships these together (always-working
+  rule, 31a):
   - `content/shows/<slug>.md` (required)
-  - `content/shows/<slug>/canon.md` (optional — defer to a
-    Rule 2 canon-completion tick when the show has enough
-    season backfill to rank)
-  - `content/shows/<slug>/seasons/NN-<title>.md` (optional —
-    season blurbs drain through Rule 2)
+  - `content/shows/<slug>/canon.md` (REQUIRED — even a
+    single-entry canon ranking the seeded season at #1, with
+    a full 80-120 word rationale)
+  - `content/shows/<slug>/seasons/NN-<slug>.md` (REQUIRED —
+    at least one seeded season, filename `NN-<slug>.md`
+    where `<slug>` is kebab-case ASCII; the slug becomes the
+    canonical URL — see §2.5 filename convention).
+    `canonical_position` filled to match the canon rank.
 - Frontmatter fields, **exactly twelve**, no more:
   - `slug` (lowercase kebab-case)
   - `name` (display name)
@@ -230,10 +282,12 @@ After the curator returns, confirm:
   - `watch_list` of 3-6 items is the single highest-value
     editorial addition — 1-2 sentence pointers at moments worth
     attention. Spoiler discipline P0: pointers, not outcomes.
-- Update `content/shows/<slug>/canon.md` to include each
-  newly-blurbed season's `canonical_position` when the canon
-  exists; the cloud loop ranks separately once season coverage
-  is in place (phase 26 long-truck workflow).
+- Update `content/shows/<slug>/canon.md` IN THE SAME COMMIT —
+  insert each new season at the editorially-correct rank, shift
+  the surrounding entries by ±1, and rewrite every shifted
+  season's `canonical_position` so the lax-mode content-check
+  passes. The 31a canon discipline (§2.5) is binding for every
+  Rule 2 batch from this phase forward.
 
 **No `brander` for canon completion.** Per-show illustration
 is prohibited; the show's palette + the shared brand mark are
@@ -403,7 +457,7 @@ content/themes/                               # existing themes
 # Write
 content/shows/<slug>.md                       # via content-curator (Rule 1)
 content/shows/<slug>/canon.md                 # via content-curator (Rule 2)
-content/shows/<slug>/seasons/NN-<title>.md    # via content-curator (Rule 2)
+content/shows/<slug>/seasons/NN-<slug>.md     # via content-curator (Rule 2) — filename slug = URL slug
 content/themes/<slug>.md                      # via content-curator (Rule 3)
 plan/AUDIT.md                                 # tick the addressed row
 

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getCanon, getSeason, getShow } from '@/content'
+import { getCanon, getSeasonBySlug, getShow } from '@/content'
 import { buildOgImage } from '@/lib/og/template'
 
 export const runtime = 'nodejs'
@@ -7,7 +7,7 @@ export const alt = 'tiered.tv — the seasons, ranked. no spoilers.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-type Params = { show: string; n: string }
+type Params = { show: string; slug: string }
 
 function padRank(n: number | null | undefined): string {
   if (n == null) return ''
@@ -19,14 +19,13 @@ export default async function OpenGraphImage({
 }: {
   params: Promise<Params>
 }) {
-  const { show: slug, n } = await params
-  const num = Number.parseInt(n, 10)
-  const show = getShow(slug)
-  if (!show || !Number.isFinite(num)) notFound()
-  const season = getSeason(slug, num)
+  const { show: showSlug, slug: seasonSlug } = await params
+  const show = getShow(showSlug)
+  if (!show) notFound()
+  const season = getSeasonBySlug(showSlug, seasonSlug)
   if (!season) notFound()
 
-  const canonFile = getCanon(slug)
+  const canonFile = getCanon(showSlug)
   const canonHit = canonFile?.entries.find((e) => e.season === season.number)
   const canonRank = canonHit?.rank ?? season.canonical_position ?? null
   const eyebrow = canonRank

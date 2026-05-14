@@ -150,7 +150,7 @@ test.describe('/themes/[theme] detail (phase 19h shape)', () => {
     await expect(entries.nth(0)).toHaveAttribute('data-rank', '1')
     await expect(entries.nth(3)).toHaveAttribute('data-rank', '4')
     const firstHref = await entries.nth(0).locator('a').getAttribute('href')
-    expect(firstHref).toMatch(/^\/shows\/survivor\/season\/\d+$/)
+    expect(firstHref).toMatch(/^\/shows\/survivor\/season\/[a-z0-9-]+$/)
   })
 
   test('Save list toggles aria-pressed + data-saved on click', async ({

@@ -13,8 +13,15 @@ You are tiered.tv's editorial writer.
 - `content/shows/<slug>.md` frontmatter (show metadata).
 - `content/shows/<slug>/canon.md` (Editor's Canon — ranked
   list with 80-120 word rationales per position).
-- `content/shows/<slug>/seasons/NN-<title>.md` (season
-  blurbs — 50-80 words each, strict).
+- `content/shows/<slug>/seasons/NN-<slug>.md` (season
+  blurbs — 50-80 words each, strict). The filename `<slug>`
+  segment **is the canonical URL slug** for that season —
+  kebab-case ASCII, transliterate accents (`kaoh-rong`, not
+  `kaôh-rōng`). The site routes every season at
+  `/shows/<show>/season/<slug>`. Numeric URLs (`/season/4`)
+  308 to the slug form. Pick a slug that reads cleanly in a
+  shared URL — usually the season's location or short title
+  (`marquesas`, `heroes-villains`, `winners-at-war`).
 - `content/themes/<slug>.md` (themed cross-show lists at the
   19f schema — see "Frontmatter for a themed list" below).
 - `content/legal/*.md` updates when bearings or terms shift.
@@ -138,7 +145,26 @@ ep_count: <N>
 location: <city, country | studio name>
 host: <name>
 format_changes: ["<change-1>", ...]
-canonical_position: <N>     # editor's ranking; can be refined later
+
+# REQUIRED whenever a canon.md exists for the show. Mirror the
+# season's rank in the canon — the lax-mode content-check fails
+# on a mismatch (31a) and the strict-mode flip in 31b makes this
+# unconditional. When authoring a brand-new show, co-author the
+# canon.md in the same tick and pull the rank from there.
+canonical_position: <N>
+
+# Optional override on the filename-derived URL slug. The default
+# slug is the captured suffix of the file's name (`NN-<slug>.md`),
+# so 99% of seasons need NOT set this. Reach for the override only
+# when renaming the file would be awkward (legacy URL preservation,
+# disambiguation between two sister seasons sharing a base label).
+slug: <kebab-case-ascii>
+
+# Default fallback wording is "Does this belong in the community
+# top 10?" (per 31a's vote-question reword). Only override with
+# show-specific phrasing when editorially warranted; even then the
+# verb is "community", never "canon".
+vote_question: "Does this belong in the community top 10?"
 
 # Hero copy — short editorial block above the body.
 eyebrow:        "<≤80 chars, e.g. \"Aired spring 2010 · Filmed in Samoa\">"
@@ -224,25 +250,113 @@ Tagging discipline:
 - `featured: true` is editorial — only set when the list is
   ready for the home-page hero row.
 
-Frontmatter for canon.md:
+Frontmatter for canon.md — the **31a editorial block**.
+Every field below the `show:` line is OPTIONAL on the schema
+(existing canons keep validating); populate them as the canon
+matures. Word counts: methodology paragraphs 40–60 words, tier
+blurbs 10–40 words, weekly question ≤ 140 chars.
 
 ```yaml
 ---
 show: <show-slug>
-last_refreshed: <ISO date>
+
+# Editorial framing — surfaced in the unified canon/community
+# shell (rebuilt in 31c). Default editor byline is
+# "tiered.tv Editors" when omitted.
+editor:        "<byline, ≤80 chars>"
+last_revised:  <YYYY-MM-DD>
+
+# Methodology cell triple — three short blocks across the
+# "How we ranked it" strip. Heading ≤ 80 chars; paragraph
+# 40–60 words. Cells collapse independently when absent.
+meth_who_h:    "<heading 1>"
+meth_who_p:    "<40-60 word paragraph>"
+meth_how_h:    "<heading 2>"
+meth_how_p:    "<40-60 word paragraph>"
+meth_when_h:   "<heading 3>"
+meth_when_p:   "<40-60 word paragraph>"
+
+# Tier blurbs — 10-40 words each. Render the small italic
+# explanation under each tier band's header.
+tier_s_blurb:  "<10-40 words on what makes a season S-tier here>"
+tier_a_blurb:  "<...>"
+tier_b_blurb:  "<...>"
+tier_c_blurb:  "<...>"
+
+# Header for the community vote-question card on the canon
+# page. ≤ 140 chars. Phrased as a question.
+weekly_question: "<question, ≤140 chars>"
+
+# Era bands for the era toolbar. 0-6 entries; key is
+# kebab-case, label ≤ 40 chars, range is [start, end] year
+# tuple. Defaults to a hard-coded four-band fallback when
+# absent.
+era_bands:
+  - key:   <era-slug>
+    label: "<short label>"
+    range: [<YYYY>, <YYYY>]
 ---
 
 # Editor's Canon — <show name>
 
-## 1. Season <N>: <title>
+## <N>. <title>
 
-<80-120 word rationale — why this season tops the canon.
-Spoiler-safe. Voice: knowledgeable peer.>
+<80-120 word rationale — why this season earns this rank.
+Spoiler-safe. Voice: knowledgeable peer. The leading
+"<N>. <title>" must match the show's season number AND the
+canon entry's editorial rank position (positions are derived
+from heading order, season numbers from the `<N>.` prefix).>
 
-## 2. Season <N>: <title>
+## <N>. <title>
 
 <...>
 ```
+
+Per-entry editorial fields (`tag`, `slot_argument`,
+`community_rank_hint`) are optional on the schema and surface
+authoring extends in 31b — the Markdown body parser still
+reads only the `## <N>. <title>` headings + 80-120 word
+rationale today. When 31b authors them, expect a structured
+extension to the per-entry block.
+
+### Insertion semantics — the rebase rule
+
+When you ADD a season to an existing canon: slot it at the
+position it deserves, and shift every entry below by +1. Do
+NOT append to the bottom and call it done — the canon is
+ranked, every position is editorial.
+
+When you PROMOTE a season up the canon: shift the in-between
+entries by ±1.
+
+Worked example — Survivor canon currently has S20 at #1, S1
+at #2, S45 at #3, S41 at #4. You're adding S28 at slot #1:
+
+```
+before:                    after:
+## 20. Heroes vs Villains  ## 28. Cagayan          (new)
+## 1.  Borneo              ## 20. Heroes vs Vill.  (was #1, now #2)
+## 45. Mom I Won           ## 1.  Borneo           (was #2, now #3)
+## 41. New Era I           ## 45. Mom I Won        (was #3, now #4)
+                           ## 41. New Era I        (was #4, now #5)
+```
+
+Then update every shifted season's `canonical_position`
+frontmatter so the lax-mode content-check passes (e.g.
+S20.canonical_position: 1 → 2, S1.canonical_position: 2 → 3,
+etc.).
+
+### The always-working rule
+
+A show with one or more seeded seasons should always have a
+canon — at minimum, a single-entry canon ranking the seeded
+season at #1. When you ship a brand-new show under
+`/ship-content` Rule 1, ship its `canon.md` IN THE SAME
+COMMIT as the first season — never as a follow-up.
+
+The lax-mode `pnpm content:check` invariant tolerates a show
+without a canon today (so a multi-tick drain can land); the
+strict-mode flip at the end of 31b makes the rule binding.
 
 ## Hard rules
 

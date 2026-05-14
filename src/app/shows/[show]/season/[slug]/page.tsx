@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import {
   getAllSeasons,
   getAllShows,
   getAllThemes,
   getCanon,
   getSeason,
+  getSeasonBySlug,
   getShow,
 } from '@/content'
 import type { Season, Show, Theme } from '@/content'
@@ -33,13 +34,13 @@ import { Bullet } from '@/components/atoms/Bullet'
 import { auth0 } from '@/lib/auth0'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
 
-type Params = { show: string; n: string }
+type Params = { show: string; slug: string }
 
 export function generateStaticParams(): Params[] {
   const out: Params[] = []
   for (const show of getAllShows()) {
     for (const season of getAllSeasons(show.slug)) {
-      out.push({ show: show.slug, n: String(season.number) })
+      out.push({ show: show.slug, slug: season.slug })
     }
   }
   return out
@@ -51,24 +52,23 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     return buildMetadata({
       title: 'Season',
       description: '',
-      path: `/shows/${params.show}/season/${params.n}`,
+      path: `/shows/${params.show}/season/${params.slug}`,
       noIndex: true,
     })
   }
-  const num = Number.parseInt(params.n, 10)
-  const season = Number.isFinite(num) ? getSeason(show.slug, num) : null
+  const season = getSeasonBySlug(show.slug, params.slug)
   if (!season) {
     return buildMetadata({
-      title: `${show.name} S${params.n}`,
+      title: `${show.name} season`,
       description: '',
-      path: `/shows/${show.slug}/season/${params.n}`,
+      path: `/shows/${show.slug}/season/${params.slug}`,
       noIndex: true,
     })
   }
   return buildMetadata({
     title: `${show.name} S${season.number} — ${season.title}`,
     description: `Vote and discuss ${show.name} season ${season.number}: ${season.title}.`,
-    path: `/shows/${show.slug}/season/${season.number}`,
+    path: `/shows/${show.slug}/season/${season.slug}`,
   })
 }
 
@@ -139,7 +139,7 @@ function adjacentByCanon(
   const toSide = (s: Season | undefined | null): AdjacentSide | null => {
     if (!s) return null
     return {
-      href: `/shows/${show.slug}/season/${s.number}`,
+      href: `/shows/${show.slug}/season/${s.slug}`,
       rank: s.canonical_position ?? null,
       title: s.title,
       caption: s.tag,
@@ -208,12 +208,27 @@ function whereItSitsCopy(
   return `Slot #${pad2(canonRank)} of ${canonTotal} in the ${show.name} Editor's Canon. The neighbors below frame what we ranked above and below it.`
 }
 
+// 31a: digit-form back-compat. URLs like `/shows/survivor/season/4`
+// resolve the season by number and 308 to its canonical slug form.
+// Decided to do this in the page instead of middleware so the
+// resolver can use the existing content loaders without forcing
+// the middleware onto an experimental Node.js runtime — the
+// user-visible behavior (`/season/4` → `/season/marquesas`) is
+// identical, and Next.js's permanentRedirect emits a 308.
+const DIGIT_PARAM_RE = /^\d+$/
+
 export default async function SeasonPage({ params }: { params: Params }) {
   const show = getShow(params.show)
   if (!show) notFound()
-  const num = Number.parseInt(params.n, 10)
-  if (!Number.isFinite(num)) notFound()
-  const season = getSeason(show.slug, num)
+  if (DIGIT_PARAM_RE.test(params.slug)) {
+    const n = Number.parseInt(params.slug, 10)
+    const bySeason = getSeason(show.slug, n)
+    if (bySeason) {
+      permanentRedirect(`/shows/${show.slug}/season/${bySeason.slug}`)
+    }
+    notFound()
+  }
+  const season = getSeasonBySlug(show.slug, params.slug)
   if (!season) notFound()
 
   const session = await auth0.getSession().catch(() => null)
@@ -230,7 +245,7 @@ export default async function SeasonPage({ params }: { params: Params }) {
     type: 'Article',
     headline: `${show.name} S${season.number} — ${season.title}`,
     description: (season.lede ?? season.blurb_md).slice(0, 200),
-    path: `/shows/${show.slug}/season/${season.number}`,
+    path: `/shows/${show.slug}/season/${season.slug}`,
     author: 'tiered.tv Editors',
     ...(season.premiere_date ? { datePublished: season.premiere_date } : {}),
   })
@@ -239,7 +254,7 @@ export default async function SeasonPage({ params }: { params: Params }) {
     trail: [
       { name: 'Tiers', path: '/shows' },
       { name: show.name, path: `/shows/${show.slug}` },
-      { name: `Season ${season.number}`, path: `/shows/${show.slug}/season/${season.number}` },
+      { name: `Season ${season.number}`, path: `/shows/${show.slug}/season/${season.slug}` },
     ],
   })
 
@@ -402,7 +417,7 @@ export default async function SeasonPage({ params }: { params: Params }) {
                   />
                 ) : (
                   <CommentInputStub
-                    signInHref={`/sign-in?return=/shows/${show.slug}/season/${season.number}`}
+                    signInHref={`/sign-in?return=/shows/${show.slug}/season/${season.slug}`}
                   />
                 )
               }

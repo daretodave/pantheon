@@ -146,11 +146,12 @@ describe('parseShowFile', () => {
 })
 
 describe('parseSeasonFile', () => {
-  it('returns frontmatter + blurb_md', () => {
-    const season = parseSeasonFile(borneoSeason, 'borneo.md')
+  it('returns frontmatter + blurb_md, slug derived from filename', () => {
+    const season = parseSeasonFile(borneoSeason, '01-borneo.md', 'borneo')
     expect(season.show).toBe('survivor')
     expect(season.number).toBe(1)
     expect(season.title).toBe('Borneo')
+    expect(season.slug).toBe('borneo')
     expect(season.premiere_date).toBe('2000-05-31')
     expect(season.location).toBe('Pulau Tiga, Malaysia')
     expect(season.blurb_md).toContain('w0')
@@ -158,7 +159,25 @@ describe('parseSeasonFile', () => {
 
   it('rejects a too-short blurb', () => {
     const bad = borneoSeason.replace(sixtyWords, 'too short')
-    expect(() => parseSeasonFile(bad, 'borneo.md')).toThrow(/50.*80/)
+    expect(() => parseSeasonFile(bad, '01-borneo.md', 'borneo')).toThrow(/50.*80/)
+  })
+
+  it('frontmatter slug overrides filename derivation', () => {
+    const withOverride = `---
+show: survivor
+number: 1
+title: Borneo
+slug: castaway-prime
+---
+
+${sixtyWords}
+`
+    const season = parseSeasonFile(withOverride, '01-borneo.md', 'borneo')
+    expect(season.slug).toBe('castaway-prime')
+  })
+
+  it('throws when no derived slug and no frontmatter slug present', () => {
+    expect(() => parseSeasonFile(borneoSeason, 'orphan.md')).toThrow()
   })
 })
 

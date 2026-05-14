@@ -10,7 +10,7 @@ const DESKTOP_PAGES = [
   '/shows',
   '/shows/survivor',
   '/shows/survivor/canon',
-  '/shows/survivor/season/1',
+  '/shows/survivor/season/borneo',
   '/themes',
   '/about',
 ] as const
@@ -18,7 +18,7 @@ const DESKTOP_PAGES = [
 const MOBILE_PAGES = [
   '/',
   '/shows/survivor',
-  '/shows/survivor/season/1',
+  '/shows/survivor/season/borneo',
 ] as const
 
 const MOBILE_VIEWPORT = { width: 375, height: 800 } as const

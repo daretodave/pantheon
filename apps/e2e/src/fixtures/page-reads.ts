@@ -77,7 +77,7 @@ export const pageReads: Record<string, PageReadAssertion> = {
     expectH1Pattern: /Community Rank/i,
     expectJsonLdType: 'ItemList',
   },
-  '/shows/[show]/season/[n]': {
+  '/shows/[show]/season/[slug]': {
     expectVisible: [
       '[data-testid=season-page-screen]',
       '[data-testid=season-hero]',

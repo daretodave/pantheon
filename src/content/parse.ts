@@ -82,10 +82,20 @@ export function parseShowFile(raw: string, file: string): Show {
   return validate(showSchema, merged, file, 'show')
 }
 
-export function parseSeasonFile(raw: string, file: string): Season {
+export function parseSeasonFile(
+  raw: string,
+  file: string,
+  derivedSlug?: string,
+): Season {
   const { data, content } = readFrontmatter(raw)
   const body = content.trim()
-  const merged = { ...data, blurb_md: body }
+  // 31a: pre-fill `slug` from the filename so the loader's
+  // `NN-<slug>.md` convention drives the canonical URL. A
+  // frontmatter `slug:` value spreads after and wins as the
+  // optional override.
+  const merged = derivedSlug
+    ? { slug: derivedSlug, ...data, blurb_md: body }
+    : { ...data, blurb_md: body }
   return validate(seasonSchema, merged, file, 'season')
 }
 

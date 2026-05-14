@@ -5,6 +5,11 @@ import { Bullet } from '@/components/atoms/Bullet'
 type ListEntryStackProps = {
   theme: Theme
   showsBySlug: Map<string, Show>
+  // 31a: `<show>:<season-number>` → season slug. The list-detail
+  // page builds this from the loader; absent entries fall through
+  // to the digit form, which the season-page 308s to the canonical
+  // slug. Optional so existing unit-test fixtures keep working.
+  seasonSlugByKey?: Map<string, string>
 }
 
 function defaultShowName(slug: string): string {
@@ -16,7 +21,7 @@ function defaultSeasonLabel(entry: ThemeEntry): string {
   return `S${n}`
 }
 
-export function ListEntryStack({ theme, showsBySlug }: ListEntryStackProps) {
+export function ListEntryStack({ theme, showsBySlug, seasonSlugByKey }: ListEntryStackProps) {
   const ordered = [...theme.entries].sort((a, b) => a.rank - b.rank)
   const count = ordered.length
 
@@ -33,7 +38,10 @@ export function ListEntryStack({ theme, showsBySlug }: ListEntryStackProps) {
           const bulletColor = show?.palette.primary ?? 'var(--color-ink-3)'
           const seasonLabel = entry.season_label ?? defaultSeasonLabel(entry)
           const rankStr = `#${String(entry.rank).padStart(2, '0')}`
-          const href = `/shows/${entry.show}/season/${entry.season}`
+          const slug = seasonSlugByKey?.get(`${entry.show}:${entry.season}`)
+          const href = slug
+            ? `/shows/${entry.show}/season/${slug}`
+            : `/shows/${entry.show}/season/${entry.season}`
 
           return (
             <li

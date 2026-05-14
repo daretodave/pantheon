@@ -51,7 +51,7 @@ export default function CommunityPage({ params }: { params: Params }) {
         ? result.entries.map((entry) => ({
             position: entry.rank,
             name: entry.season.title,
-            path: `/shows/${show.slug}/season/${entry.season.number}`,
+            path: `/shows/${show.slug}/season/${entry.season.slug}`,
           }))
         : [
             {
@@ -111,7 +111,7 @@ export default function CommunityPage({ params }: { params: Params }) {
                   title={entry.season.title}
                   tag={entry.tag}
                   seasonNumber={entry.season.number}
-                  href={`/shows/${show.slug}/season/${entry.season.number}`}
+                  href={`/shows/${show.slug}/season/${entry.season.slug}`}
                 />
               ))}
             </SeasonGrid>

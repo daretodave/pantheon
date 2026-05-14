@@ -24,7 +24,7 @@ const ROUTES = [
   '/shows/survivor',
   '/shows/top-chef',
   '/shows/dragrace',
-  '/shows/survivor/season/1',
+  '/shows/survivor/season/borneo',
 ]
 
 for (const path of ROUTES) {

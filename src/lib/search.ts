@@ -149,7 +149,7 @@ function scoreSeason(season: Season, queryTokens: Set<string>): SearchHit | null
     show: season.show,
     number: season.number,
     title: season.title,
-    href: `/shows/${season.show}/season/${season.number}`,
+    href: `/shows/${season.show}/season/${season.slug}`,
     snippet,
     score,
   }

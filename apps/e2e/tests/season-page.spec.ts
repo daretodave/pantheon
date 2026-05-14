@@ -7,12 +7,12 @@ import { canonicalUrls } from '../src/fixtures/canonical-urls'
 // (display_title accent, 6-tile stats strip, episode-rhythm bar,
 // 4-card watch list).
 
-const seasonUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/season/[n]')
+const seasonUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/season/[slug]')
 
 for (const url of seasonUrls) {
   const slug = url.show ?? ''
-  const num = url.season ?? 0
-  test.describe(`season page: /shows/${slug}/season/${num}`, () => {
+  const seasonSlug = url.seasonSlug ?? ''
+  test.describe(`season page: /shows/${slug}/season/${seasonSlug}`, () => {
     test('renders hero + info card + body grid + thread', async ({ page }) => {
       const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
       expect(response?.status()).toBe(200)
@@ -54,7 +54,7 @@ for (const url of seasonUrls) {
 }
 
 test.describe('survivor S20 — gold-standard reference', () => {
-  const path = '/shows/survivor/season/20'
+  const path = '/shows/survivor/season/heroes-villains'
 
   test('renders display_title accent, 6-tile stats, ep-strip, watch-list', async ({ page }) => {
     const response = await page.goto(path, { waitUntil: 'domcontentloaded' })
@@ -84,7 +84,7 @@ test.describe('survivor S20 — gold-standard reference', () => {
 })
 
 test.describe('survivor S1 — graceful collapse without deep editorial', () => {
-  const path = '/shows/survivor/season/1'
+  const path = '/shows/survivor/season/borneo'
 
   test('renders cleanly without watch-list or ep-strip', async ({ page }) => {
     const response = await page.goto(path, { waitUntil: 'domcontentloaded' })
@@ -106,8 +106,8 @@ test.describe('mobile @ 375px viewport', () => {
 
   for (const url of seasonUrls) {
     const slug = url.show ?? ''
-    const num = url.season ?? 0
-    test(`season page mobile reflow: /shows/${slug}/season/${num}`, async ({ page }) => {
+    const seasonSlug = url.seasonSlug ?? ''
+    test(`season page mobile reflow: /shows/${slug}/season/${seasonSlug}`, async ({ page }) => {
       const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
       expect(response?.status()).toBe(200)
 

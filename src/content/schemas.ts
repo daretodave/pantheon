@@ -102,6 +102,12 @@ export type WatchListItem = z.infer<typeof watchListItemSchema>
 export const seasonFrontmatterSchema = z.object({
   show: slug,
   number: z.number().int().positive(),
+  // 31a: every season carries a slug — the loader pre-fills it from
+  // the filename (`NN-<slug>.md`) before this schema validates. A
+  // frontmatter `slug:` value overrides the filename derivation only
+  // when a curator needs a different rendered URL than the file
+  // would imply (rare; reserved for awkward renames).
+  slug,
   title: z.string().min(1),
   // Rich-display variant of `title` — limited HTML, optional. See
   // `displayTitleHtml` above.
@@ -264,17 +270,83 @@ const rationaleBody = z
     return wc >= 80 && wc <= 120
   }, { message: 'canon rationale must be 80–120 words' })
 
+// 31a: optional editorial hint authored alongside a canon entry so
+// the page can render a community-rank pill even before live vote
+// signal wires in. Replaced by the live signal once enough votes
+// land.
+export const communityRankHintSchema = z.object({
+  rank: z.number().int().positive(),
+  delta: z.number().int(),
+  sentiment: z.enum(['up', 'down', 'hold']),
+})
+
+export type CommunityRankHint = z.infer<typeof communityRankHintSchema>
+
 export const canonEntrySchema = z.object({
   rank: z.number().int().positive(),
   season: z.number().int().positive(),
   title: z.string().min(1),
   rationale: rationaleBody,
+  // 31a: optional editorial fields surfaced by the unified
+  // canon/community shell that 31c will rebuild. Renderers collapse
+  // each surface when absent.
+  tag: z.string().min(1).max(120).optional(),
+  slot_argument: z.string().min(1).max(240).optional(),
+  community_rank_hint: communityRankHintSchema.optional(),
 })
 
 export type CanonEntry = z.infer<typeof canonEntrySchema>
 
+// 31a: methodology cell — three of these stack across the canon
+// page's "How we ranked it" strip. Cells are independently
+// optional; renderer collapses absent ones.
+const methodologyCellHeading = z.string().min(1).max(80)
+const methodologyCellParagraph = z
+  .string()
+  .min(1)
+  .refine((b) => {
+    const wc = wordCount(b)
+    return wc >= 40 && wc <= 60
+  }, { message: 'methodology paragraph must be 40–60 words' })
+
+const tierBlurb = z
+  .string()
+  .refine((b) => {
+    const wc = wordCount(b)
+    return wc >= 10 && wc <= 40
+  }, { message: 'tier blurb must be 10–40 words' })
+
+const eraBandSchema = z.object({
+  key: slug,
+  label: z.string().min(1).max(40),
+  range: z.tuple([
+    z.number().int().min(1900).max(2100),
+    z.number().int().min(1900).max(2100),
+  ]),
+})
+
+export type EraBand = z.infer<typeof eraBandSchema>
+
 export const canonFileSchema = z.object({
   show: slug,
+  // 31a: optional editorial frontmatter consumed by the unified
+  // canon/community shell (rebuilt in 31c). Every field is optional
+  // so existing canons (survivor / dragrace / top-chef) validate
+  // without modification; 31b populates the fields as it drains.
+  editor: z.string().min(1).max(80).optional(),
+  last_revised: isoDate.optional(),
+  meth_who_h: methodologyCellHeading.optional(),
+  meth_who_p: methodologyCellParagraph.optional(),
+  meth_how_h: methodologyCellHeading.optional(),
+  meth_how_p: methodologyCellParagraph.optional(),
+  meth_when_h: methodologyCellHeading.optional(),
+  meth_when_p: methodologyCellParagraph.optional(),
+  tier_s_blurb: tierBlurb.optional(),
+  tier_a_blurb: tierBlurb.optional(),
+  tier_b_blurb: tierBlurb.optional(),
+  tier_c_blurb: tierBlurb.optional(),
+  weekly_question: z.string().min(1).max(140).optional(),
+  era_bands: z.array(eraBandSchema).max(6).optional(),
   entries: z.array(canonEntrySchema).min(1),
 })
 

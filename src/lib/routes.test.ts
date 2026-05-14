@@ -40,15 +40,24 @@ describe('getAllRoutes', () => {
     expect(patterns).toContain('/shows/[show]')
     expect(patterns).toContain('/shows/[show]/canon')
     expect(patterns).toContain('/shows/[show]/community')
-    expect(patterns).toContain('/shows/[show]/season/[n]')
+    expect(patterns).toContain('/shows/[show]/season/[slug]')
   })
 
-  it('includes a concrete season path for each seeded season', () => {
+  it('includes a slug-form season path for each seeded season', () => {
     const routes = getAllRoutes()
     const seasonPaths = routes
-      .filter((r) => r.pattern === '/shows/[show]/season/[n]')
+      .filter((r) => r.pattern === '/shows/[show]/season/[slug]')
       .map((r) => r.path)
-    expect(seasonPaths).toContain('/shows/survivor/season/1')
+    expect(seasonPaths).toContain('/shows/survivor/season/borneo')
+    expect(seasonPaths).toContain('/shows/survivor/season/heroes-villains')
+  })
+
+  it('does not emit numeric-form season paths', () => {
+    const routes = getAllRoutes()
+    const numericMatch = routes.some((r) =>
+      /\/shows\/[a-z-]+\/season\/\d+$/.test(r.path),
+    )
+    expect(numericMatch).toBe(false)
   })
 })
 

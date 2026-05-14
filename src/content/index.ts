@@ -8,6 +8,7 @@ export {
   getLegalDoc,
   getRelatedThemes,
   getSeason,
+  getSeasonBySlug,
   getShow,
   getShowsForTheme,
   getTheme,
@@ -23,6 +24,8 @@ export { ContentValidationError } from './errors'
 export type {
   CanonEntry,
   CanonFile,
+  CommunityRankHint,
+  EraBand,
   LegalDoc,
   Season,
   SeasonFrontmatter,

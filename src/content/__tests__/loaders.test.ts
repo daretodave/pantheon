@@ -12,6 +12,7 @@ import {
   getLegalDoc,
   getRelatedThemes,
   getSeason,
+  getSeasonBySlug,
   getShow,
   getShowsForTheme,
   getTheme,
@@ -372,6 +373,65 @@ describe('loaders', () => {
       showsCovered: 2,
       lastIndexRevision: '2026-05-20',
     })
+  })
+
+  it('derives season slug from filename and exposes getSeasonBySlug', () => {
+    makeShow(tmp, 'alpha', 'Alpha')
+    makeSeason(tmp, 'alpha', 4, 'Marquesas')
+    const season = getSeason('alpha', 4)
+    expect(season?.slug).toBe('marquesas')
+    expect(getSeasonBySlug('alpha', 'marquesas')?.number).toBe(4)
+    expect(getSeasonBySlug('alpha', 'unknown')).toBeNull()
+  })
+
+  it('frontmatter slug overrides the filename derivation', () => {
+    makeShow(tmp, 'alpha', 'Alpha')
+    const seasonFile = path.join(
+      tmp,
+      'shows',
+      'alpha',
+      'seasons',
+      '04-marquesas.md',
+    )
+    mkdirSync(path.dirname(seasonFile), { recursive: true })
+    writeFileSync(
+      seasonFile,
+      `---
+show: alpha
+number: 4
+title: Marquesas
+slug: castaway-prime
+---
+
+${sixtyWords}
+`,
+    )
+    expect(getSeason('alpha', 4)?.slug).toBe('castaway-prime')
+    expect(getSeasonBySlug('alpha', 'castaway-prime')?.number).toBe(4)
+  })
+
+  it('throws on a season filename that does not match NN-<slug>.md', () => {
+    makeShow(tmp, 'alpha', 'Alpha')
+    const bad = path.join(
+      tmp,
+      'shows',
+      'alpha',
+      'seasons',
+      'oops.md',
+    )
+    mkdirSync(path.dirname(bad), { recursive: true })
+    writeFileSync(
+      bad,
+      `---
+show: alpha
+number: 1
+title: One
+---
+
+${sixtyWords}
+`,
+    )
+    expect(() => getAllSeasons('alpha')).toThrow(/NN-<slug>\.md/)
   })
 
   it('throws when show slug in frontmatter mismatches filename', () => {

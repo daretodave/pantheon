@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getAllShows, getCanon, getShow } from '@/content'
+import { getAllShows, getCanon, getSeason, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import {
   CanonEntry,
@@ -33,6 +33,11 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   })
 }
 
+function seasonHref(showSlug: string, n: number): string {
+  const s = getSeason(showSlug, n)
+  return s ? `/shows/${showSlug}/season/${s.slug}` : `/shows/${showSlug}/season/${n}`
+}
+
 export default function CanonPage({ params }: { params: Params }) {
   const show = getShow(params.show)
   if (!show) notFound()
@@ -49,7 +54,7 @@ export default function CanonPage({ params }: { params: Params }) {
         ? entries.map((entry) => ({
             position: entry.rank,
             name: entry.title,
-            path: `/shows/${show.slug}/season/${entry.season}`,
+            path: seasonHref(show.slug, entry.season),
             description: entry.rationale.slice(0, 200),
           }))
         : [
@@ -98,7 +103,7 @@ export default function CanonPage({ params }: { params: Params }) {
                   title={entry.title}
                   seasonNumber={entry.season}
                   rationale={entry.rationale}
-                  href={`/shows/${show.slug}/season/${entry.season}`}
+                  href={seasonHref(show.slug, entry.season)}
                 />
               ))}
           </CanonList>

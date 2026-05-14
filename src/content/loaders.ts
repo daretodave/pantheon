@@ -84,6 +84,14 @@ function loadShows(c: Cache): void {
   }
 }
 
+// 31a: filename-as-slug. Every season file matches `NN-<slug>.md`
+// (e.g. `04-marquesas.md`, `20-heroes-villains.md`). The captured
+// suffix becomes `season.slug`; an explicit frontmatter `slug:`
+// override beats the derivation, but the override is rare —
+// reserved for cases where renaming the file would be awkward
+// (e.g. legacy URLs already in the wild).
+const SEASON_FILENAME_RE = /^(\d+)-(.+)\.md$/
+
 function loadShowSeasons(c: Cache, slug: string): void {
   const dir = seasonsDir(slug)
   if (!existsSync(dir)) {
@@ -95,7 +103,14 @@ function loadShowSeasons(c: Cache, slug: string): void {
     if (!entry.isFile()) continue
     if (!entry.name.endsWith('.md')) continue
     const file = path.join(dir, entry.name)
-    const season = parseSeasonFile(readMd(file), file)
+    const match = entry.name.match(SEASON_FILENAME_RE)
+    if (!match) {
+      throw new Error(
+        `season filename "${entry.name}" must match NN-<slug>.md (file ${file})`,
+      )
+    }
+    const derivedSlug = match[2] ?? ''
+    const season = parseSeasonFile(readMd(file), file, derivedSlug)
     if (season.show !== slug) {
       throw new Error(
         `season show mismatch: file ${file} declares show "${season.show}", expected "${slug}"`,
@@ -175,6 +190,14 @@ export function getAllSeasons(showSlug: string): Season[] {
 export function getSeason(showSlug: string, n: number): Season | null {
   const seasons = getAllSeasons(showSlug)
   return seasons.find((s) => s.number === n) ?? null
+}
+
+export function getSeasonBySlug(
+  showSlug: string,
+  seasonSlug: string,
+): Season | null {
+  const seasons = getAllSeasons(showSlug)
+  return seasons.find((s) => s.slug === seasonSlug) ?? null
 }
 
 export function getCanon(showSlug: string): CanonFile | null {

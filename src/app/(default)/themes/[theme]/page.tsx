@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import {
   type Show,
+  getAllSeasons,
   getAllShows,
   getAllThemes,
   getRelatedThemes,
@@ -61,6 +62,21 @@ export default function ThemePage({ params }: { params: Params }) {
     .map((slug) => getShow(slug))
     .filter((s): s is Show => s !== null)
 
+  // 31a: build a `<show>:<season-number>` → slug map so the entry
+  // stack and the JSON-LD self-links emit the canonical slug form.
+  // theme.entries[].season stays numeric (cross-show join key); only
+  // the rendered href flips.
+  const seasonSlugByKey = new Map<string, string>()
+  for (const showSlug of showSlugs) {
+    for (const season of getAllSeasons(showSlug)) {
+      seasonSlugByKey.set(`${showSlug}:${season.number}`, season.slug)
+    }
+  }
+  const seasonHref = (showSlug: string, n: number): string => {
+    const slug = seasonSlugByKey.get(`${showSlug}:${n}`)
+    return slug ? `/shows/${showSlug}/season/${slug}` : `/shows/${showSlug}/season/${n}`
+  }
+
   const related = resolveRelated(theme)
 
   const ld = buildJsonLd({
@@ -76,7 +92,7 @@ export default function ThemePage({ params }: { params: Params }) {
       .map((entry) => ({
         position: entry.rank,
         name: `${showsBySlug.get(entry.show)?.name ?? entry.show} S${entry.season}: ${entry.title}`,
-        path: `/shows/${entry.show}/season/${entry.season}`,
+        path: seasonHref(entry.show, entry.season),
         description: entry.blurb,
       })),
   })
@@ -85,7 +101,11 @@ export default function ThemePage({ params }: { params: Params }) {
     <Wrap width="narrow">
       <script {...jsonLdScriptProps({ id: 'ld-theme', data: ld })} />
       <ListDetailHero theme={theme} shows={heroShows} />
-      <ListEntryStack theme={theme} showsBySlug={showsBySlug} />
+      <ListEntryStack
+        theme={theme}
+        showsBySlug={showsBySlug}
+        seasonSlugByKey={seasonSlugByKey}
+      />
       <AdjacentLists theme={theme} related={related} />
     </Wrap>
   )

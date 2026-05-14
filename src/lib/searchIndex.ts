@@ -49,7 +49,7 @@ export function getSearchIndex(): SearchIndexItem[] {
         name: season.title,
         meta: `${show.name} · season ${String(season.number).padStart(2, '0')}`,
         color: show.palette.primary,
-        href: `/shows/${show.slug}/season/${season.number}`,
+        href: `/shows/${show.slug}/season/${season.slug}`,
         tier: show.tier,
       })
     }

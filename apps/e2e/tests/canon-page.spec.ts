@@ -40,7 +40,7 @@ for (const url of canonUrls) {
         expect(count, `expected at least one canon-entry on /shows/${slug}/canon`).toBeGreaterThanOrEqual(1)
         // Every entry links to a season page on the same show.
         const firstHref = await entries.first().locator('a').first().getAttribute('href')
-        expect(firstHref).toMatch(new RegExp(`^/shows/${slug}/season/\\d+$`))
+        expect(firstHref).toMatch(new RegExp(`^/shows/${slug}/season/[a-z0-9-]+$`))
       } else {
         const empty = page.getByTestId('canon-list').first()
         await expect(empty).toBeVisible()

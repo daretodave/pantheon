@@ -123,6 +123,7 @@ describe('seasonSchema', () => {
   const base = {
     show: 'survivor',
     number: 1,
+    slug: 'borneo',
     title: 'Borneo',
     format_changes: [],
   }

@@ -138,7 +138,7 @@ export default function ShowHomePage({ params }: { params: Params }) {
                   title={season.title}
                   tag={seasonTag(season)}
                   seasonNumber={season.number}
-                  href={`/shows/${show.slug}/season/${season.number}`}
+                  href={`/shows/${show.slug}/season/${season.slug}`}
                 />
               ))}
             </SeasonGrid>
