@@ -26,4 +26,17 @@ test.describe('authed-example', () => {
     expect(session, 'expected __session cookie attached to authed context').toBeTruthy()
     expect(session!.value.length).toBeGreaterThan(50)
   })
+
+  test('signed-in header swaps the Sign in pill for a user handle + Sign out', async ({
+    page,
+  }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    const header = page.getByTestId('site-header')
+    await expect(header).toHaveAttribute('data-signed-in', 'true')
+    await expect(page.getByTestId('site-header-user-link')).toBeVisible()
+    const signOut = page.getByTestId('site-header-signout-link')
+    await expect(signOut).toBeVisible()
+    await expect(signOut).toHaveAttribute('href', /\/auth\/logout/)
+    await expect(page.getByTestId('site-header-signin-link')).toHaveCount(0)
+  })
 })

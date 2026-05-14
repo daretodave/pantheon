@@ -88,6 +88,15 @@
 }
 .site-header-search:hover { opacity: 1; color: inherit; }
 
+.site-header-user {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: inherit;
+  opacity: 0.85;
+}
+.site-header-user:hover { opacity: 1; color: inherit; }
+
 .site-header-signin {
   font-family: var(--font-family-sans);
   font-weight: 500;
