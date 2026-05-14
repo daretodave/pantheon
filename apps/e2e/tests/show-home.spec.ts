@@ -22,7 +22,13 @@ for (const url of showHomeUrls) {
       await expect(page.getByTestId('show-home-screen')).toBeVisible()
       await expect(page.getByTestId('show-hero')).toBeVisible()
       await expect(page.getByTestId('show-hero-cover')).toBeVisible()
-      await expect(page.getByTestId('show-hero-stats')).toBeVisible()
+      const stats = page.getByTestId('show-hero-stats')
+      await expect(stats).toBeVisible()
+      // All seeded shows are currently `status: airing`, so the
+      // "on the air" stat must never read "<year>–<year>" — it's
+      // either "<year>–present" (when seasons have dates) or "—"
+      // (when none do). This is the bug #26 fix.
+      await expect(stats).not.toContainText(/\d{4}–\d{4}/)
       await expect(page.getByTestId('bullet').first()).toBeVisible()
       await expect(page.getByTestId('show-split')).toBeVisible()
       await expect(page.getByTestId('shifts-row')).toBeVisible()

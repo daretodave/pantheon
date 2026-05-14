@@ -14,6 +14,7 @@ import {
   type ShowHeroStat,
 } from '@/components/composition'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
+import { computeYearsOnAir } from '@/lib/show-format'
 import { FeaturedThemes } from '@/components/featured-themes/FeaturedThemes'
 
 type Params = { show: string }
@@ -49,19 +50,6 @@ function seasonTag(
   return `Season ${season.number}`
 }
 
-function computeYearsOnAir(
-  seasons: ReturnType<typeof getAllSeasons>,
-): string {
-  const years = seasons
-    .map((s) => (s.premiere_date ? new Date(s.premiere_date).getUTCFullYear() : null))
-    .filter((y): y is number => typeof y === 'number')
-  if (years.length === 0) return '—'
-  const min = Math.min(...years)
-  const max = Math.max(...years)
-  if (min === max) return String(min)
-  return `${min}–${max}`
-}
-
 export default function ShowHomePage({ params }: { params: Params }) {
   const show = getShow(params.show)
   if (!show) notFound()
@@ -82,7 +70,7 @@ export default function ShowHomePage({ params }: { params: Params }) {
   })
 
   const seasonsSorted = [...seasons].sort((a, b) => a.number - b.number)
-  const years = computeYearsOnAir(seasons)
+  const years = computeYearsOnAir(seasons, show.status)
   const stats: ShowHeroStat[] = [
     { value: show.seasons, key: 'seasons aired' },
     { value: years, key: 'on the air' },
