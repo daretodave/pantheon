@@ -7,6 +7,7 @@ ep_count: 13
 location: "Global route, starting Miami, Florida"
 host: Phil Keoghan
 format_changes: [twelve-team-cast]
+canonical_position: 3
 premiere_caption: "CBS · Thursday 8/7c"
 format_summary: "12 teams of 2 · expanded cast"
 cast_size: 24

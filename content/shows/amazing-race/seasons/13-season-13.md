@@ -7,6 +7,7 @@ ep_count: 12
 location: "Global route, starting Los Angeles, California"
 host: Phil Keoghan
 format_changes: [ten-team-cast]
+canonical_position: 8
 premiere_caption: "CBS · Sunday 8/7c"
 format_summary: "10 teams of 2 · trimmed cast"
 cast_size: 20

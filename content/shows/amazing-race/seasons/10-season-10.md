@@ -7,6 +7,7 @@ ep_count: 13
 location: "Global route, starting Seattle, Washington"
 host: Phil Keoghan
 format_changes: []
+canonical_position: 6
 premiere_caption: "CBS · Sunday 8/7c"
 format_summary: "12 teams of 2 · expanded cast"
 cast_size: 24

@@ -7,6 +7,7 @@ ep_count: 13
 location: "Global route, starting Denver, Colorado"
 host: Phil Keoghan
 format_changes: []
+canonical_position: 9
 premiere_caption: "CBS · Wednesday 8/7c"
 format_summary: "11 teams of 2 · standard"
 cast_size: 22

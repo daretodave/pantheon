@@ -8,6 +8,7 @@ ep_count: 11
 location: "Mostly US route, with detours into Mexico, Costa Rica, and Canada"
 host: Phil Keoghan
 format_changes: [family-edition, four-person-teams, domestic-route]
+canonical_position: 13
 eyebrow: "Aired fall 2005 · Four-person family teams · One-time format"
 premiere_caption: "CBS · Tuesday 10/9c"
 format_summary: "10 teams of 4 · families"

@@ -7,6 +7,7 @@ ep_count: 13
 location: "Global route, starting Pahrump, Nevada"
 host: Phil Keoghan
 format_changes: []
+canonical_position: 7
 premiere_caption: "CBS · Monday 9/8c"
 format_summary: "11 teams of 2 · standard"
 cast_size: 22

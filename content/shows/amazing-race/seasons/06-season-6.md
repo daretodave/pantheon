@@ -7,6 +7,7 @@ ep_count: 12
 location: "Global route, starting Chicago, Illinois"
 host: Phil Keoghan
 format_changes: []
+canonical_position: 11
 premiere_caption: "CBS · Tuesday 9/8c"
 format_summary: "11 teams of 2 · standard"
 cast_size: 22

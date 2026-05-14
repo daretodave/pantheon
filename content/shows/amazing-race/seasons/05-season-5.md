@@ -7,6 +7,7 @@ ep_count: 13
 location: "Global route, starting Santa Monica, California"
 host: Phil Keoghan
 format_changes: [summer-slot]
+canonical_position: 4
 premiere_caption: "CBS · Tuesday 9/8c"
 format_summary: "11 teams of 2 · standard"
 cast_size: 22
