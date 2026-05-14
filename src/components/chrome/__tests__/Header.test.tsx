@@ -20,11 +20,13 @@ describe('<HeaderView>', () => {
     expect(hrefs).toEqual(['/shows', '/themes', '/about'])
   })
 
-  it('renders the Search link pointing to /search', () => {
+  it('renders the search trigger button (cmd+K overlay)', () => {
     render(<HeaderView />)
-    const search = screen.getByTestId('site-header-search-link')
-    expect(search).toHaveAttribute('href', '/search')
-    expect(search).toHaveTextContent(/Search/i)
+    const trigger = screen.getByTestId('site-header-search-trigger')
+    expect(trigger.tagName).toBe('BUTTON')
+    expect(trigger).toHaveTextContent(/Search/i)
+    expect(trigger.textContent).toMatch(/⌘K/)
+    expect(screen.queryByTestId('site-header-search-link')).toBeNull()
   })
 
   it('renders the Sign in pill pointing to /sign-in when signed out', () => {

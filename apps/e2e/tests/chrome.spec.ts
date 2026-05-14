@@ -13,7 +13,7 @@ import { canonicalUrls } from '../src/fixtures/canonical-urls'
 //     NOT (full-bleed). Wrap maxes at 1240px at large viewports.
 
 const SHOW_PREFIX_RE = /^\/shows\/[^/]+(?:\/.*)?$/
-const BOUNDED_PREFIX_RE = /^(?:\/|\/shows|\/themes(?:\/[^/]+)?|\/about|\/terms|\/privacy|\/sign-in|\/search|\/mod|\/u\/[^/]+)$/
+const BOUNDED_PREFIX_RE = /^(?:\/|\/shows|\/themes(?:\/[^/]+)?|\/about|\/terms|\/privacy|\/sign-in|\/mod|\/u\/[^/]+)$/
 
 function isShowRoute(path: string): boolean {
   return SHOW_PREFIX_RE.test(path) && path !== '/shows'

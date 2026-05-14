@@ -17,7 +17,6 @@ const STATIC_ROUTES: RouteEntry[] = [
   { pattern: '/privacy', path: '/privacy' },
   { pattern: '/sign-in', path: '/sign-in' },
   { pattern: '/mod', path: '/mod' },
-  { pattern: '/search', path: '/search' },
 ]
 
 // Enumerated routes that come from content + (optionally) env. The

@@ -5,6 +5,7 @@
 @import '../styles/chrome.css';
 @import '../styles/lists.css';
 @import '../styles/shows.css';
+@import '../styles/search.css';
 
 @layer base {
   /* Phase 18 — Skip-to-main-content link. Visually hidden until

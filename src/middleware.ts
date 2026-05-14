@@ -23,6 +23,15 @@ import {
 // insert without RLS friction (see migration 20260513000001_sessions).
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+  // Phase 29 — /search retired in favor of the cmd+K overlay.
+  // Permanent redirect so external links land somewhere sensible.
+  if (request.nextUrl.pathname === '/search') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    url.search = ''
+    return NextResponse.redirect(url, 308)
+  }
+
   const auth0Response = await auth0.middleware(request)
 
   // Auth-route paths return a redirect / 200 directly — don't stamp

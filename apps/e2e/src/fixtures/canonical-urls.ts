@@ -55,7 +55,6 @@ function build(): CanonicalUrl[] {
     { pattern: '/privacy', path: '/privacy' },
     { pattern: '/sign-in', path: '/sign-in' },
     { pattern: '/mod', path: '/mod' },
-    { pattern: '/search', path: '/search' },
   ]
 
   for (const showSlug of listDir(SHOWS_DIR)) {

@@ -116,8 +116,9 @@
 
 @media (max-width: 720px) {
   .site-header { padding: 14px 16px; }
-  .site-header-links,
-  .site-header-search { display: none; }
+  .site-header-links { display: none; }
+  /* Phase 29: the search trigger button stays visible on mobile;
+     only the cmd+K kbd hint (.site-header-search-kbd) drops out. */
 }
 
 /* ---- FOOTER ---------------------------------------------------------- */

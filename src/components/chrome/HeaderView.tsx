@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SearchTrigger } from '@/components/search/SearchTrigger'
 import { BrandMark } from './BrandMark'
 import type { HeaderUser } from './headerUser'
 
@@ -37,14 +38,7 @@ export function HeaderView({ tinted = false, user = null }: HeaderViewProps) {
         </Link>
       </nav>
       <div className="site-header-right">
-        <Link
-          className="site-header-search"
-          href="/search"
-          prefetch={false}
-          data-testid="site-header-search-link"
-        >
-          <span aria-hidden="true">⌕</span> Search
-        </Link>
+        <SearchTrigger />
         {user ? (
           <>
             <Link

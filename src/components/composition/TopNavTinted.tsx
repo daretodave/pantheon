@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { SearchTrigger } from '@/components/search/SearchTrigger'
 
 type TopNavLink = { href: string; label: string }
 
@@ -42,11 +43,7 @@ export function TopNavTinted({
         ))}
       </div>
       <div className="topnav-right">
-        {search ?? (
-          <Link className="topnav-search" href="/search">
-            ⌕ Search
-          </Link>
-        )}
+        {search ?? <SearchTrigger />}
         {signIn ?? (
           <Link className="topnav-signin" href="/sign-in">
             Sign in

@@ -1,0 +1,370 @@
+/* ========================================================================
+   SEARCH — cmd+K overlay. Phase 29.
+   Ported from design/tiered.tv · Home.html (.search-overlay block).
+   Uses the canonical --color-*/--duration-*/--ease-* tokens directly
+   so the overlay lives outside `.screen` (mounted in chrome layouts).
+   ======================================================================== */
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: color-mix(in oklab, #000 64%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-settle);
+  overflow-y: auto;
+  font-family: var(--font-family-sans);
+  color: var(--color-ink-1);
+}
+.search-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-modal {
+  position: relative;
+  max-width: 720px;
+  margin: 10vh auto 40px;
+  background: var(--color-paper-1);
+  border: 1px solid var(--color-line-base);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transform: translateY(-16px);
+  transition: transform var(--duration-base) var(--ease-rise);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
+}
+.search-overlay.open .search-modal {
+  transform: translateY(0);
+}
+@media (max-width: 680px) {
+  .search-modal {
+    margin: 4vh 12px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-overlay,
+  .search-overlay.open .search-modal,
+  .search-modal {
+    transition: opacity var(--duration-quick) var(--ease-linear);
+    transform: none;
+  }
+}
+
+.search-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--color-line-soft);
+}
+@media (max-width: 680px) {
+  .search-head {
+    padding: 18px 20px;
+  }
+}
+.search-icon {
+  font-family: var(--font-family-mono);
+  font-size: 22px;
+  color: var(--color-ink-3);
+  line-height: 1;
+  user-select: none;
+}
+.search-input {
+  flex: 1;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0;
+  font-family: var(--font-family-serif);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--color-ink-0);
+  letter-spacing: -0.015em;
+}
+@media (max-width: 680px) {
+  .search-input {
+    font-size: 22px;
+  }
+}
+.search-input::placeholder {
+  color: var(--color-ink-3);
+  font-style: italic;
+  font-weight: 400;
+}
+.search-close {
+  appearance: none;
+  background: transparent;
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  padding: 8px 12px;
+  border: 1px solid var(--color-line-base);
+  border-radius: 999px;
+  transition:
+    color var(--duration-base) var(--ease-settle),
+    border-color var(--duration-base) var(--ease-settle);
+  cursor: pointer;
+}
+.search-close:hover {
+  color: var(--color-ink-1);
+  border-color: var(--color-line-loud);
+}
+
+.search-filters {
+  display: flex;
+  gap: 6px;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--color-line-soft);
+  flex-wrap: wrap;
+}
+@media (max-width: 680px) {
+  .search-filters {
+    padding: 12px 20px;
+  }
+}
+.search-chip {
+  appearance: none;
+  background: transparent;
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  padding: 8px 14px;
+  border: 1px solid var(--color-line-base);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color var(--duration-quick) var(--ease-settle),
+    background var(--duration-quick) var(--ease-settle),
+    border-color var(--duration-quick) var(--ease-settle);
+}
+.search-chip:hover {
+  color: var(--color-ink-1);
+  border-color: var(--color-line-loud);
+}
+.search-chip.on {
+  color: var(--color-paper-0);
+  background: var(--color-ink-0);
+  border-color: var(--color-ink-0);
+}
+
+.search-results {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 8px 0 12px;
+}
+.search-empty {
+  padding: 48px 28px;
+  text-align: center;
+  font-family: var(--font-family-serif);
+  font-size: 16px;
+  color: var(--color-ink-2);
+}
+.search-empty b {
+  color: var(--color-ink-0);
+  font-weight: 500;
+  font-style: italic;
+}
+.search-empty .sub {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--color-ink-3);
+  font-style: italic;
+}
+
+.search-group {
+  padding: 14px 0 4px;
+}
+.search-group-head {
+  padding: 0 28px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+@media (max-width: 680px) {
+  .search-group-head {
+    padding: 0 20px 8px;
+  }
+}
+.search-group-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-line-soft);
+}
+.search-group-count {
+  color: var(--color-ink-3);
+  font-weight: 400;
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 28px;
+  transition: background var(--duration-quick) var(--ease-settle);
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 680px) {
+  .search-row {
+    padding: 12px 20px;
+    gap: 12px;
+    grid-template-columns: auto 1fr auto;
+  }
+  .search-row .search-row-arrow {
+    display: none;
+  }
+}
+.search-row.focused,
+.search-row:hover {
+  background: var(--color-paper-2);
+}
+.search-row-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.search-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.search-row-name {
+  font-family: var(--font-family-serif);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--color-ink-0);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.search-row-name mark {
+  background: color-mix(in oklab, var(--color-primary-base) 36%, transparent);
+  color: var(--color-ink-0);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.search-row-meta {
+  font-family: var(--font-family-mono);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.search-row-tier {
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  padding: 5px 9px;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--color-primary-base) 14%, transparent);
+  color: var(--color-primary-base);
+}
+.search-row-arrow {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--color-ink-3);
+  opacity: 0.7;
+}
+.search-row.focused .search-row-arrow {
+  color: var(--color-ink-0);
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.search-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 28px;
+  border-top: 1px solid var(--color-line-soft);
+  font-family: var(--font-family-mono);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+  flex-wrap: wrap;
+}
+@media (max-width: 680px) {
+  .search-foot {
+    padding: 12px 20px;
+  }
+}
+.search-foot kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  margin: 0 2px;
+  border: 1px solid var(--color-line-base);
+  border-radius: 4px;
+  background: var(--color-paper-2);
+  color: var(--color-ink-1);
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.search-foot-promise em {
+  color: var(--color-primary-base);
+  font-style: italic;
+  font-family: var(--font-family-serif);
+  font-size: 12px;
+}
+
+/* keyboard hint on the header search trigger */
+.site-header-search-kbd {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 3px 7px;
+  border: 1px solid var(--color-line-base);
+  border-radius: 4px;
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-ink-3);
+  background: var(--color-paper-1);
+  letter-spacing: 0.02em;
+}
+@media (max-width: 720px) {
+  .site-header-search-kbd {
+    display: none;
+  }
+}
