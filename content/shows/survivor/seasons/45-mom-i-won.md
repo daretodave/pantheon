@@ -7,6 +7,7 @@ ep_count: 14
 location: Mamanuca Islands, Fiji
 host: Jeff Probst
 format_changes: [ninety-minute-episode, sanctuary]
+canonical_position: 7
 premiere_caption: "CBS · Wednesday 8/7c"
 format_summary: "New Era · 3 tribes"
 cast_size: 18

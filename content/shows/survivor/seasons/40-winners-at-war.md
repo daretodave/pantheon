@@ -7,6 +7,7 @@ ep_count: 14
 location: Mamanuca Islands, Fiji
 host: Jeff Probst
 format_changes: [all-winners-cast, edge-of-extinction, fire-tokens]
+canonical_position: 8
 display_title: "Winners <em>at</em><br/>War"
 premiere_caption: "CBS · Wednesday 8/7c"
 format_summary: "Winners only · returnees"

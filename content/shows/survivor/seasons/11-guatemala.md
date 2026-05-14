@@ -8,6 +8,7 @@ ep_count: 14
 location: Yaxhá, Petén, Guatemala
 host: Jeff Probst
 format_changes: [returnee-injection]
+canonical_position: 15
 eyebrow: "Aired fall 2005 · Filmed at Yaxhá"
 lede: "Survivor's first ruins-set season, camped within the Yaxhá archaeological park in northern Guatemala. The eleventh season also tries the show's first soft returnee twist — two veterans slotted into a fresh cast, a structural idea the franchise keeps borrowing back from later."
 pull: "Guatemala stages a Mesoamerican location with rare seriousness. The ruins aren't backdrop — they're a working camp the show treats with weight."

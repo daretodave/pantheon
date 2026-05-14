@@ -7,6 +7,7 @@ ep_count: 13
 location: Pulau Tiga, Malaysia
 host: Jeff Probst
 format_changes: []
+canonical_position: 3
 premiere_caption: "CBS · Wednesday 8/7c"
 format_summary: "Originals · 2 tribes"
 format_caption: "the season that invented the format"

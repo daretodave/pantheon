@@ -8,6 +8,7 @@ ep_count: 14
 location: Upolu, Samoa
 host: Jeff Probst
 format_changes: [all-returnee-cast, hero-villain-tribes]
+canonical_position: 2
 eyebrow: "Aired spring 2010 · Filmed in Samoa"
 lede: "A returnees season that finally let the format show what it could really do, when nobody had to be introduced. The pace doesn't slow, even for sleep."
 pull: "Twenty-five years in, this is the season Survivor will still be measured against. We'd defend it without footnotes."

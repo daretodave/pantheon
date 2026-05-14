@@ -7,6 +7,7 @@ ep_count: 13
 location: Shaba National Reserve, Kenya
 host: Jeff Probst
 format_changes: [non-island-shoot]
+canonical_position: 17
 eyebrow: "Aired fall 2001 · Filmed in Kenya"
 lede: "The first non-island Survivor, shot on a Kenyan game reserve where the camp had to be fenced against elephants and lions overnight. The survival layer is genuine here in a way later seasons have never quite needed to replicate."
 pull: "The season the show realized location could be the antagonist. Africa never asks for sympathy, and the cast learns to stop expecting any."

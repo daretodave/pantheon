@@ -7,6 +7,7 @@ ep_count: 14
 location: Pearl Islands, Panama
 host: Jeff Probst
 format_changes: [outcasts-twist]
+canonical_position: 4
 premiere_caption: "CBS · Thursday 8/7c"
 format_summary: "Originals · 2 tribes"
 format_caption: "pirate-themed marooning"

@@ -218,6 +218,53 @@ too short
 `
     expect(() => parseCanonFile(bad, 'canon.md')).toThrow(/80.*120/)
   })
+
+  it('reads leading tag / slot_argument / community_rank_hint lines into the entry', () => {
+    const withMeta = `---
+show: survivor
+---
+
+## 28. Cagayan
+
+tag: The modern Survivor template.
+slot_argument: Every season since 2014 borrows Cagayan's casting math and tribal openness.
+community_rank_hint: rank=1 delta=0 sentiment=hold
+
+${ninetyWords}
+
+## 1. Borneo
+
+tag: Foundational document.
+
+${ninetyWords}
+`
+    const canon = parseCanonFile(withMeta, 'canon.md')
+    expect(canon.entries[0]?.tag).toBe('The modern Survivor template.')
+    expect(canon.entries[0]?.slot_argument).toContain('casting math')
+    expect(canon.entries[0]?.community_rank_hint).toEqual({
+      rank: 1,
+      delta: 0,
+      sentiment: 'hold',
+    })
+    expect(canon.entries[0]?.rationale.startsWith('w0')).toBe(true)
+    expect(canon.entries[1]?.tag).toBe('Foundational document.')
+    expect(canon.entries[1]?.slot_argument).toBeUndefined()
+    expect(canon.entries[1]?.community_rank_hint).toBeUndefined()
+  })
+
+  it('treats non-metadata leading lines as rationale start (no false-positive on prose)', () => {
+    const withProse = `---
+show: survivor
+---
+
+## 1. Borneo
+
+${ninetyWords}
+`
+    const canon = parseCanonFile(withProse, 'canon.md')
+    expect(canon.entries[0]?.tag).toBeUndefined()
+    expect(canon.entries[0]?.rationale.startsWith('w0')).toBe(true)
+  })
 })
 
 describe('parseThemeFile', () => {

@@ -7,6 +7,7 @@ ep_count: 13
 location: Nuku Hiva, Marquesas Islands
 host: Jeff Probst
 format_changes: []
+canonical_position: 10
 eyebrow: "Aired spring 2002 · Filmed in French Polynesia"
 lede: "Survivor's first French Polynesian shoot, set on a volcanic island three days' boat ride from anywhere. The season is where the show's social game stops following tribe lines and starts following personal alliances, mid-game and on camera."
 pull: "Marquesas is the inflection point. After this season the format stops being a tribe-versus-tribe puzzle and becomes a game of individual reads."

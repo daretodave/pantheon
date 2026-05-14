@@ -7,6 +7,7 @@ ep_count: 14
 location: Cagayan, Philippines
 host: Jeff Probst
 format_changes: [brains-brawn-beauty]
+canonical_position: 1
 display_title: "Cagayan: <em>Brains</em><br/>Brawn &amp; Beauty"
 premiere_caption: "CBS · Wednesday 8/7c"
 format_summary: "Brains · Brawn · Beauty"

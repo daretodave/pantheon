@@ -41,6 +41,7 @@ import {
   themeSchema,
   type CanonEntry,
   type CanonFile,
+  type CommunityRankHint,
   type LegalDoc,
   type Season,
   type Show,
@@ -113,6 +114,31 @@ export function parseLegalFile(raw: string, file: string): LegalDoc {
 }
 
 const CANON_HEADING_RE = /^##\s+(\d+)\.\s+(.+?)\s*$/
+// 31b: per-entry editorial metadata reads as leading "key: value"
+// lines between the heading and the rationale. Recognized keys
+// are `tag`, `slot_argument`, and `community_rank_hint`. Anything
+// else terminates the metadata block and starts the rationale.
+const ENTRY_META_RE = /^(tag|slot_argument|community_rank_hint):\s*(.+)$/
+
+function parseCommunityRankHint(value: string): CommunityRankHint | undefined {
+  // Expects space-separated key=value pairs, e.g.
+  // "rank=2 delta=+1 sentiment=up".
+  const parts = value.split(/\s+/).filter(Boolean)
+  const map: Record<string, string> = {}
+  for (const part of parts) {
+    const eq = part.indexOf('=')
+    if (eq <= 0) return undefined
+    map[part.slice(0, eq)] = part.slice(eq + 1)
+  }
+  const rank = Number.parseInt(map.rank ?? '', 10)
+  const delta = Number.parseInt(map.delta ?? '', 10)
+  const sentiment = map.sentiment
+  if (Number.isNaN(rank) || Number.isNaN(delta) || !sentiment) return undefined
+  if (sentiment !== 'up' && sentiment !== 'down' && sentiment !== 'hold') {
+    return undefined
+  }
+  return { rank, delta, sentiment }
+}
 
 export function parseCanonFile(raw: string, file: string): CanonFile {
   const { data, content } = readFrontmatter(raw)
@@ -134,12 +160,40 @@ export function parseCanonFile(raw: string, file: string): CanonFile {
   }
   if (current) buckets.push(current)
 
-  const entries: CanonEntry[] = buckets.map((b, idx) => ({
-    rank: idx + 1,
-    season: b.season,
-    title: b.title,
-    rationale: b.lines.join('\n').trim(),
-  }))
+  const entries: CanonEntry[] = buckets.map((b, idx) => {
+    let i = 0
+    let tag: string | undefined
+    let slot_argument: string | undefined
+    let community_rank_hint: CommunityRankHint | undefined
+    while (i < b.lines.length) {
+      const trimmed = (b.lines[i] ?? '').trim()
+      if (trimmed === '') {
+        i += 1
+        continue
+      }
+      const m = trimmed.match(ENTRY_META_RE)
+      if (!m) break
+      const key = m[1]
+      const val = (m[2] ?? '').trim()
+      if (key === 'tag') tag = val
+      else if (key === 'slot_argument') slot_argument = val
+      else if (key === 'community_rank_hint') {
+        community_rank_hint = parseCommunityRankHint(val)
+      }
+      i += 1
+    }
+    const rationale = b.lines.slice(i).join('\n').trim()
+    const entry: CanonEntry = {
+      rank: idx + 1,
+      season: b.season,
+      title: b.title,
+      rationale,
+    }
+    if (tag != null) entry.tag = tag
+    if (slot_argument != null) entry.slot_argument = slot_argument
+    if (community_rank_hint != null) entry.community_rank_hint = community_rank_hint
+    return entry
+  })
 
   return validate(
     canonFileSchema,
