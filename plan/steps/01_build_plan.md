@@ -93,7 +93,7 @@ in the same commit that ships the phase.
 - [x] Phase 21 — Show backfill round 2 (Bachelor, Bachelorette, Traitors) — 5ba35f1
 - [x] Phase 22 — Show backfill round 3 (Love Island US, Love Island UK, Bake Off, Project Runway, The Challenge — completes the 12-show launch quota per bearings Rule 1) — 09f1a87
 - [x] Phase 23 — Themed lists round 1 (best premieres, best finales, best post-merge runs, best returnee seasons, best newbie casts — 5 themes drains bearings Rule 3 to ≥5/10) — 0001655
-- [ ] Phase 24 — Themed lists round 2 (best villain editing, best comeback seasons, best location reveals, best reunion specials, best non-winning runs — completes Rule 3 quota at 10)
+- [x] Phase 24 — Themed lists round 2 (best villain editing, best comeback seasons, best location reveals, best reunion specials, best non-winning runs — 5 lists, total 12, Rule 3 quota cleared) — 0f03ff6
 - [ ] Phase 25 — Canon iteration (refresh canon rationales for the first 3 shows after critique passes file substantive feedback. **Brand mark refresh is not needed** — 19b already regenerated the favicon set + brand-mark SVG from the canonical spec.)
 
 > **After phase 25:** the loop transitions back into `/iterate`
