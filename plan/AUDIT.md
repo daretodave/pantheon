@@ -19,6 +19,7 @@
 - [ ] [SEV] <one-line description> (category: <c>, source: <jot|critique|triage|expand|self>, score: N.N) — <commit hash where filed>
 -->
 
+- [ ] [HIGH] show-home season grid sorts by season number, not canon rank — label reads "Sorted by Editor's Canon" but the actual order on `/shows/[show]` is season order. `src/app/shows/[show]/page.tsx:72` does `[...seasons].sort((a, b) => a.number - b.number)`; should sort by `canonical_position` (ascending; missing values fall back to end, tie-break on season number). Cards already render `rank={season.canonical_position ?? season.number}`, so cards display correct rank but in wrong sequence. Fix touches the one sort + a unit test asserting the order matches canon. (category: bug, source: user-jot, score: 5.6) — oversight 2026-05-14
 - [ ] [MED] season-page comment thread renders empty state — read path not wired to Supabase (#24) (category: bug, source: triage, score: 4.2) — cf69494
 
 ## Done
