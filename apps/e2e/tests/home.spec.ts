@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 
-test('home renders the promise + hero + grids', async ({ page }) => {
+test('home renders the promise + hero + all the spec sections', async ({
+  page,
+}) => {
   const errors: string[] = []
   const failedResponses: string[] = []
   page.on('console', (msg) => {
@@ -14,18 +16,19 @@ test('home renders the promise + hero + grids', async ({ page }) => {
   expect(response?.status()).toBe(200)
 
   const main = page.getByRole('main')
-  // Phase 19e — the H1 is still the cold-search promise itself.
+  // Phase 27 — the H1 is still the cold-search promise itself.
   await expect(main.locator('h1')).toContainText(/the seasons/i)
   await expect(main.locator('h1')).toContainText(/no spoilers/i)
 
-  // The hero shell + the two grids.
+  // The five sections that make up the phase-27 home.
   await expect(page.getByTestId('home-hero')).toBeVisible()
   await expect(page.getByTestId('home-hero-cover')).toBeVisible()
   await expect(page.getByTestId('home-show-grid')).toBeVisible()
-  await expect(page.getByTestId('home-list-grid')).toBeVisible()
+  await expect(page.getByTestId('home-more-shows')).toBeVisible()
+  await expect(page.getByTestId('home-dual-callout')).toBeVisible()
+  await expect(page.getByTestId('home-lists-stack')).toBeVisible()
 
-  // The home page is bounded — it lives inside the (default)
-  // layout's <Wrap>.
+  // The home page is bounded — it lives inside the (default) layout's <Wrap>.
   await expect(page.getByTestId('wrap')).toBeVisible()
 
   // The chrome.
@@ -61,6 +64,18 @@ test('hero cover names the featured show + go-pill links to /shows/<slug>', asyn
   await expect(go).toHaveAttribute('href', /^\/shows\/[a-z][a-z0-9-]*$/)
 })
 
+test('hero stat strip surfaces seasons ranked + canon revised', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const stats = page.getByTestId('home-hero-stats')
+  await expect(stats).toContainText(/seasons ranked/i)
+  await expect(stats).toContainText(/canon revised/i)
+  // Canon revised label is formatted "MM / YY"; cheap shape check.
+  const revised = page.getByTestId('home-hero-canon-revised')
+  await expect(revised).toHaveText(/^\d{2}\s\/\s\d{2}$/)
+})
+
 test('hero copy column carries the est-2026 eyebrow + the CTAs', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByTestId('home-hero')).toContainText(/tiered\.tv · est\. 2026/i)
@@ -68,9 +83,10 @@ test('hero copy column carries the est-2026 eyebrow + the CTAs', async ({ page }
   await expect(page.getByTestId('home-cta-about')).toHaveAttribute('href', '/about')
 })
 
-test('show grid renders one tile per shipped show, capped at 3', async ({ page }) => {
+test('featured show grid renders exactly 3 tinted tiles', async ({ page }) => {
   await page.goto('/')
-  const tiles = page.getByTestId('home-show-tile')
+  const featuredGrid = page.getByTestId('home-show-grid')
+  const tiles = featuredGrid.getByTestId('home-show-tile')
   const count = await tiles.count()
   expect(count).toBeGreaterThanOrEqual(1)
   expect(count).toBeLessThanOrEqual(3)
@@ -81,11 +97,15 @@ test('show grid renders one tile per shipped show, capped at 3', async ({ page }
   for (const href of hrefs) {
     expect(href).toMatch(/^\/shows\/[a-z][a-z0-9-]*$/)
   }
+  // Featured variant — every tile renders a blurb.
+  for (let i = 0; i < count; i++) {
+    await expect(tiles.nth(i).locator('.show-tile-blurb')).toBeVisible()
+  }
 })
 
-test('every show tile renders a bullet + serif name', async ({ page }) => {
+test('every featured tile renders a bullet + serif name', async ({ page }) => {
   await page.goto('/')
-  const tiles = page.getByTestId('home-show-tile')
+  const tiles = page.getByTestId('home-show-grid').getByTestId('home-show-tile')
   const count = await tiles.count()
   for (let i = 0; i < count; i++) {
     const tile = tiles.nth(i)
@@ -94,34 +114,65 @@ test('every show tile renders a bullet + serif name', async ({ page }) => {
   }
 })
 
-test('list grid renders one tile per themed list, capped at 3', async ({ page }) => {
+test('compact tiles drop the blurb but keep bullet + name + meta', async ({
+  page,
+}) => {
   await page.goto('/')
-  const tiles = page.getByTestId('home-list-tile')
-  const count = await tiles.count()
-  expect(count).toBeGreaterThanOrEqual(0)
-  expect(count).toBeLessThanOrEqual(3)
+  const compactGrid = page.getByTestId('home-more-shows-grid')
+  const compact = compactGrid.getByTestId('home-show-tile')
+  const count = await compact.count()
+  expect(count).toBeGreaterThan(0)
+  expect(count).toBeLessThanOrEqual(6)
+  for (let i = 0; i < count; i++) {
+    const tile = compact.nth(i)
+    expect(await tile.locator('.show-tile-blurb').count()).toBe(0)
+    await expect(tile.locator('.show-tile-name').first()).toBeVisible()
+    await expect(tile.getByTestId('bullet').first()).toBeVisible()
+  }
+})
 
-  const hrefs = await tiles.evaluateAll((els) =>
+test('sub-row label surfaces the index remainder', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByTestId('home-more-shows-label')).toContainText(
+    /^\+\s\d+\smore in the index$/,
+  )
+})
+
+test('dual-rank callout names canon + community without naming a show', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const dual = page.getByTestId('home-dual-callout')
+  await expect(dual).toContainText(/editor.?s canon/i)
+  await expect(dual).toContainText(/community rank/i)
+  const text = (await dual.textContent()) ?? ''
+  expect(text).not.toMatch(/survivor|drag race|top chef/i)
+})
+
+test('themed-list stack renders rows with sentiment dots', async ({ page }) => {
+  await page.goto('/')
+  const rows = page.getByTestId('home-list-row')
+  const count = await rows.count()
+  expect(count).toBeGreaterThanOrEqual(0)
+  expect(count).toBeLessThanOrEqual(4)
+
+  const hrefs = await rows.evaluateAll((els) =>
     els.map((el) => el.getAttribute('href') ?? ''),
   )
   for (const href of hrefs) {
     expect(href).toMatch(/^\/themes\/[a-z][a-z0-9-]*$/)
   }
-})
-
-test('every list tile renders a sentiment dot', async ({ page }) => {
-  await page.goto('/')
-  const tiles = page.getByTestId('home-list-tile')
-  const count = await tiles.count()
   for (let i = 0; i < count; i++) {
-    const tile = tiles.nth(i)
-    await expect(tile.getByTestId('home-list-tile-dot')).toBeVisible()
-    const sentiment = await tile.getAttribute('data-sentiment')
+    const row = rows.nth(i)
+    await expect(row.getByTestId('home-list-row-dot')).toBeVisible()
+    const sentiment = await row.getAttribute('data-sentiment')
     expect(sentiment).toMatch(/^(warm-up|warm-down|neutral|hold|verdict|consensus)$/)
   }
 })
 
-test('home hero is color-only — no facade art, no svg illustrations', async ({ page }) => {
+test('home hero is color-only — no facade art, no svg illustrations', async ({
+  page,
+}) => {
   await page.goto('/')
   const hero = page.getByTestId('home-hero')
   await expect(hero).toBeVisible()
@@ -129,7 +180,9 @@ test('home hero is color-only — no facade art, no svg illustrations', async ({
   expect(await hero.getByTestId('home-hero-art').count()).toBe(0)
 })
 
-test('mobile @ 375px viewport: no horizontal scroll, H1 visible', async ({ page }) => {
+test('mobile @ 375px viewport: no horizontal scroll, H1 visible', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 375, height: 800 })
   await page.goto('/')
   const overflow = await page.evaluate(

@@ -1,10 +1,13 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import type { Show } from '@/content'
-import { Bullet } from '@/components/atoms/Bullet'
 
 type HomeHeroProps = {
   featured: Show
+  /** "Seasons ranked" stat — defaults to `featured.seasons`. */
+  seasonsRanked?: number
+  /** "Canon revised" stat label — pre-formatted as `MM / YY`. */
+  canonRevisedLabel: string
 }
 
 function renderBlurbWithBreaks(blurb: string) {
@@ -18,11 +21,17 @@ function renderBlurbWithBreaks(blurb: string) {
   ))
 }
 
-export function HomeHero({ featured }: HomeHeroProps) {
+export function HomeHero({
+  featured,
+  seasonsRanked,
+  canonRevisedLabel,
+}: HomeHeroProps) {
   const coverStyle = {
     background: featured.palette.paper,
     color: featured.palette.ink,
   } satisfies CSSProperties
+
+  const seasons = seasonsRanked ?? featured.seasons
 
   return (
     <section className="home-hero" data-testid="home-hero">
@@ -38,19 +47,37 @@ export function HomeHero({ featured }: HomeHeroProps) {
           {featured.name}
         </h2>
         <p className="cover-sub" style={{ color: featured.palette.ink }}>
-          {renderBlurbWithBreaks(featured.blurb)}
+          {renderBlurbWithBreaks(featured.tagline ?? featured.blurb)}
         </p>
-        <Link
-          href={`/shows/${featured.slug}`}
-          prefetch={false}
-          className="cover-go"
-          data-testid="home-cover-go"
-          style={{ color: featured.palette.ink }}
-        >
-          <Bullet color={featured.palette.primary} size={10} />
-          go to {featured.name}{' '}
-          <span aria-hidden="true">→</span>
-        </Link>
+        <div className="cover-foot" data-testid="home-hero-foot">
+          <div className="cover-stats" data-testid="home-hero-stats">
+            <div className="cover-stat">
+              <div className="cover-stat-val">{seasons}</div>
+              <div className="cover-stat-key">Seasons ranked</div>
+            </div>
+            <div className="cover-stat">
+              <div
+                className="cover-stat-val"
+                data-testid="home-hero-canon-revised"
+              >
+                {canonRevisedLabel}
+              </div>
+              <div className="cover-stat-key">Canon revised</div>
+            </div>
+          </div>
+          <Link
+            href={`/shows/${featured.slug}`}
+            prefetch={false}
+            className="cover-go"
+            data-testid="home-cover-go"
+            style={{ color: featured.palette.ink }}
+          >
+            Go to {featured.name}{' '}
+            <span className="arrow" aria-hidden="true">
+              →
+            </span>
+          </Link>
+        </div>
       </div>
       <div className="home-hero-copy">
         <div className="home-hero-eyebrow">tiered.tv · est. 2026</div>
@@ -60,8 +87,11 @@ export function HomeHero({ featured }: HomeHeroProps) {
           ranked. <em>no spoilers.</em>
         </h1>
         <p className="home-hero-blurb">
-          Two rankings for every show. One written by an editor with the whole
-          series in their head, one voted by the people who lived through it.
+          Two rankings for every show. <b>One written by an editor</b> with the
+          whole series in their head; <b>one voted by the readers</b> who lived
+          through it. Every page is reviewed for spoilers before it goes live —
+          so you can scroll without losing the season you&apos;re three episodes
+          into.
         </p>
         <div className="home-hero-actions">
           <Link
