@@ -1,14 +1,16 @@
 import { expect, test } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
 
-// Phase 7 lights up /shows/[show]/canon. Survivor has a seeded
-// canon (4 entries) so the populated path is covered; top-chef +
-// dragrace will exercise the empty-state path until canons land
-// in phases 20-22.
+// Phase 7 lights up /shows/[show]/canon. Survivor seeded a
+// 4-entry canon (phase 7); phase 25 seeded 3-entry canons for
+// the other two pioneers — top-chef and dragrace — so the
+// populated-list assertion now covers all three. Shows beyond
+// the pioneer trio still exercise the empty-state path until
+// future /ship-content rounds seed their canons.
 
 const canonUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/canon')
 
-const SHOWS_WITH_CANON = new Set(['survivor'])
+const SHOWS_WITH_CANON = new Set(['survivor', 'top-chef', 'dragrace'])
 
 for (const url of canonUrls) {
   const slug = url.show ?? ''

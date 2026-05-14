@@ -1,18 +1,18 @@
 import { expect, test } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
 
-// Phase 8 lights up /shows/[show]/community. Survivor has a
-// canon, so its source is 'canon'. Top Chef + Drag Race have
-// seasons-only state (today: zero seasons → seasons source with
-// empty entries). When their seasons land the source flips
-// without page changes.
+// Phase 8 lights up /shows/[show]/community. Phase 25 seeded
+// 3-entry canons for top-chef and dragrace alongside Survivor's
+// 4-entry canon, so all three pioneer-trio communities now read
+// 'canon' as their rank source. Shows beyond the pioneer trio
+// still flow through the seasons source until canons land.
 
 const communityUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/community')
 
 const EXPECTED_SOURCE: Record<string, 'canon' | 'seasons' | 'votes'> = {
   survivor: 'canon',
-  'top-chef': 'seasons',
-  dragrace: 'seasons',
+  'top-chef': 'canon',
+  dragrace: 'canon',
 }
 
 for (const url of communityUrls) {
@@ -40,12 +40,13 @@ for (const url of communityUrls) {
       const grid = page.getByTestId('season-grid').first()
       await expect(grid).toBeVisible()
 
-      if (slug === 'survivor') {
-        // Survivor has 4 seasons seeded; canon order ranks them.
+      if (EXPECTED_SOURCE[slug] === 'canon') {
+        // Pioneer trio (survivor, top-chef, dragrace) have canons +
+        // matching season files, so the grid renders ranked cards.
         const cards = page.getByTestId('season-card')
         expect(await cards.count()).toBeGreaterThanOrEqual(1)
       } else {
-        // Top Chef + Drag Race have zero seasons today → empty state.
+        // Other shows have no canon and no seasons yet → empty state.
         expect(await grid.getAttribute('data-empty')).toBe('true')
       }
     })
