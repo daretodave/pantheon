@@ -278,7 +278,7 @@ Per the headline rule: **no season is committed without a
 `canonical_position`, and no show with one or more seeded
 seasons goes without a real `canon.md`.** This phase makes that
 true across the existing 47 season files + 10 shows-without-canon
-in one drain, then the generation paths (section F) keep it
+in one drain, then the generation paths (section G) keep it
 true forever after.
 
 1. **Every season file** — populate `canonical_position`.
@@ -339,7 +339,83 @@ true forever after.
    always-working rule guarantees; phase 31's commit makes
    it true for all 47 existing season files.
 
-### F. Generation paths — lock the always-working-canon rule
+### F. Season URL slugs — `/season/4` → `/season/marquesas`
+
+Numeric season URLs (`/shows/survivor/season/4`) are weak for
+SEO and unfriendly to share. Switch the canonical form to a
+**slug** derived from the season's title — `/shows/survivor/season/marquesas`,
+`/shows/survivor/season/heroes-villains`, etc. The convention
+is already half-shipped: every season file is named
+`NN-<slug>.md` on disk (`04-marquesas.md`,
+`20-heroes-villains.md`, `41-new-era-i.md`), so the slug is
+authored — just not exposed.
+
+1. **Loader change** — `src/content/loaders.ts` parses
+   `^(\d+)-(.+)\.md$` on each season filename and stores the
+   captured suffix as `season.slug`. No frontmatter authoring
+   required for existing files; the regex pulls
+   `marquesas`, `heroes-villains`, etc. directly. Files that
+   don't match the pattern (none currently) fail the
+   content-check.
+2. **Schema** — `seasonFrontmatterSchema` gains a `slug?`
+   override (optional, kebab-case, ≤ 64 chars). When set, the
+   override beats the filename-derived slug. Curator only
+   reaches for the override when a filename rename would be
+   awkward (e.g. a season the file system already keys on by
+   number).
+3. **Route rename** —
+   `src/app/shows/[show]/season/[n]/` →
+   `src/app/shows/[show]/season/[slug]/`. The route param
+   resolves through a new `getSeasonBySlug(show, slug)` helper
+   that prefers the slug match and falls back to numeric
+   parse for backward compatibility (so a stale link to
+   `/season/4` still works while we redirect).
+4. **Canonical-form redirects** — `src/middleware.ts` adds a
+   308 from `/shows/<show>/season/<digits>` to
+   `/shows/<show>/season/<slug>` whenever the digit form
+   resolves to a known season. External links (search-engine
+   indexes, shared URLs, old QR codes) keep working but land
+   on the canonical form. `/sitemap.ts` emits the slug form
+   only.
+5. **Internal links** — sweep every link emitter (the
+   `<SeasonCard>`s on `/shows/<show>`, the canon page's
+   `.hero-entry` / `.mid-entry` / `.compact-entry` /
+   `.tail-row` link hrefs, the community-list rows, the
+   `<AdjacentSeasons>` prev/next, the `<AppearsInList>` rows,
+   the season-detail JSON-LD self-link, the breadcrumb
+   trails) and replace `season.number` with `season.slug` in
+   the href. The cross-reference *keys* (e.g.
+   `theme.entries[].season` is still numeric — it's the
+   cross-show join key authored by the curator) stay
+   numeric; only the rendered href flips to slug.
+6. **`apps/e2e/src/fixtures/canonical-urls.ts` +
+   `page-reads.ts`** — regenerate from the slug form. Smoke
+   walker still hits every season; the URLs just read
+   differently. Also keep one digit-form URL per show in a
+   separate `redirect-fixtures.ts` so the 308 path has a
+   regression test.
+7. **Generation paths** — extend the content-curator agent +
+   ship-content Rule 2 with the slug convention written out
+   explicitly: every new season file is named
+   `NN-<slug>.md`, slug is kebab-case ASCII (transliterate
+   accents — `kaoh-rong`, not `kaôh-rōng`), no leading
+   numerics (so `Survivor 41` becomes `new-era-i` from the
+   editor's notes — match the existing pattern). The
+   pre-flight checklist gains a slug-uniqueness check per
+   show; `scripts/content-check.ts` asserts every season's
+   resolved slug is unique within its show.
+8. **JSON-LD + canonical URLs** — `buildMetadata` /
+   `canonicalUrl` already centralizes URL composition. Point
+   them at the slug form once `getSeasonBySlug` is in. No
+   structured-data shape change.
+
+**Out of scope here:** *show* slugs are already correct
+(`survivor`, `amazing-race`, etc — phase 5 baked them in).
+Theme entry slugs unchanged. No DB migration — slugs are
+content-side only; the `votes.target_id` key still uses
+`<show>:<season-number>` for stability across slug renames.
+
+### G. Generation paths — lock the always-working-canon rule + slug convention
 
 This is the **super-important** part. Every content-generation
 surface must enforce the headline rule: no season ships without
@@ -588,6 +664,12 @@ across all 13 shows + the 47 season pages.
   vote question.
 - Every season file in `content/shows/**/seasons/*.md` whose
   show carries a canon has `canonical_position` populated.
+- Every season is reachable at its slug URL — e.g.
+  `/shows/survivor/season/marquesas` resolves; the old
+  `/shows/survivor/season/4` 308s to it. Slug uniqueness is
+  asserted by `content:check`. Sitemap emits slug-form URLs
+  only; smoke walker traverses slug form + a redirect spot
+  check.
 - Three canon files carry the new frontmatter block; top-5
   hero entries on Survivor carry tag + slot_argument +
   community_rank_hint.
