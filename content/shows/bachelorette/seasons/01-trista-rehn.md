@@ -2,7 +2,7 @@
 show: bachelorette
 number: 1
 title: Trista Rehn
-canonical_position: 4
+canonical_position: 5
 premiere_date: 2003-01-08
 ep_count: 6
 location: Agoura Hills, California

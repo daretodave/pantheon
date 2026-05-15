@@ -2,7 +2,7 @@
 show: bachelorette
 number: 4
 title: DeAnna Pappas
-canonical_position: 7
+canonical_position: 14
 premiere_date: 2008-05-19
 ep_count: 9
 location: Agoura Hills, California

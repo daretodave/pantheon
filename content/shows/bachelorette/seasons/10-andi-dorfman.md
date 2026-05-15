@@ -2,7 +2,7 @@
 show: bachelorette
 number: 10
 title: Andi Dorfman
-canonical_position: 6
+canonical_position: 12
 premiere_date: 2014-05-19
 ep_count: 11
 location: Agoura Hills, California

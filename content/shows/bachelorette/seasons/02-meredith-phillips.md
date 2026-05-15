@@ -2,7 +2,7 @@
 show: bachelorette
 number: 2
 title: Meredith Phillips
-canonical_position: 9
+canonical_position: 19
 premiere_date: 2004-09-08
 ep_count: 8
 location: Agoura Hills, California

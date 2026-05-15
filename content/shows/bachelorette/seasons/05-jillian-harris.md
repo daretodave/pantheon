@@ -2,7 +2,7 @@
 show: bachelorette
 number: 5
 title: Jillian Harris
-canonical_position: 3
+canonical_position: 8
 premiere_date: 2009-05-18
 ep_count: 12
 location: Agoura Hills, California

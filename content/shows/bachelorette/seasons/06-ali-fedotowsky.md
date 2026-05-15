@@ -2,7 +2,7 @@
 show: bachelorette
 number: 6
 title: Ali Fedotowsky
-canonical_position: 1
+canonical_position: 4
 premiere_date: 2010-05-24
 ep_count: 11
 location: Agoura Hills, California

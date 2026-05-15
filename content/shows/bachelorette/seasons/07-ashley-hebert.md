@@ -2,7 +2,7 @@
 show: bachelorette
 number: 7
 title: Ashley Hebert
-canonical_position: 5
+canonical_position: 11
 premiere_date: 2011-05-23
 ep_count: 12
 location: Agoura Hills, California

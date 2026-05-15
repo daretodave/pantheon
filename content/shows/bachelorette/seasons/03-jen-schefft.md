@@ -2,7 +2,7 @@
 show: bachelorette
 number: 3
 title: Jen Schefft
-canonical_position: 10
+canonical_position: 20
 premiere_date: 2005-01-10
 ep_count: 8
 location: Agoura Hills, California

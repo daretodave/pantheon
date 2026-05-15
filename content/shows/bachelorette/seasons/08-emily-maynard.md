@@ -2,7 +2,7 @@
 show: bachelorette
 number: 8
 title: Emily Maynard
-canonical_position: 2
+canonical_position: 6
 premiere_date: 2012-05-14
 ep_count: 11
 location: Charlotte, North Carolina
