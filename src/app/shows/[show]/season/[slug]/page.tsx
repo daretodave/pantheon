@@ -262,7 +262,7 @@ export default async function SeasonPage({ params }: { params: Params }) {
   const { prev, next } = adjacentByCanon(show, seasons, season)
   const appearsIn = appearsInRowsFor(show, season, themes, canonRank)
   const voteQuestion =
-    season.vote_question ?? 'Does this belong in the canon top 10?'
+    season.vote_question ?? 'Does this belong in the community top 10?'
 
   const lede = ledeOf(season)
   const body = bodyOf(season)

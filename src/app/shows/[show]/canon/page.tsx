@@ -1,13 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getAllShows, getCanon, getSeason, getShow } from '@/content'
+import { getAllSeasons, getAllShows, getCanon, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
-import {
-  CanonEntry,
-  CanonList,
-  ShieldBadge,
-  ShowHero,
-} from '@/components/composition'
+import { CanonPageShell } from '@/components/canon'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
 
 type Params = { show: string }
@@ -33,16 +28,15 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   })
 }
 
-function seasonHref(showSlug: string, n: number): string {
-  const s = getSeason(showSlug, n)
-  return s ? `/shows/${showSlug}/season/${s.slug}` : `/shows/${showSlug}/season/${n}`
-}
-
 export default function CanonPage({ params }: { params: Params }) {
   const show = getShow(params.show)
   if (!show) notFound()
+  const seasons = getAllSeasons(show.slug)
   const canon = getCanon(show.slug)
   const entries = canon?.entries ?? []
+
+  const seasonByNumber = new Map<number, ReturnType<typeof getAllSeasons>[number]>()
+  for (const s of seasons) seasonByNumber.set(s.number, s)
 
   const itemListLd = buildJsonLd({
     type: 'ItemList',
@@ -51,12 +45,18 @@ export default function CanonPage({ params }: { params: Params }) {
     path: `/shows/${show.slug}/canon`,
     items:
       entries.length > 0
-        ? entries.map((entry) => ({
-            position: entry.rank,
-            name: entry.title,
-            path: seasonHref(show.slug, entry.season),
-            description: entry.rationale.slice(0, 200),
-          }))
+        ? entries.map((entry) => {
+            const season = seasonByNumber.get(entry.season)
+            const path = season
+              ? `/shows/${show.slug}/season/${season.slug}`
+              : `/shows/${show.slug}`
+            return {
+              position: entry.rank,
+              name: entry.title,
+              path,
+              description: entry.rationale.slice(0, 200),
+            }
+          })
         : [
             {
               position: 1,
@@ -78,44 +78,16 @@ export default function CanonPage({ params }: { params: Params }) {
     <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-canon', data: itemListLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-canon-breadcrumb', data: crumbsLd })} />
-      <div className="screen canon-page" data-testid="canon-page-screen">
-        <ShowHero
-          crumb={
-            <>
-              <a href="/shows">Tiers</a> / <a href={`/shows/${show.slug}`}>{show.name}</a> /{' '}
-              Editor&rsquo;s Canon
-            </>
-          }
-          title="Editor's Canon"
-          blurb={`${show.name}, ranked with confidence.`}
-          tagline="Every placement is spoiler-safe, every rationale is on the record."
-          shield={<ShieldBadge />}
+      <div
+        className="screen canon-page-screen"
+        data-testid="canon-page-screen"
+      >
+        <CanonPageShell
+          show={show}
+          seasons={seasons}
+          canon={canon}
+          initialView="canon"
         />
-
-        {entries.length > 0 ? (
-          <CanonList>
-            {[...entries]
-              .sort((a, b) => a.rank - b.rank)
-              .map((entry) => (
-                <CanonEntry
-                  key={entry.rank}
-                  rank={entry.rank}
-                  title={entry.title}
-                  seasonNumber={entry.season}
-                  rationale={entry.rationale}
-                  href={seasonHref(show.slug, entry.season)}
-                />
-              ))}
-          </CanonList>
-        ) : (
-          <p
-            className="canon-empty"
-            data-testid="canon-list"
-            data-empty="true"
-          >
-            The canon hasn&rsquo;t been ranked yet — this page populates as the loop ships it.
-          </p>
-        )}
       </div>
     </ShowPaletteScope>
   )

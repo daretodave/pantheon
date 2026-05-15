@@ -438,6 +438,13 @@
   border-radius: 8px; overflow: hidden;
 }
 
+/* Phase 31c: the show-home renders both canon and community orderings
+   in DOM; FilterBar flips data-active-filter on the host element.
+   Only the ordering matching the active filter is visible. */
+[data-season-ordering-host] [data-season-ordering] { display: none; }
+[data-season-ordering-host][data-active-filter="canon"] [data-season-ordering="canon"],
+[data-season-ordering-host][data-active-filter="community"] [data-season-ordering="community"] { display: block; }
+
 .season-card {
   display: grid; grid-template-columns: 64px 1fr; gap: 18px;
   background: var(--show-paper);
@@ -980,115 +987,7 @@
 .pf-footer { padding: 24px 32px; border-top: 1px solid color-mix(in oklab, var(--show-ink, var(--color-ink-0)) 12%, transparent); }
 .pf-foot-row { display: flex; justify-content: space-between; font: 400 12px/1.4 var(--mono); color: color-mix(in oklab, var(--show-ink, var(--color-ink-0)) 50%, transparent); letter-spacing: 0.04em; }
 
-/* ============================================================ CANON PAGE */
-.canon-page { background: var(--show-paper); color: var(--show-ink); }
-
-.canon-page .show-hero-art {
-  /* The canon sub-surface uses a sigil thumbnail, not the full facade. */
-  min-height: 320px;
-  padding: 32px 48px;
-}
-.canon-page .show-hero-art svg { width: auto; height: 100%; max-height: 240px; }
-
-.canon-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 32px 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent);
-  border-radius: 12px;
-  overflow: hidden;
-  background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper));
-}
-.canon-entry {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 28px 32px;
-  border-top: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
-  transition: background 240ms cubic-bezier(.4,0,.2,1);
-}
-.canon-entry:first-child { border-top: 0; }
-.canon-entry:hover { background: color-mix(in oklab, var(--show-ink) 6%, transparent); }
-
-.canon-entry-head {
-  display: grid;
-  grid-template-columns: 72px 1fr auto;
-  align-items: baseline;
-  gap: 18px;
-}
-.canon-rank {
-  font: 500 28px/1 var(--mono);
-  color: var(--show-primary);
-  letter-spacing: -0.02em;
-}
-.canon-entry-title {
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: 24px;
-  letter-spacing: -0.01em;
-  color: var(--show-ink);
-}
-.canon-entry-season {
-  font: 500 12px/1 var(--mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--show-ink) 55%, transparent);
-}
-.canon-rationale {
-  font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.6;
-  color: color-mix(in oklab, var(--show-ink) 86%, transparent);
-  margin: 0;
-  text-wrap: pretty;
-  /* Slight indent so the rationale visually belongs to the entry above. */
-  padding-left: 72px;
-}
-
-.canon-empty {
-  margin: 0 32px 80px;
-  padding: 32px;
-  border: 1px dashed color-mix(in oklab, var(--show-ink) 24%, transparent);
-  border-radius: 12px;
-  color: color-mix(in oklab, var(--show-ink) 70%, transparent);
-  font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* ============================================================ COMMUNITY RANK */
-.community-page { background: var(--show-paper); color: var(--show-ink); }
-
-.community-source {
-  margin: 32px 32px 0;
-  padding: 14px 18px;
-  border: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper));
-  font: 500 12px/1.4 var(--mono);
-  letter-spacing: 0.04em;
-  color: color-mix(in oklab, var(--show-ink) 75%, transparent);
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.community-source::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--show-primary);
-}
-
-.community-page .show-hero-art {
-  /* Sigil-only sub-surface, same as the canon page. */
-  min-height: 320px;
-  padding: 32px 48px;
-}
-.community-page .show-hero-art svg { width: auto; height: 100%; max-height: 240px; }
+/* canon + community page styles moved to src/styles/canon.css (phase 31c). */
 
 /* rank shift pill */
 .rank-pill {
@@ -1202,19 +1101,7 @@
   .show-themes .section-head h2 { font-size: 22px; }
   .lists-grid { margin: 0 16px; }
 
-  .canon-list { margin: 0 16px 32px; }
-  .canon-entry { padding: 20px 16px; }
-  .canon-entry-head { grid-template-columns: 56px 1fr auto; gap: 12px; }
-  .canon-rank { font-size: 22px; }
-  .canon-entry-title { font-size: 19px; }
-  .canon-rationale { font-size: 15px; padding-left: 0; }
-  .canon-page .show-hero-art { min-height: 220px; padding: 24px; }
-  .canon-page .show-hero-art svg { max-height: 180px; }
-  .canon-empty { margin: 0 16px 32px; padding: 24px; }
-
-  .community-source { margin: 16px 16px 0; padding: 12px 16px; font-size: 11px; }
-  .community-page .show-hero-art { min-height: 220px; padding: 24px; }
-  .community-page .show-hero-art svg { max-height: 180px; }
+  /* canon + community mobile reflow now lives in src/styles/canon.css. */
 
   .season-related { grid-template-columns: 1fr; }
 

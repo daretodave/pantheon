@@ -1,0 +1,31 @@
+import type { CanonEntry } from '@/content'
+
+type CanonTailEntriesProps = {
+  entries: CanonEntry[]
+  seasonHref: (entry: CanonEntry) => string
+}
+
+function padRank(rank: number): string {
+  return String(rank).padStart(2, '0')
+}
+
+export function CanonTailEntries({ entries, seasonHref }: CanonTailEntriesProps) {
+  return (
+    <div className="cp-tail-table" data-testid="canon-tail-entries">
+      {entries.map((entry) => (
+        <a
+          key={entry.rank}
+          className="cp-tail-row"
+          href={seasonHref(entry)}
+          data-testid="canon-tail-row"
+          data-rank={entry.rank}
+        >
+          <div className="cp-tr-rank">{padRank(entry.rank)}</div>
+          <div className="cp-tr-title">{entry.title}</div>
+          <div className="cp-tr-tag">{entry.tag ?? ''}</div>
+          <div className="cp-tr-num">S{padRank(entry.season)}</div>
+        </a>
+      ))}
+    </div>
+  )
+}

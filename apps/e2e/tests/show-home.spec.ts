@@ -52,6 +52,12 @@ for (const url of showHomeUrls) {
       await expect(canon).toHaveAttribute('href', `/shows/${slug}/canon`)
       await expect(community).toHaveAttribute('href', `/shows/${slug}/community`)
 
+      // Phase 31c: only Canon + Community chips remain. "By era" is gone.
+      const chips = page.locator('[data-testid="filter-bar"] [role="tab"]')
+      expect(await chips.count()).toBe(2)
+      await expect(chips.first()).toHaveText(/canon/i)
+      await expect(chips.nth(1)).toHaveText(/community/i)
+
       const wrapper = page.locator(`[data-show="${slug}"]`).first()
       await expect(wrapper).toBeVisible()
 
@@ -72,6 +78,25 @@ for (const url of showHomeUrls) {
     })
   })
 }
+
+test.describe('chip switch reorders seasons + persists URL state', () => {
+  test('clicking Community on /shows/survivor flips ordering + writes ?view=', async ({
+    page,
+  }) => {
+    await page.goto('/shows/survivor', { waitUntil: 'domcontentloaded' })
+    const host = page.locator('[data-season-ordering-host]')
+    await expect(host).toHaveAttribute('data-active-filter', 'canon')
+
+    await page.getByTestId('filter-chip-community').click()
+
+    await expect(host).toHaveAttribute('data-active-filter', 'community')
+    await expect(page).toHaveURL(/\?view=community$/)
+
+    await page.getByTestId('filter-chip-canon').click()
+    await expect(host).toHaveAttribute('data-active-filter', 'canon')
+    await expect(page).toHaveURL('/shows/survivor')
+  })
+})
 
 test.describe('mobile @ 375px viewport', () => {
   test.use({ viewport: { width: 375, height: 812 } })

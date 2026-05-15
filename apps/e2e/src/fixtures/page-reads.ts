@@ -72,10 +72,18 @@ export const pageReads: Record<string, PageReadAssertion> = {
   '/shows/[show]/canon': {
     expectH1Pattern: /Editor['’]s Canon/i,
     expectJsonLdType: 'ItemList',
+    expectVisible: [
+      '[data-testid=canon-page-root][data-view=canon]',
+      '[data-testid=canon-tabs]',
+    ],
   },
   '/shows/[show]/community': {
-    expectH1Pattern: /Community Rank/i,
+    expectH1Pattern: /Editor['’]s Canon|Community Rank/i,
     expectJsonLdType: 'ItemList',
+    expectVisible: [
+      '[data-testid=canon-page-root][data-view=community]',
+      '[data-testid=community-live-strip]',
+    ],
   },
   '/shows/[show]/season/[slug]': {
     expectVisible: [

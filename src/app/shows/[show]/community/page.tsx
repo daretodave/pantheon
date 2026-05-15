@@ -2,14 +2,9 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSeasons, getAllShows, getCanon, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
-import {
-  SeasonCard,
-  SeasonGrid,
-  ShieldBadge,
-  ShowHero,
-} from '@/components/composition'
+import { CanonPageShell } from '@/components/canon'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
-import { computeCommunityRank, sourceBannerCopy } from '@/lib/community/rank'
+import { computeCommunityRank } from '@/lib/community/rank'
 
 type Params = { show: string }
 
@@ -70,65 +65,20 @@ export default function CommunityPage({ params }: { params: Params }) {
     ],
   })
 
-  const banner = sourceBannerCopy(result.source)
-
   return (
     <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-community', data: itemListLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-community-breadcrumb', data: crumbsLd })} />
-      <div className="screen community-page" data-testid="community-page-screen">
-        <ShowHero
-          crumb={
-            <>
-              <a href="/shows">Tiers</a> / <a href={`/shows/${show.slug}`}>{show.name}</a> /{' '}
-              Community Rank
-            </>
-          }
-          title="Community Rank"
-          blurb={`Voted by people who've watched ${show.name}.`}
-          tagline="Rankings shift as the community weighs in — be the first to push it."
-          shield={<ShieldBadge />}
+      <div
+        className="screen community-page-screen"
+        data-testid="community-page-screen"
+      >
+        <CanonPageShell
+          show={show}
+          seasons={seasons}
+          canon={canon}
+          initialView="community"
         />
-
-        <p
-          className="community-source"
-          data-testid="community-source-banner"
-          data-rank-source={result.source}
-        >
-          {banner}
-        </p>
-
-        {result.entries.length > 0 ? (
-          <section className="show-seasons" aria-labelledby="community-heading">
-            <div className="section-head">
-              <h2 id="community-heading">Ranked by the community</h2>
-            </div>
-            <SeasonGrid data-rank-source={result.source}>
-              {result.entries.map((entry) => (
-                <SeasonCard
-                  key={entry.season.number}
-                  rank={entry.rank}
-                  title={entry.season.title}
-                  tag={entry.tag}
-                  seasonNumber={entry.season.number}
-                  href={`/shows/${show.slug}/season/${entry.season.slug}`}
-                />
-              ))}
-            </SeasonGrid>
-          </section>
-        ) : (
-          <p
-            data-testid="season-grid"
-            data-empty="true"
-            style={{
-              margin: '24px 32px 80px',
-              color: 'var(--show-ink)',
-              opacity: 0.7,
-            }}
-          >
-            Seasons haven&rsquo;t been added yet — this page populates as the loop ships them.
-          </p>
-        )}
       </div>
     </ShowPaletteScope>
   )
