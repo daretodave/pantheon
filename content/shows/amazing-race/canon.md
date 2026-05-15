@@ -1,7 +1,7 @@
 ---
 show: amazing-race
 editor: tiered.tv Editors
-last_revised: 2026-05-14
+last_revised: 2026-05-15
 meth_who_h: Who ranks?
 meth_who_p: tiered.tv's editors. We've watched The Amazing Race since the original Keoghan summer in 2001, and we've replayed every season that lands on this list. The ranking starts as one editor's read, then gets calibrated against what reasonable race fans agree on after a long argument. We are not pretending to be objective; we are pretending to be honest.
 meth_how_h: How do we weigh it?
@@ -257,6 +257,42 @@ re-pressured by a different generation of returnees. The canon
 places it fourteenth because the season earns its argument
 even where the original All-Stars argument lands harder.
 
+## 24. All-Stars
+
+tag: The third full returnee field — the all-stars argument re-run a decade after the template.
+slot_argument: Eleven returning teams pulled from across the show's history, a Santa Clarita start, and the kind of chemistry only veterans who know the format cold can produce. The route's first-ever Wales stop is the bonus.
+community_rank_hint: rank=15 delta=0 sentiment=hold
+
+All-Stars 2014 is the franchise's third full returnee outing,
+and the canon rewards it for landing the returnee argument
+cleanly a decade after the original template. Eleven teams the
+audience already had relationships with came back to a Santa
+Clarita start, and the editing leans on the confessional weight
+only race veterans can carry. The route swept China, Malaysia,
+Sri Lanka, and continental Europe before a Las Vegas finish, with
+the show's first-ever stop in Wales. Express Passes, Double
+U-Turns, and Speed Bumps gave the field tools veterans actually
+use. The canon places it fifteenth because the chemistry is real
+even where it does not reach the original All-Stars peak.
+
+## 31. Reality Showdown
+
+tag: The first cross-franchise field — the format opening its starting line to other CBS shows.
+slot_argument: Five Amazing Race teams against three Survivor and three Big Brother teams. The format-historical argument is the strategy clash — three competition shows' instincts tested on one global road for the first time.
+community_rank_hint: rank=16 delta=0 sentiment=hold
+
+Reality Showdown is the season the race opened its starting line
+to the rest of the CBS competition slate, and the canon rewards
+the argument it makes. Five Amazing Race teams lined up against
+three Survivor and three Big Brother teams — the first
+cross-franchise field the format had ever run. Eleven teams left
+Hermosa Beach into a spring route through Japan, Laos, Vietnam,
+Uganda, Switzerland, Croatia, and England before a Detroit
+finish. CBS held the Wednesday hour and the editing leaned into
+the clash of three games' worth of instincts. The canon places
+it sixteenth because the casting concept gives the season a
+format-historical reason to exist.
+
 ## 15. Season 15
 
 tag: A confident fall outing — geography sharper than the years on either side.
@@ -270,7 +306,7 @@ tweak that the editing room used to open the first two legs
 into broader team-by-team coverage. The casting goes deep on
 archetypes the audience already trusts. Phil Keoghan paces a
 fall outing whose geography lands sharper than the seasons on
-either side. The canon places it fifteenth because the season
+either side. The canon places it seventeenth because the season
 earns its slot without straining for novelty.
 
 ## 17. Season 17
@@ -286,8 +322,25 @@ longer legs in fewer countries, the editing room trusting the
 geography to fill the hour without leaning on manufactured
 friction. The casting widens its demographic reach again. Phil
 Keoghan hosts the format running cleanly on rails. The canon
-places it sixteenth because the season is polished across
+places it eighteenth because the season is polished across
 every leg without making a distinct format-historical argument.
+
+## 29. Season 29
+
+tag: The total-strangers reset — the boldest casting gamble the format had run in years.
+slot_argument: Twenty-two individuals meet and pair into teams at the starting line. No shared history, no warm-up — the season's argument is that the format can build chemistry from scratch on the road.
+community_rank_hint: rank=19 delta=0 sentiment=hold
+
+Season 29 is the total-strangers experiment, and the canon
+rewards it for the casting nerve. Twenty-two individuals met for
+the first time and chose their racing partners at the starting
+line after a pre-starting-line task — no relationships, no
+warm-up, just a hunch tested against a global route. Eleven new
+teams left Los Angeles through Panama, Brazil, Tanzania, Norway,
+Italy, Greece, Vietnam, and South Korea before a Chicago finish.
+A reusable U-Turn and a lifted Roadblock cap let strategy
+compound. The canon places it nineteenth because the casting
+gamble gives the season a genuine format-historical argument.
 
 ## 14. Season 14
 
@@ -302,9 +355,26 @@ tuning. The casting leans on long-running partner duos and the
 editing trusts the unfamiliar Eastern European start to do the
 heavy lifting across the opening legs. Phil Keoghan hosts an
 outing that earns its slot without reaching for novelty. The
-canon places it seventeenth because the season is solid and
+canon places it twentieth because the season is solid and
 predictable in the way the late-classic franchise had taught
 the audience to expect.
+
+## 30. Season 30
+
+tag: The Head-to-Head debut — the season that handed the format two new tools at once.
+slot_argument: The first Head-to-Head challenge and the first partner swaps the race had ever run, broadcast as twelve legs across just eight episodes. The format-historical argument is the toolkit, even where the compressed cut blunts the pacing.
+community_rank_hint: rank=21 delta=0 sentiment=hold
+
+Season 30 is the season that handed the format two genuinely new
+tools, and the canon rewards the invention. The new Head-to-Head
+challenge pit teams directly against each other, and the first
+partner swaps the race had ever run reshuffled chemistry
+mid-route. Twelve teams left New York through Iceland, Belgium,
+Morocco, the Czech Republic, Zimbabwe, Bahrain, Thailand, and
+Hong Kong before a USS Hornet finish. CBS broadcast the twelve
+legs across only eight episodes, which blunts the leg-to-leg
+breathing room. The canon places it twenty-first because the
+toolkit is real even where the compressed cut works against it.
 
 ## 22. Season 22
 
@@ -319,9 +389,27 @@ the production opened with a starting line outside the United
 States — a quiet structural tweak the editing room used to
 push the early legs into broader coverage. Phil Keoghan paces
 a season whose geography is the argument. The canon places it
-eighteenth because the season holds its shape across the
+twenty-second because the season holds its shape across the
 route, even where the casting does not produce the kind of
 chemistry the higher-canon outings depend on.
+
+## 26. Blind Date
+
+tag: The blind-date casting experiment — the first leg as a first date.
+slot_argument: Five pairs of strangers met their partners at the starting line, racing alongside six established couples. The concept gives the early legs a texture standard casting cannot — but the gimmick does not reach the higher returnee arguments.
+community_rank_hint: rank=23 delta=0 sentiment=hold
+
+Blind Date is the casting experiment where five pairs of
+strangers met their racing partners at the starting line,
+running against six established couples. Eleven teams left
+Castaic Lake through Japan, Thailand, Germany, France, Monaco,
+Namibia, the Netherlands, and Peru before a Dallas finish. CBS
+held the Friday hour and built Date Night rewards and a Blind
+Double U-Turn into the legs. The concept gives the early route a
+texture standard casting cannot manufacture — strangers learning
+each other and the format at once. The canon places it
+twenty-third because the gimmick earns its airtime without
+reaching the returnee tier's arguments.
 
 ## 16. Season 16
 
@@ -335,9 +423,26 @@ production delivered the kind of season the franchise can
 build in its sleep after a full decade on the road. The
 casting leans on the dating-couple and partner-pair archetypes
 the show had refined. Phil Keoghan keeps the pit-stop cadence
-honest across the legs. The canon places it nineteenth because
+honest across the legs. The canon places it twenty-fourth because
 the season is competent across the route without making a
 distinct argument about what the format can do next.
+
+## 28. Social Media Stars
+
+tag: The influencer-casting season — eleven hometown starts and a route run as a feed.
+slot_argument: Social-media personalities paired with relatives or friends, launching from their own front doors with arrivals announced online. The concept reshapes the on-camera energy, but it is a casting tweak rather than a format argument.
+community_rank_hint: rank=25 delta=0 sentiment=hold
+
+Season 28 stocked its field with social-media personalities,
+each paired with a relative or friend, and the canon places it
+where the concept lands. Eleven teams launched from their own US
+hometowns — arrivals announced across their feeds — into a route
+through Mexico, Colombia, Switzerland, France, Armenia, Georgia,
+the UAE, Indonesia, and China before a Santa Barbara finish,
+with first-ever stops in Colombia, Armenia, and Georgia. CBS held
+the Friday hour. The casting reshapes the on-camera energy from
+the first front door. The canon places it twenty-fifth because
+the concept is a casting tweak rather than a format argument.
 
 ## 19. Season 19
 
@@ -352,8 +457,25 @@ and the production ran the format with the muscle memory of
 eleven years on the road. The casting widens across age and
 partner type but the editing room couldn't quite find the kind
 of central friction it had spent the spring leaning on. Phil
-Keoghan hosts. The canon places it twentieth because the
+Keoghan hosts. The canon places it twenty-sixth because the
 season is competent without quite carrying the room.
+
+## 25. Season 25
+
+tag: The Save debuts — a standard run with one quietly consequential new tool.
+slot_argument: The season that introduced the Save and a Blind Detour. A competent standard outing whose structural tweaks matter more in retrospect than they do across the legs themselves.
+community_rank_hint: rank=27 delta=0 sentiment=hold
+
+Season 25 is a competent standard outing carrying one quietly
+consequential tool. Eleven teams left New York's Times Square
+through the US Virgin Islands, England, Scotland, Denmark,
+Sweden, Morocco, Italy, Malta, Singapore, and the Philippines
+before a Rancho Palos Verdes finish. CBS moved the hour to Friday
+and introduced the Save — a new safety mechanic — alongside a
+Blind Detour that hides the choice until teams commit. The
+casting leans on teams who arrived already knowing each other.
+The canon places it twenty-seventh because the new tool matters
+more in retrospect than it does across these particular legs.
 
 ## 20. Season 20
 
@@ -368,8 +490,25 @@ established lane — the version the show had been making for a
 decade now. The casting leans on partner pairs and dating
 couples. Phil Keoghan paces an outing that is competent across
 the legs without reaching for novelty. The canon places it
-twenty-first because the season is dependable but its texture
+twenty-eighth because the season is dependable but its texture
 does not particularly reward a second pass on the route.
+
+## 32. Season 32
+
+tag: The back-to-basics outing — filmed in 2018, shelved, then aired into a different world.
+slot_argument: A stripped-down standard season that brought back the Yield for the first time since 2007 and added the Mega Leg. Its production story — held nearly two years before broadcast — is more interesting than the hour.
+community_rank_hint: rank=29 delta=0 sentiment=hold
+
+Season 32 is the back-to-basics outing, filmed in late 2018 and
+held back: originally slated for May 2020, its broadcast slid to
+October. Eleven teams left Los Angeles through Trinidad and
+Tobago, Colombia, Brazil, Paraguay, France, Germany, Kazakhstan,
+India, Cambodia, and the Philippines before a New Orleans finish.
+CBS brought back the Yield for the first time since 2007,
+alongside the new Mega Leg and a City Sprint twist. The canon
+places it twenty-ninth because the season is a clean stripped-down
+run whose delayed-broadcast story is more interesting than the
+route itself.
 
 ## 21. Season 21
 
@@ -383,9 +522,26 @@ CBS held the Sunday hour and the production ran a competent
 fall outing in a year when the franchise was visibly between
 arguments about itself. The casting widens across partner
 types again. Phil Keoghan hosts the format running its trusted
-lane. The canon places it twenty-second because the season is
+lane. The canon places it thirtieth because the season is
 competent across the route without making a distinctive
 argument about what the show was for in its twelfth year.
+
+## 27. Season 27
+
+tag: A standard run with sharper strategic mechanics — competent across the route.
+slot_argument: The Express Pass now has to be handed to a rival after use and the U-Turn moved to the Detour decision point. The mechanics are sharper, but the season makes no larger argument about what the format is for.
+community_rank_hint: rank=31 delta=0 sentiment=hold
+
+Season 27 is a competent standard outing with two sharpened
+tools. Eleven teams left Los Angeles through Brazil, Argentina,
+Zambia, France, the Netherlands, Poland, India, Hong Kong, and
+Macau before a Southampton finish, with the show's first-ever
+stop in Zimbabwe. CBS held the Friday hour and tightened the
+mechanics: the Express Pass has to be handed to a rival after
+use, and the U-Turn moved onto the Detour decision point. The
+casting leans on partner pairs. The canon places it
+thirty-first because the strategy is sharper without the season
+making a larger argument about the format.
 
 ## 23. Season 23
 
@@ -400,5 +556,22 @@ audience could watch in muscle memory — familiar geographies,
 a few sharper detours, and the franchise visibly waiting for
 the structural tweak it would land in the next outing. The
 casting leans on partner pairs and dating couples. Phil
-Keoghan paces the cadence. The canon places it twenty-third
+Keoghan paces the cadence. The canon places it thirty-second
 because the season closes the late-classic run cleanly.
+
+## 33. Season 33
+
+tag: The interrupted season — paused mid-route for nineteen months, then restarted.
+slot_argument: The franchise's most logistically extraordinary outing: filming stopped after three legs, resumed nineteen months later with a reshuffled field and a chartered jet. The shape carries the seam.
+community_rank_hint: rank=33 delta=0 sentiment=hold
+
+Season 33 is the most logistically extraordinary outing the
+franchise has run. Filming began with hometown starts, then
+stopped after three legs through England and Scotland; it resumed
+roughly nineteen months later. Some teams couldn't return, so two
+previously-out teams were reinstated, and the resumed legs ran on
+a chartered Titan Airways 757 with staggered releases. The route
+also touched Switzerland, France, Greece, and Portugal before a
+Greater Los Angeles finish. The canon places it thirty-third
+because the production story is genuinely historic while the
+season's shape visibly carries the seam where it was interrupted.

@@ -7,7 +7,7 @@ ep_count: 12
 location: "Global route, starting Los Angeles, California, finishing in Atlanta, Georgia"
 host: Phil Keoghan
 format_changes: []
-canonical_position: 20
+canonical_position: 26
 premiere_caption: "CBS · Sunday 8/7c"
 format_summary: "11 teams of 2 · standard"
 cast_size: 22
