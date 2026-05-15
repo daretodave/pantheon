@@ -125,7 +125,7 @@ function main(): number {
   //
   // Toggling STRICT is intentionally a one-line change so the
   // 31b drain ticks can flip it without re-arguing the contract.
-  const STRICT = false
+  const STRICT = true
   failures.push(...collectFailures(STRICT))
 
   const showSlugs = new Set(getAllShows().map((s) => s.slug))
