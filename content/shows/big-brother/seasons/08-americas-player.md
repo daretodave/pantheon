@@ -2,7 +2,7 @@
 show: big-brother
 number: 8
 title: America's Player
-canonical_position: 6
+canonical_position: 14
 premiere_date: 2007-07-05
 ep_count: 30
 location: Studio City, California

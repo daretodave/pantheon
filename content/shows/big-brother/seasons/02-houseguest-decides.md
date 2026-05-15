@@ -2,7 +2,7 @@
 show: big-brother
 number: 2
 title: Houseguest Decides
-canonical_position: 3
+canonical_position: 6
 premiere_date: 2001-07-05
 ep_count: 30
 location: Studio City, California
