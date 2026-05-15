@@ -11,6 +11,7 @@ premiere_caption: "Logo · Monday 9/8c"
 format_summary: "Standard format"
 format_caption: "Bianca and Adore turning point"
 cast_size: 14
+canonical_position: 2
 ---
 
 The split-premiere season — two workroom intros, two cast

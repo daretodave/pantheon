@@ -11,6 +11,7 @@ premiere_caption: "VH1 · Friday 8/7c"
 format_summary: "Standard format"
 format_caption: "the VH1 move season"
 cast_size: 13
+canonical_position: 3
 ---
 
 Drag Race's VH1 debut, and the format's biggest production-
