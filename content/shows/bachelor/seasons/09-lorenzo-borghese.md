@@ -3,7 +3,7 @@ show: bachelor
 number: 9
 title: Lorenzo Borghese
 display_title: "Lorenzo Borghese<br/><em>Rome</em>"
-canonical_position: 3
+canonical_position: 5
 premiere_date: 2006-10-02
 ep_count: 9
 location: Rome, Italy

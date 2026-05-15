@@ -2,7 +2,7 @@
 show: bachelor
 number: 4
 title: Bob Guiney
-canonical_position: 6
+canonical_position: 11
 premiere_date: 2003-09-24
 ep_count: 6
 location: Agoura Hills, California

@@ -2,7 +2,7 @@
 show: bachelor
 number: 6
 title: Byron Velvick
-canonical_position: 4
+canonical_position: 8
 premiere_date: 2004-09-22
 ep_count: 8
 location: Agoura Hills, California

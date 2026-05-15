@@ -2,7 +2,7 @@
 show: bachelor
 number: 2
 title: Aaron Buerge
-canonical_position: 7
+canonical_position: 13
 premiere_date: 2002-09-25
 ep_count: 6
 location: Agoura Hills, California
