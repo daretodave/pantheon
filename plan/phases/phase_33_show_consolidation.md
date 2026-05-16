@@ -188,10 +188,21 @@ surprising hits inside `/* … */`.
 ### F. Wiring (every `/canon` + `/community` reference)
 
 1. **Season page** (`src/app/shows/[show]/season/[slug]/
-   page.tsx`) — any "see the full canon" / "community top 10"
-   links point to `/shows/[show]` (canon) and
-   `/shows/[show]?view=community`. The vote-question fallback
-   wording ("community top 10", set 31c) is unchanged.
+   page.tsx`) — repoint **every** canon/community href, named
+   explicitly so none is missed:
+   - **The `AppearsInList` "Also appears in → Editor's Canon"
+     row** at `season/[slug]/page.tsx:182` (`href:
+     /shows/${slug}/canon`). This is the row a reader sees at
+     the bottom of e.g. `/shows/survivor/season/gabon`.
+     Repoint to `/shows/[show]` (canon is the default view).
+     If cheap, anchor to the season's canon entry; do not
+     over-engineer it — a clean landing on the consolidated
+     page is the bar. Keep the row (the season *is* ranked in
+     the canon; the cross-ref still makes sense).
+   - Any "see the full canon" / "community top 10" CTA →
+     `/shows/[show]` / `/shows/[show]?view=community`.
+   - The vote-question fallback wording ("community top 10",
+     set 31c) is unchanged.
 2. **Home, search index, themed-list cross-links, `/u/
    [handle]`** — grep for `/canon` and `/community` hrefs;
    repoint to the show page (+ `?view=community` where the
@@ -210,6 +221,25 @@ surprising hits inside `/* … */`.
    landing-only framing. Verify the rendered OG PNG copy is
    accurate for Survivor before sign-off. The two deleted OG
    routes are gone (A).
+6. **No-dead-links guarantee (belt + suspenders + tested).**
+   This phase must not strand a single internal link.
+   - *Belt:* the 308 redirects in §A mean any
+     `/shows/[show]/canon` or `/community` link that slips
+     through repointing still resolves (308 → consolidated
+     page) — **no 404, ever**, including external inbound
+     links and stale bookmarks.
+   - *Suspenders:* a repo-wide grep for
+     `/shows/.*?/(canon|community)` hrefs is part of the
+     work; every internal occurrence is repointed to the
+     canonical consolidated URL so internal navigation never
+     even takes the redirect hop. The full enumerated set
+     today: `ShowSplit` (removed in §B), the season
+     `AppearsInList` row (F.1), `season/[slug]/page.tsx:182`,
+     plus any home / search-index / `/u/[handle]` /
+     themed-list occurrences (grep is authoritative — treat
+     the list as a floor, not a ceiling).
+   - *Tested:* add an e2e link-integrity assertion (see
+     Tests) so "no dead links" is a gate, not a hope.
 
 ### G. URL contract + e2e (the locked-surface change)
 
@@ -243,6 +273,15 @@ the user** to change them.
      the consolidated show page renders both panes + tab
      toggle + era toolbar (Survivor: chips present;
      `?view=community` deep-link lands on community).
+   - **Link-integrity crawl.** On `/shows/survivor` and a
+     representative season page (`/shows/survivor/season/
+     gabon` — the exact page the user flagged, which carries
+     the "Also appears in → Editor's Canon" row), collect
+     every internal `<a href>` and assert each resolves
+     `200` (or an intended `308` whose target is `200`) —
+     **zero 404s**, and the season "Also appears in" canon
+     row lands on the consolidated page. Keep it a small,
+     fast spec, not a whole-site spider.
 
 ## Bolt-ons (small, season-page polish — ship in this commit)
 
@@ -320,6 +359,10 @@ ring, `aria-selected`, ≥44px hit targets).
 - URL contract updated in `bearings.md` + `spec.md`;
   sitemap + canonical-urls + page-reads + redirect fixtures
   consistent; smoke walker green.
+- **No dead links.** The season "Also appears in → Editor's
+  Canon" row (and every other internal canon/community link)
+  resolves to the consolidated page; the link-integrity
+  crawl is green; nothing 404s.
 - OG/meta for `/shows/[show]` reviewed and accurate for the
   consolidated page (sign-off item).
 - Three bolt-ons shipped and verified on the Cagayan /
