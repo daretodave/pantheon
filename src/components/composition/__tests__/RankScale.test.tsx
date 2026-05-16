@@ -25,22 +25,29 @@ describe('rankFillPercent', () => {
 })
 
 describe('<RankScale>', () => {
-  it('renders the rank pad-2 and the total in mark labels', () => {
+  it('renders the rank pad-2 and the two descriptive endpoint marks', () => {
     render(<RankScale rank={7} total={47} />)
     expect(screen.getByTestId('rank-scale-rank')).toHaveTextContent('#07')
     expect(screen.getByText('of 47')).toBeInTheDocument()
-    expect(screen.getByText('#01')).toBeInTheDocument()
-    expect(screen.getByText('#47')).toBeInTheDocument()
+    expect(screen.getByText('#01 · canon peak')).toBeInTheDocument()
+    expect(screen.getByText('#47 · the tail')).toBeInTheDocument()
   })
 
-  it('flips the here arrow when the rank is in the bottom third', () => {
-    render(<RankScale rank={44} total={47} />)
-    expect(screen.getByTestId('rank-scale-here').textContent).toMatch(/↓/)
+  it('places the dot marker + label at the rank percentage', () => {
+    render(<RankScale rank={7} total={47} />)
+    const label = screen.getByTestId('rank-scale-here')
+    expect(label).toHaveTextContent('#07')
+    const dot = label.closest('.scale-here') as HTMLElement
+    expect(dot).not.toBeNull()
+    expect(dot.style.left).toMatch(/^14\.\d+%$/)
   })
 
-  it('keeps the up arrow for top-half ranks', () => {
-    render(<RankScale rank={3} total={47} />)
-    expect(screen.getByTestId('rank-scale-here').textContent).toMatch(/↑/)
+  it('puts the dot at 100% when rank=total', () => {
+    render(<RankScale rank={47} total={47} />)
+    const dot = screen
+      .getByTestId('rank-scale-here')
+      .closest('.scale-here') as HTMLElement
+    expect(dot.style.left).toMatch(/^100(\.00)?%$/)
   })
 
   it('writes the fill percentage as inline style', () => {

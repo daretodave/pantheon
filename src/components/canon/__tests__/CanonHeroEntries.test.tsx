@@ -42,9 +42,26 @@ describe('<CanonHeroEntries>', () => {
     const rows = screen.getAllByTestId('canon-hero-entry')
     expect(rows).toHaveLength(2)
     expect(rows[0]).toHaveAttribute('data-rank', '1')
-    expect(screen.getByText('01')).toBeInTheDocument()
+    expect(rows[0]?.querySelector('.cp-he-rank')?.textContent).toBe('01')
     expect(screen.getByText('Borneo')).toBeInTheDocument()
     expect(screen.getByText('Heroes vs. Villains')).toBeInTheDocument()
+  })
+
+  it('stacks the zero-padded season tag under the rank numeral', () => {
+    const entries = [entry({ rank: 1, season: 20, title: 'Heroes vs. Villains' })]
+    render(
+      <CanonHeroEntries
+        entries={entries}
+        seasonHref={() => '/x'}
+        seasonOf={() => undefined}
+        eraOf={() => undefined}
+      />,
+    )
+    const tag = screen.getByTestId('canon-hero-season-tag')
+    expect(tag).toHaveTextContent('S20')
+    const stack = tag.closest('.cp-he-rank-stack')
+    expect(stack).not.toBeNull()
+    expect(stack?.querySelector('.cp-he-rank')?.textContent).toBe('01')
   })
 
   it('collapses absent tag / slot_argument / community_rank_hint', () => {

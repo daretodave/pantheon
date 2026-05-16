@@ -19,6 +19,11 @@ describe('<SeasonInfoCard>', () => {
     expect(screen.getByTestId('info-row-vote')).toBeInTheDocument()
     expect(screen.getByTestId('info-row-shield')).toBeInTheDocument()
     expect(screen.getByTestId('vote-slot')).toBeInTheDocument()
+    // Phase 37 nit 5: the canon scale renders a dot marker + #NN label
+    // on the track and two descriptive endpoint marks.
+    expect(screen.getByTestId('rank-scale-here')).toHaveTextContent('#07')
+    expect(screen.getByText('#01 · canon peak')).toBeInTheDocument()
+    expect(screen.getByText('#47 · the tail')).toBeInTheDocument()
   })
 
   it('hides the community row by default', () => {

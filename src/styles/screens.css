@@ -568,13 +568,25 @@
   margin-top: 6px;
 }
 .scale-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: var(--show-primary); }
+.scale-here {
+  position: absolute; top: 50%; transform: translate(-50%, -50%);
+  width: 14px; height: 14px; border-radius: 999px;
+  background: var(--show-primary);
+  box-shadow: 0 0 0 4px var(--show-paper);
+}
+.scale-here-label {
+  position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+  font: 500 11px/1 var(--mono); letter-spacing: 0.06em;
+  color: var(--show-primary); white-space: nowrap;
+}
 .scale-marks {
   display: flex; justify-content: space-between;
-  margin-top: 8px;
-  font: 500 10px/1 var(--mono); letter-spacing: 0.08em;
+  margin-top: 28px;
+  font: 500 10px/1.3 var(--mono); letter-spacing: 0.08em;
   color: color-mix(in oklab, var(--show-ink) 40%, transparent);
+  text-transform: uppercase;
 }
-.scale-marks .here { color: var(--show-primary); }
+.scale-marks .end-r { text-align: right; }
 
 .community-line { display: flex; align-items: baseline; gap: 12px; }
 .community-num { font: 500 38px/1 var(--mono); color: var(--show-ink); letter-spacing: -0.01em; }

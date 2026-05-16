@@ -193,8 +193,9 @@
 /* =========================================================== TOOLBAR */
 .cp-toolbar {
   padding: 20px var(--gutter);
-  margin-top: 12px;
-  border-top: 1px solid var(--rule);
+  /* No margin-top / border-top: the methodology's border-bottom is
+     the single seam above the toolbar (design Survivor.html .toolbar
+     lines 217-221). Toolbar carries only its own border-bottom. */
   border-bottom: 1px solid var(--rule);
   display: flex;
   align-items: center;
@@ -363,11 +364,33 @@
 .cp-hero-entry:hover {
   background: color-mix(in oklab, var(--show-ink) 4%, var(--show-paper));
 }
+.cp-he-rank-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+}
 .cp-he-rank {
   font: 500 64px/1 var(--mono);
   color: var(--show-primary);
   letter-spacing: -0.03em;
+}
+.cp-he-season-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font: 500 26px/1 var(--mono);
+  color: var(--show-ink);
+  letter-spacing: -0.01em;
   padding-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+}
+.cp-he-season-tag .cp-pre {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-55);
+  font-weight: 500;
 }
 .cp-he-body { min-width: 0; }
 .cp-he-title {
@@ -485,6 +508,18 @@
   color: var(--show-primary);
   letter-spacing: -0.01em;
   padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.cp-mid-rank .cp-mid-season-tag {
+  font: 500 14px/1 var(--mono);
+  color: var(--show-ink);
+  letter-spacing: -0.005em;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+  min-width: 32px;
 }
 .cp-mid-title {
   font-family: var(--serif);
@@ -983,8 +1018,8 @@
   .cp-he-rank {
     font-size: 44px;
     margin-bottom: 8px;
-    padding-top: 0;
   }
+  .cp-he-season-tag { font-size: 22px; }
   .cp-he-title { font-size: 30px; }
   .cp-cl-cols,
   .cp-cl-row {
@@ -1081,7 +1116,10 @@
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   position: sticky;
-  top: 60px;
+  /* Pins flush under the sticky chrome.css .site-header. Keep in
+     sync with .site-header height (chrome.css:37 padding 18px +
+     ~36px content row + 1px border ≈ 72px). */
+  top: 72px;
   z-index: 20;
   background: color-mix(in oklab, var(--show-paper) 96%, #000);
   backdrop-filter: blur(8px);
@@ -1107,5 +1145,10 @@
   }
   .ranking .cp-tab {
     padding: 14px 20px;
+  }
+  /* Mobile .site-header is shorter (chrome.css:118 padding 14px 16px
+     ≈ 64px) — pin the tab bar flush there too. */
+  .ranking .cp-tabs {
+    top: 64px;
   }
 }

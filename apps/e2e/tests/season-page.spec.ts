@@ -24,6 +24,14 @@ for (const url of seasonUrls) {
       await expect(page.getByTestId('info-card')).toBeVisible()
       await expect(page.getByTestId('info-row-canon')).toBeVisible()
       await expect(page.getByTestId('info-row-vote')).toBeVisible()
+      // Phase 37 nit 5: ranked seasons render the canon scale dot +
+      // #NN label on the track (unranked seasons show the "not yet
+      // ranked" fallback instead — scope the assertion accordingly).
+      const rankScale = page.getByTestId('rank-scale')
+      if ((await rankScale.count()) > 0) {
+        await expect(page.getByTestId('rank-scale-here')).toBeVisible()
+        await expect(page.getByText('#01 · canon peak')).toBeVisible()
+      }
       await expect(page.getByTestId('vote-pair')).toBeVisible()
       await expect(page.getByTestId('season-thread')).toBeVisible()
       await expect(page.getByTestId('comment-thread')).toBeVisible()

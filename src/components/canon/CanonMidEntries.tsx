@@ -39,7 +39,15 @@ export function CanonMidEntries({
             data-rank={entry.rank}
             data-era={eraOf(entry) ?? ''}
           >
-            <div className="cp-mid-rank">{padRank(entry.rank)}</div>
+            <div className="cp-mid-rank">
+              {padRank(entry.rank)}
+              <div
+                className="cp-mid-season-tag"
+                data-testid="canon-mid-season-tag"
+              >
+                S{padRank(entry.season)}
+              </div>
+            </div>
             <div>
               <h4 className="cp-mid-title">{entry.title}</h4>
               {entry.tag ? <p className="cp-mid-tag">{entry.tag}</p> : null}

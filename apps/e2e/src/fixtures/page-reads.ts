@@ -52,18 +52,19 @@ export const pageReads: Record<string, PageReadAssertion> = {
     ],
   },
   '/shows/[show]': {
-    // Phase 33: consolidated show page — hero + shifts + the ranking
+    // Phase 33: consolidated show page — hero + the ranking
     // (sticky tabs, canon pane SSR'd + community pane SSR'd) + themed
     // lists. Both panes are in the DOM regardless of active view (CSS
     // toggles visibility), so the smoke walker asserts the canon pane
     // visible (default view) and the ranking scaffold present.
+    // Phase 37 nit 4: the shifts section is absent until phase 35
+    // wires the 72-hour signal — not a required selector.
     expectVisible: [
       '[data-testid=bullet]',
       '[data-testid=shield-badge]',
       '[data-testid=show-hero]',
       '[data-testid=show-hero-cover]',
       '[data-testid=show-hero-stats]',
-      '[data-testid=shifts-row]',
       '[data-testid=show-ranking][data-view=canon]',
       '[data-testid=ranking-intro]',
       '[data-testid=canon-tabs]',

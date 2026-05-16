@@ -17,21 +17,27 @@ export function CanonTailEntries({
 }: CanonTailEntriesProps) {
   return (
     <div className="cp-tail-table" data-testid="canon-tail-entries">
-      {entries.map((entry) => (
-        <a
-          key={entry.rank}
-          className="cp-tail-row"
-          href={seasonHref(entry)}
-          data-testid="canon-tail-row"
-          data-rank={entry.rank}
-          data-era={eraOf(entry) ?? ''}
-        >
-          <div className="cp-tr-rank">{padRank(entry.rank)}</div>
-          <div className="cp-tr-title">{entry.title}</div>
-          <div className="cp-tr-tag">{entry.tag ?? ''}</div>
-          <div className="cp-tr-num">S{padRank(entry.season)}</div>
-        </a>
-      ))}
+      {entries.map((entry) => {
+        const hint = entry.community_rank_hint
+        return (
+          <a
+            key={entry.rank}
+            className="cp-tail-row"
+            href={seasonHref(entry)}
+            data-testid="canon-tail-row"
+            data-rank={entry.rank}
+            data-era={eraOf(entry) ?? ''}
+          >
+            <div className="cp-tr-rank">{padRank(entry.rank)}</div>
+            <div className="cp-tr-title">{entry.title}</div>
+            <div className="cp-tr-tag">{entry.tag ?? ''}</div>
+            <div className="cp-tr-num">
+              S{padRank(entry.season)}
+              {hint ? ` · Community #${padRank(hint.rank)}` : ''}
+            </div>
+          </a>
+        )
+      })}
     </div>
   )
 }

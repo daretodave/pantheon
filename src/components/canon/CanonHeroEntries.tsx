@@ -49,7 +49,16 @@ export function CanonHeroEntries({
             data-rank={entry.rank}
             data-era={eraOf(entry) ?? ''}
           >
-            <div className="cp-he-rank">{padRank(entry.rank)}</div>
+            <div className="cp-he-rank-stack">
+              <div className="cp-he-rank">{padRank(entry.rank)}</div>
+              <div
+                className="cp-he-season-tag"
+                data-testid="canon-hero-season-tag"
+              >
+                <span className="cp-pre">S</span>
+                {padRank(entry.season)}
+              </div>
+            </div>
             <div className="cp-he-body">
               <h3 className="cp-he-title">{entry.title}</h3>
               <div className="cp-he-season">{seasonLine(entry, season)}</div>

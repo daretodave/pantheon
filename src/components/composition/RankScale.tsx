@@ -1,8 +1,9 @@
-// Phase 30: pure renderer for the canon scale-track inside SeasonInfoCard.
-// Mirrors design/tiered.tv · Heroes vs. Villains.html § .scale-* — a thin
-// rule with a primary-colored fill, the rank as a 38px mono number, and
-// three marks (#01 / ↑ here / #N) underneath. Fill percentage matches the
-// design's `width:14.9%` style for rank=7/47: fill = rank / total.
+// Phase 30 / 37: pure renderer for the canon scale-track inside
+// SeasonInfoCard. Mirrors design/tiered.tv · Heroes vs. Villains.html
+// § .scale-* — a thin rule with a primary-colored fill, the rank as a
+// 38px mono number, a dot marker on the track with a #NN label, and
+// two descriptive endpoint marks (#01 · canon peak / #NN · the tail).
+// Fill + dot offset = rank / total (design's width:14.9% for 7/47).
 
 type RankScaleProps = {
   rank: number
@@ -29,7 +30,6 @@ export function RankScale({
 }: RankScaleProps) {
   const pct = rankFillPercent(rank, total)
   const metaText = meta ?? `${total} ${total === 1 ? 'season' : 'seasons'}`
-  const lowerThird = rank > total * (2 / 3)
   return (
     <div data-testid="rank-scale">
       <div className="info-row-head">
@@ -48,13 +48,15 @@ export function RankScale({
           data-testid="rank-scale-fill"
           style={{ width: `${pct.toFixed(2)}%` }}
         />
+        <div className="scale-here" style={{ left: `${pct.toFixed(2)}%` }}>
+          <span className="scale-here-label" data-testid="rank-scale-here">
+            #{pad2(rank)}
+          </span>
+        </div>
       </div>
       <div className="scale-marks">
-        <span>#01</span>
-        <span className="here" data-testid="rank-scale-here">
-          {lowerThird ? '↓ here' : '↑ here'}
-        </span>
-        <span>#{pad2(total)}</span>
+        <span>#01 · canon peak</span>
+        <span className="end-r">#{pad2(total)} · the tail</span>
       </div>
     </div>
   )

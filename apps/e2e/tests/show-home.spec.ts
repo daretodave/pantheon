@@ -28,8 +28,11 @@ for (const url of showHomeUrls) {
       await expect(page.getByTestId('show-hero-cover')).toBeVisible()
       await expect(page.getByTestId('show-hero-stats')).toBeVisible()
       await expect(page.getByTestId('bullet').first()).toBeVisible()
-      await expect(page.getByTestId('shifts-row')).toBeVisible()
-      await expect(page.getByTestId('shifts-empty')).toBeVisible()
+      // Phase 37 nit 4: the 72-hour shift signal is unwired (phase 35),
+      // so the "What changed this week." section is absent entirely —
+      // no empty box, no stray rule.
+      expect(await page.getByTestId('shifts-row').count()).toBe(0)
+      expect(await page.getByTestId('shifts-empty').count()).toBe(0)
       await expect(page.getByTestId('shield-badge').first()).toBeVisible()
 
       // The consolidated ranking: root seeded canon (default view),
@@ -168,6 +171,73 @@ test.describe('era toolbar (33b)', () => {
     expect(
       await toolbar.locator('.cp-chip:not([data-filter=all])').count(),
     ).toBeGreaterThanOrEqual(1)
+  })
+})
+
+test.describe('phase 37 design-fidelity nits', () => {
+  test('nit 1: sticky canon tab bar pins flush under the site header (desktop)', async ({
+    page,
+  }) => {
+    await page.goto('/shows/survivor', { waitUntil: 'domcontentloaded' })
+    const tabs = page.getByTestId('canon-tabs')
+    const header = page.locator('.site-header').first()
+    await expect(tabs).toBeVisible()
+    await expect(header).toBeVisible()
+
+    // Scroll far enough that the tab bar is pinned (sticky engaged).
+    await page.evaluate(() => window.scrollTo(0, 1400))
+    await page.waitForTimeout(120)
+
+    const tabsBox = await tabs.boundingBox()
+    const headerBox = await header.boundingBox()
+    expect(tabsBox, 'tab bar bounding box').not.toBeNull()
+    expect(headerBox, 'header bounding box').not.toBeNull()
+    const gap = tabsBox!.y - (headerBox!.y + headerBox!.height)
+    expect(
+      Math.abs(gap),
+      `tab bar should sit flush under the header — gap=${gap}px`,
+    ).toBeLessThanOrEqual(2)
+  })
+
+  test('nit 1 (mobile @375): sticky canon tab bar pins flush under the header', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 })
+    await page.goto('/shows/survivor', { waitUntil: 'domcontentloaded' })
+    const tabs = page.getByTestId('canon-tabs')
+    const header = page.locator('.site-header').first()
+    await expect(tabs).toBeVisible()
+
+    await page.evaluate(() => window.scrollTo(0, 1600))
+    await page.waitForTimeout(120)
+
+    const tabsBox = await tabs.boundingBox()
+    const headerBox = await header.boundingBox()
+    const gap = tabsBox!.y - (headerBox!.y + headerBox!.height)
+    expect(
+      Math.abs(gap),
+      `mobile tab bar flush under header — gap=${gap}px`,
+    ).toBeLessThanOrEqual(2)
+  })
+
+  test('nit 3: methodology bottom and era toolbar top share a single seam', async ({
+    page,
+  }) => {
+    await page.goto('/shows/survivor', { waitUntil: 'domcontentloaded' })
+    const methodology = page.getByTestId('canon-methodology')
+    const toolbar = page.getByTestId('canon-era-toolbar')
+    await expect(methodology).toBeVisible()
+    await expect(toolbar).toBeVisible()
+
+    const mBox = await methodology.boundingBox()
+    const tBox = await toolbar.boundingBox()
+    expect(mBox, 'methodology box').not.toBeNull()
+    expect(tBox, 'toolbar box').not.toBeNull()
+    const seamGap = tBox!.y - (mBox!.y + mBox!.height)
+    expect(
+      Math.abs(seamGap),
+      `no hollow double border — methodology→toolbar gap=${seamGap}px`,
+    ).toBeLessThanOrEqual(2)
   })
 })
 
