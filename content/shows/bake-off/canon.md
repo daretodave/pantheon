@@ -1,7 +1,7 @@
 ---
 show: bake-off
 editor: tiered.tv Editors
-last_revised: 2026-05-15
+last_revised: 2026-05-16
 meth_who_h: Who ranks?
 meth_who_p: One tiered.tv editor who has watched every series of Bake Off, from the touring pilot through the Channel 4 years, calibrated against what long-running fans tend to agree on. The read is opinionated but defensible — we treat the BBC and Channel 4 stretches as one continuous body of work, and we weigh each series on its own terms.
 meth_how_h: How do we weigh it?
@@ -96,10 +96,50 @@ community_rank_hint: rank=9 delta=0 sentiment=hold
 
 The final series with Sandi Toksvig at the tent flap, and a quiet end-of-era piece of television. Toksvig and Noel Fielding work their last run as a presenter pair, Prue Leith and Paul Hollywood anchor a bench that reads fully settled, and the casting class arrives confident in what Bake Off is by this point. The technical challenges land with the bench's by-now-familiar discipline, the showstoppers push craft without showing off, and the broadcast trusts the room. Worth the watch for a study in a settled-era series doing exactly what the format asks of it, and for the texture of a lineup quietly closing a chapter.
 
+## 14. The Hammond Arrival
+
+tag: The Channel 4 chemistry reset — Alison Hammond joins, national themes are gone.
+slot_argument: The strongest of the recent Channel 4 tail years. A presenter change the format absorbed faster than most, paired with a quiet rebuild of how a themed week gets framed.
+community_rank_hint: rank=10 delta=0 sentiment=hold
+
+The chemistry reset the Channel 4 era needed. Alison Hammond joined Noel Fielding at the tent flap after Matt Lucas departed, and the series ran as the first after the producers scrapped nationally-themed weeks, swapping in general and party-cake categories instead. The tent-flap warmth lands earlier than most lineup changes manage, Prue Leith and Paul Hollywood anchor a disciplined bench, and the casting class reads strong end to end. This is the recent tail year with the clearest argument for itself — a presenter handover the format took cleanly and a structural rethink that steadied the show's footing. Worth the watch for the era finding stable ground again.
+
+## 13. The Welford Return
+
+tag: The tent comes home — post-bubble, back at Welford, marked by a themed-week reckoning.
+slot_argument: A confident return out of the COVID bubble with the casting denser than the bubble years, weighed against a themed-week controversy that pushed a format change.
+community_rank_hint: rank=11 delta=0 sentiment=hold
+
+The series that put the tent back where it belonged. The production moved out of the COVID bubble and back to Welford Park, with Noel Fielding and Matt Lucas working Lucas's final run and Prue Leith and Paul Hollywood anchoring the bench at the show's proper scale again. The casting class reads denser than the bubble years, and the run is marked by a nationally-themed week that drew cultural-appropriation criticism on broadcast and pushed the producers to rethink how Bake Off frames a culture. A series that matters as much for the format question it raised as for the bakes, and a clean post-bubble return worth the watch.
+
 ## 2. The Format Stretches
 
 tag: The early series the show is still finding its rhythm — Valentines Mansion, eight episodes, the format mid-stretch.
 slot_argument: The historical texture is real but the run lacks the bench density of later series. A second-year series figuring out what Bake Off can do at length, with the casting and the comedy not yet fully calibrated.
-community_rank_hint: rank=10 delta=0 sentiment=hold
+community_rank_hint: rank=12 delta=0 sentiment=hold
 
 The early series the show was still figuring out at length. The run stretched to eight episodes from the pilot's six, the tent moved to Valentines Mansion in east London, and the broadcast started attracting the audience the producers needed to justify a longer commitment. Mary Berry and Paul Hollywood read a touch more cautious here than they later would, and Mel Giedroyc and Sue Perkins are still calibrating the warmth that defined their tenure. The casting class is gentler than the runs that followed, the bench is lighter, and the format reads mid-stretch rather than settled. A historical curiosity more than a rewarding rewatch, and the run the show grew out of.
+
+## 15. The Hammond Settles
+
+tag: The new pairing stops being new — Hammond's second run, the post-national format bedded in.
+slot_argument: A settled, competent recent run that confirms the rebuilt format works without giving the canon much to argue about. The bench holds discipline, the casting reads workmanlike.
+community_rank_hint: rank=13 delta=0 sentiment=hold
+
+The series where the new pairing stops being new. Alison Hammond and Noel Fielding worked a confident second run, with Prue Leith and Paul Hollywood on the bench and a themed roster — a 1970s Week among them — continuing the post-national format. The casting class reads competent rather than memorable, the bench holds its by-now-familiar discipline, and the run confirms the rebuilt format works without straining to prove it. This is a settled piece of television more than one the canon argues over: useful for tracking where the current era sits, less rewarding as a rewatch than the runs that asked harder questions of the tent.
+
+## 11. The Bubble Year
+
+tag: The pandemic series — Bake Off shot inside a sealed COVID bubble, Lucas's first run.
+slot_argument: A series defined by how it was made more than what it produced. The bubble premise carries real historical texture, but the compressed shoot and lighter bench keep it low in the canon.
+community_rank_hint: rank=14 delta=0 sentiment=hold
+
+The pandemic series, and a piece of television defined by its production. The crew sealed cast and team into a self-contained bubble at Down Hall Hotel after relocating from Welford Park, and Matt Lucas joined Noel Fielding at the tent flap as Sandi Toksvig stepped away. Prue Leith and Paul Hollywood anchor the bench, the casting class bonds harder than a normal shoot allows, and the compressed six-week schedule leaves its texture on the run. A series worth the watch as a record of how the format survived 2020 — the bubble premise is doing more editorial work than the bakes, which is exactly why it sits low.
+
+## 12. The Second Bubble
+
+tag: The bubble, again — the second sealed COVID shoot, less novelty to recommend it.
+slot_argument: A competent run carrying the same production weight as the year before with none of its strangeness. The lowest canon slot — the constraint stopped being interesting and the run never argued past it.
+community_rank_hint: rank=15 delta=0 sentiment=hold
+
+The second bubble year, and the run where the constraint stopped being interesting. The production returned to Down Hall Hotel for another sealed shoot under COVID protocols, with Noel Fielding and Matt Lucas working a settled second pairing and Prue Leith and Paul Hollywood back on the bench. The casting class has the familiar bubble closeness, the bench reads disciplined, and the format leads with the bakes again rather than the premise. A competent piece of television that carries the same weight as the first bubble year with less to recommend it — the lowest slot in the canon, and a completist's entry more than a rewatch.

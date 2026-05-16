@@ -2,7 +2,7 @@
 show: bake-off
 number: 2
 title: Valentines Mansion
-canonical_position: 10
+canonical_position: 12
 premiere_date: 2011-08-16
 ep_count: 8
 location: Valentines Mansion, Redbridge, London
