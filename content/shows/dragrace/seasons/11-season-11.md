@@ -6,7 +6,7 @@ slug: season-11
 premiere_date: 2019-02-28
 location: Los Angeles, California
 host: RuPaul Charles
-canonical_position: 7
+canonical_position: 8
 eyebrow: "Aired winter 2019 · VH1 · the loaded cast"
 lede: "A VH1 season cast heavy on big, confrontational personalities. The workroom runs hot all the way through, and the edit leans into the friction more than the craft."
 premiere_caption: "VH1 · Thursday 9/8c"

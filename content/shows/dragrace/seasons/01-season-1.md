@@ -6,7 +6,7 @@ slug: season-1
 premiere_date: 2009-02-02
 location: Los Angeles, California
 host: RuPaul Charles
-canonical_position: 13
+canonical_position: 17
 eyebrow: "Aired winter 2009 · Logo · the pilot season"
 lede: "The franchise before it knew what it was. A short, heavily stylized first run with a soft-focus filter, a tiny budget, and a cast figuring the rules out alongside the producers."
 premiere_caption: "Logo · Monday 9/8c"

@@ -6,7 +6,7 @@ slug: season-7
 premiere_date: 2015-03-02
 location: Los Angeles, California
 host: RuPaul Charles
-canonical_position: 12
+canonical_position: 16
 eyebrow: "Aired spring 2015 · Logo · the last Logo run"
 lede: "The final Logo-era season before the VH1 jump. A larger cast and a slicker edit, but a workroom whose chemistry never fully catches the way the seasons around it did."
 premiere_caption: "Logo · Monday 9/8c"

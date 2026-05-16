@@ -6,7 +6,7 @@ slug: season-2
 premiere_date: 2010-02-01
 location: Los Angeles, California
 host: RuPaul Charles
-canonical_position: 11
+canonical_position: 15
 eyebrow: "Aired winter 2010 · Logo · the filter comes off"
 lede: "The season the show drops the soft filter and starts to look like itself. Bigger cast, sharper editing, and a workroom that finally runs hot enough to carry an hour."
 premiere_caption: "Logo · Monday 10/9c"

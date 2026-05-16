@@ -7,7 +7,7 @@ premiere_date: 2021-01-01
 location: Los Angeles, California
 host: RuPaul Charles
 format_changes: [opening-lip-sync-structure]
-canonical_position: 10
+canonical_position: 14
 eyebrow: "Aired winter 2021 · VH1 · the restructured premiere"
 lede: "The season that opened with an unusual premiere lip-sync structure, reworking how the first episode functions. A large VH1 cast filmed under tightened production conditions."
 premiere_caption: "VH1 · Friday 8/7c"

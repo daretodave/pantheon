@@ -6,7 +6,7 @@ slug: season-8
 premiere_date: 2016-03-07
 location: Los Angeles, California
 host: RuPaul Charles
-canonical_position: 8
+canonical_position: 11
 eyebrow: "Aired spring 2016 · Logo · the polished farewell"
 lede: "Logo's last produced season, and its most visually finished. A smaller, glossier cast and a runway-forward edit that previews the scale VH1 would soon bring."
 premiere_caption: "Logo · Monday 9/8c"
