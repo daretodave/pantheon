@@ -3,7 +3,7 @@ show: bachelor
 number: 12
 title: Matt Grant
 display_title: "Matt Grant<br/><em>London</em>"
-canonical_position: 18
+canonical_position: 25
 premiere_date: 2008-03-17
 ep_count: 9
 location: Agoura Hills, California

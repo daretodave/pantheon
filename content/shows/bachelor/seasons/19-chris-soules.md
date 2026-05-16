@@ -3,7 +3,7 @@ show: bachelor
 number: 19
 title: Chris Soules
 display_title: "Chris Soules<br/><em>Arlington, Iowa</em>"
-canonical_position: 15
+canonical_position: 22
 premiere_date: 2015-01-05
 ep_count: 12
 location: Agoura Hills, California

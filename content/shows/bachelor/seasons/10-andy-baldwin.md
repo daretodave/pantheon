@@ -2,7 +2,7 @@
 show: bachelor
 number: 10
 title: Andy Baldwin
-canonical_position: 20
+canonical_position: 27
 premiere_date: 2007-04-02
 ep_count: 9
 location: Agoura Hills, California

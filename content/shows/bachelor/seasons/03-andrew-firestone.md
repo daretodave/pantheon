@@ -2,7 +2,7 @@
 show: bachelor
 number: 3
 title: Andrew Firestone
-canonical_position: 9
+canonical_position: 16
 premiere_date: 2003-03-24
 ep_count: 6
 location: Agoura Hills, California

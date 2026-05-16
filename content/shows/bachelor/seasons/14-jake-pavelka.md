@@ -2,7 +2,7 @@
 show: bachelor
 number: 14
 title: Jake Pavelka
-canonical_position: 12
+canonical_position: 14
 premiere_date: 2010-01-04
 ep_count: 11
 location: Agoura Hills, California

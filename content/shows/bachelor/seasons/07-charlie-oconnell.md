@@ -2,7 +2,7 @@
 show: bachelor
 number: 7
 title: Charlie O'Connell
-canonical_position: 16
+canonical_position: 23
 premiere_date: 2005-04-04
 ep_count: 6
 location: Long Beach, California

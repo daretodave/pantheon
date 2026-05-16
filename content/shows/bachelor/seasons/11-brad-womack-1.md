@@ -3,7 +3,7 @@ show: bachelor
 number: 11
 title: Brad Womack
 display_title: "Brad Womack<br/><em>first run</em>"
-canonical_position: 19
+canonical_position: 26
 premiere_date: 2007-09-24
 ep_count: 9
 location: Agoura Hills, California
