@@ -21,6 +21,7 @@ const SHOWS_WITH_CANON = new Set([
   'project-runway',
   'bake-off',
   'love-island-uk',
+  'love-island-us',
 ])
 
 for (const url of canonUrls) {
