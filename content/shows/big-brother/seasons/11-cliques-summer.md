@@ -2,7 +2,7 @@
 show: big-brother
 number: 11
 title: Cliques Summer
-canonical_position: 11
+canonical_position: 14
 premiere_date: 2009-07-09
 ep_count: 30
 location: Studio City, California

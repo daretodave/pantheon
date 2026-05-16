@@ -2,7 +2,7 @@
 show: big-brother
 number: 13
 title: Veterans vs. Newbies
-canonical_position: 4
+canonical_position: 5
 premiere_date: 2011-07-07
 ep_count: 30
 location: Studio City, California

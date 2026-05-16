@@ -2,7 +2,7 @@
 show: big-brother
 number: 4
 title: Exes In The House
-canonical_position: 15
+canonical_position: 20
 premiere_date: 2003-07-08
 ep_count: 30
 location: Studio City, California

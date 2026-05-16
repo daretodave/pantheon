@@ -2,7 +2,7 @@
 show: big-brother
 number: 18
 title: Vets And Newbies Reprise
-canonical_position: 10
+canonical_position: 12
 premiere_date: 2016-06-22
 ep_count: 37
 location: Studio City, California

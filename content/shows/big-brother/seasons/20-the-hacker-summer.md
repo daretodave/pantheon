@@ -2,7 +2,7 @@
 show: big-brother
 number: 20
 title: The Hacker Summer
-canonical_position: 13
+canonical_position: 17
 premiere_date: 2018-06-27
 ep_count: 38
 location: Studio City, California

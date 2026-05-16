@@ -2,7 +2,7 @@
 show: big-brother
 number: 14
 title: Coaches Twist
-canonical_position: 5
+canonical_position: 6
 premiere_date: 2012-07-12
 ep_count: 30
 location: Studio City, California

@@ -2,7 +2,7 @@
 show: big-brother
 number: 9
 title: The Winter Couples
-canonical_position: 20
+canonical_position: 26
 premiere_date: 2008-02-12
 ep_count: 30
 location: Studio City, California

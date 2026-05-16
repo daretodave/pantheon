@@ -2,7 +2,7 @@
 show: big-brother
 number: 10
 title: Renegades Era
-canonical_position: 3
+canonical_position: 4
 premiere_date: 2008-07-13
 ep_count: 30
 location: Studio City, California

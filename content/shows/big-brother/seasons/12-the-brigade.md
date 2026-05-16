@@ -2,7 +2,7 @@
 show: big-brother
 number: 12
 title: The Brigade
-canonical_position: 8
+canonical_position: 9
 premiere_date: 2010-07-08
 ep_count: 30
 location: Studio City, California

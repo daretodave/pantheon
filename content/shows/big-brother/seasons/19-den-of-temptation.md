@@ -2,7 +2,7 @@
 show: big-brother
 number: 19
 title: Den Of Temptation
-canonical_position: 12
+canonical_position: 16
 premiere_date: 2017-06-28
 ep_count: 38
 location: Studio City, California

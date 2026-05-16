@@ -2,7 +2,7 @@
 show: big-brother
 number: 3
 title: The Strategy Era Begins
-canonical_position: 9
+canonical_position: 10
 premiere_date: 2002-07-10
 ep_count: 30
 location: Studio City, California

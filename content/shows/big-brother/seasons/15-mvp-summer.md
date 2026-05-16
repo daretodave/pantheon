@@ -2,7 +2,7 @@
 show: big-brother
 number: 15
 title: MVP Summer
-canonical_position: 19
+canonical_position: 25
 premiere_date: 2013-06-26
 ep_count: 37
 location: Studio City, California

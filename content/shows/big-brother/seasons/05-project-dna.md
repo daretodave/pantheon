@@ -2,7 +2,7 @@
 show: big-brother
 number: 5
 title: Project DNA
-canonical_position: 17
+canonical_position: 23
 premiere_date: 2004-07-06
 ep_count: 30
 location: Studio City, California

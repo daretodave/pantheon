@@ -2,7 +2,7 @@
 show: big-brother
 number: 16
 title: Battle Of The Block
-canonical_position: 7
+canonical_position: 8
 premiere_date: 2014-06-25
 ep_count: 37
 location: Studio City, California
