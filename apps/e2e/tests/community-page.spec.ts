@@ -1,35 +1,59 @@
 import { expect, test } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
+import { rankingRedirects } from '../src/fixtures/redirect-fixtures'
 
-// Phase 31c: /shows/[show]/community renders the unified canon/community
-// shell with the community view active. Live-strip, movers placeholder,
-// weekly question card, and the full ranking table appear when seasons
-// exist. With no live votes, the ranking table reads cleanly as a
-// canon-ordered list — approval / % / 7d / votes cells render as hidden
-// placeholders.
+// Phase 33: the standalone /shows/[show]/community route is gone. It
+// 308s to /shows/[show]?view=community, which seeds the community
+// pane server-side (live strip + movers + weekly question + full
+// table, or the empty state). This spec asserts the 308 contract and
+// the seeded community pane on the consolidated page.
 
-const communityUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/community')
+const showRows = canonicalUrls.filter(
+  (u) => u.pattern === '/shows/[show]' && u.show,
+)
 
-for (const url of communityUrls) {
-  const slug = url.show ?? ''
-  test.describe(`community page: ${slug}`, () => {
-    test(`renders the unified shell with community view active`, async ({ page }) => {
-      const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
+const communityRedirects = rankingRedirects.filter((r) =>
+  r.fromPath.endsWith('/community'),
+)
+
+for (const r of communityRedirects) {
+  test(`community 308: ${r.fromPath} → ${r.toPath}`, async ({ page }) => {
+    const response = await page.goto(r.fromPath, {
+      waitUntil: 'domcontentloaded',
+    })
+    expect(response?.status()).toBe(200)
+    const landed = new URL(page.url())
+    expect(landed.pathname).toBe(`/shows/${r.show}`)
+    expect(landed.searchParams.get('view')).toBe('community')
+
+    const ranking = page.getByTestId('show-ranking')
+    expect(await ranking.getAttribute('data-view')).toBe('community')
+  })
+}
+
+for (const row of showRows) {
+  const slug = row.show as string
+  test.describe(`consolidated community pane: ${slug}`, () => {
+    test(`?view=community seeds the community pane server-side`, async ({
+      page,
+    }) => {
+      const response = await page.goto(`/shows/${slug}?view=community`, {
+        waitUntil: 'domcontentloaded',
+      })
       expect(response?.status()).toBe(200)
 
-      await expect(page.getByTestId('community-page-screen')).toBeVisible()
-      const root = page.getByTestId('canon-page-root')
-      await expect(root).toBeVisible()
-      expect(await root.getAttribute('data-view')).toBe('community')
-      await expect(page.getByTestId('canon-h1')).toContainText(/editor['’]s canon|community rank/i)
+      const ranking = page.getByTestId('show-ranking')
+      await expect(ranking).toBeVisible()
+      expect(await ranking.getAttribute('data-view')).toBe('community')
       await expect(page.getByTestId('canon-tabs')).toBeVisible()
+      await expect(page.getByTestId('community-view-pane')).toBeVisible()
       await expect(page.getByTestId('community-live-strip')).toBeVisible()
       await expect(page.getByTestId('community-movers')).toBeVisible()
 
       const sigilCount = await page.getByTestId('show-sigil').count()
       expect(sigilCount).toBe(0)
 
-      const seasonsCount = url.seasonsCount ?? 0
+      const seasonsCount = row.seasonsCount ?? 0
       if (seasonsCount > 0) {
         await expect(page.getByTestId('community-rank-list')).toBeVisible()
         const rows = page.getByTestId('community-rank-row')
@@ -44,12 +68,14 @@ for (const url of communityUrls) {
 test.describe('mobile @ 375px viewport', () => {
   test.use({ viewport: { width: 375, height: 812 } })
 
-  for (const url of communityUrls) {
-    const slug = url.show ?? ''
-    test(`community mobile reflow: ${slug}`, async ({ page }) => {
-      const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
+  for (const row of showRows) {
+    const slug = row.show as string
+    test(`community pane mobile reflow: ${slug}`, async ({ page }) => {
+      const response = await page.goto(`/shows/${slug}?view=community`, {
+        waitUntil: 'domcontentloaded',
+      })
       expect(response?.status()).toBe(200)
-      await expect(page.getByTestId('canon-page-root')).toBeVisible()
+      await expect(page.getByTestId('show-ranking')).toBeVisible()
 
       const overflow = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
@@ -57,18 +83,8 @@ test.describe('mobile @ 375px viewport', () => {
       }))
       expect(
         overflow.scrollWidth - overflow.clientWidth,
-        `horizontal overflow on ${url.path}: scrollWidth=${overflow.scrollWidth} clientWidth=${overflow.clientWidth}`,
+        `horizontal overflow on /shows/${slug}?view=community`,
       ).toBeLessThanOrEqual(1)
     })
   }
-})
-
-test.describe('community ↔ canon tab switch', () => {
-  test('clicking the Editor tab on /community lands on /canon', async ({ page }) => {
-    await page.goto('/shows/survivor/community', { waitUntil: 'domcontentloaded' })
-    await page.getByTestId('canon-tab-canon').click()
-    await expect(page).toHaveURL('/shows/survivor/canon')
-    const root = page.getByTestId('canon-page-root')
-    expect(await root.getAttribute('data-view')).toBe('canon')
-  })
 })

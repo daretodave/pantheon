@@ -4,23 +4,19 @@ import { getAllSeasons, getAllShows, getCanon, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import { Bullet } from '@/components/atoms/Bullet'
 import {
-  FilterBar,
-  SeasonCard,
-  SeasonGrid,
   ShiftsRow,
   ShieldBadge,
   ShowHero,
-  ShowSplit,
-  type SeasonCardShift,
   type ShowHeroStat,
 } from '@/components/composition'
+import { ShowRanking } from '@/components/canon'
 import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
-import { computeYearsOnAir } from '@/lib/show-format'
 import { computeCommunityRank } from '@/lib/community/rank'
 import { FeaturedThemes } from '@/components/featured-themes/FeaturedThemes'
 import type { Season } from '@/content'
 
 type Params = { show: string }
+type Search = { view?: string }
 
 export function generateStaticParams(): Params[] {
   return getAllShows().map((show) => ({ show: show.slug }))
@@ -37,34 +33,41 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     })
   }
   return buildMetadata({
-    title: `${show.name} — ranked seasons, no spoilers`,
-    description: show.tagline,
+    title: `${show.name} — the canon + the community vote, no spoilers`,
+    description: `${show.name}, every season ranked: the Editor's Canon and the live community vote on one page. ${show.tagline}`,
     path: `/shows/${show.slug}`,
   })
 }
 
-function seasonTag(season: Season): string {
-  if (season.tag) return season.tag
-  if (season.premiere_date) {
-    return new Date(season.premiere_date).getUTCFullYear().toString()
-  }
-  return `Season ${season.number}`
+function canonRevisedYear(iso: string | undefined): number | null {
+  if (!iso) return null
+  const d = new Date(`${iso}T00:00:00Z`)
+  if (Number.isNaN(d.getTime())) return null
+  return d.getUTCFullYear()
 }
 
-function sortByCanon(seasons: Season[]): Season[] {
-  return [...seasons].sort((a, b) => {
-    const ra = a.canonical_position ?? Number.MAX_SAFE_INTEGER
-    const rb = b.canonical_position ?? Number.MAX_SAFE_INTEGER
-    if (ra !== rb) return ra - rb
-    return a.number - b.number
-  })
-}
-
-export default function ShowHomePage({ params }: { params: Params }) {
+export default async function ShowHomePage({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams?: Promise<Search>
+}) {
   const show = getShow(params.show)
   if (!show) notFound()
   const seasons = getAllSeasons(show.slug)
   const canon = getCanon(show.slug)
+
+  const sp = (await searchParams) ?? {}
+  const initialView: 'canon' | 'community' =
+    sp.view === 'community' ? 'community' : 'canon'
+
+  const seasonByNumber = new Map<number, Season>()
+  for (const s of seasons) seasonByNumber.set(s.number, s)
+  const seasonPath = (n: number): string => {
+    const s = seasonByNumber.get(n)
+    return s ? `/shows/${show.slug}/season/${s.slug}` : `/shows/${show.slug}`
+  }
 
   const collectionLd = buildJsonLd({
     type: 'CollectionPage',
@@ -80,35 +83,65 @@ export default function ShowHomePage({ params }: { params: Params }) {
     ],
   })
 
-  const years = computeYearsOnAir(seasons, show.status)
-  const stats: ShowHeroStat[] = [
-    { value: show.seasons, key: 'seasons aired' },
-    { value: years, key: 'on the air' },
-  ]
+  const canonEntries = canon?.entries ?? []
+  const canonItemListLd = buildJsonLd({
+    type: 'ItemList',
+    name: `${show.name} — Editor's Canon`,
+    description: `Spoiler-safe editorial ranking for ${show.name}.`,
+    path: `/shows/${show.slug}`,
+    items:
+      canonEntries.length > 0
+        ? canonEntries.map((entry) => ({
+            position: entry.rank,
+            name: entry.title,
+            path: seasonPath(entry.season),
+            description: entry.rationale.slice(0, 200),
+          }))
+        : [
+            {
+              position: 1,
+              name: `${show.name} — canon pending`,
+              path: `/shows/${show.slug}`,
+            },
+          ],
+  })
 
-  const canonOrdered = sortByCanon(seasons)
   const community = computeCommunityRank(show, seasons, canon)
+  const communityItemListLd = buildJsonLd({
+    type: 'ItemList',
+    name: `${show.name} — Community Rank`,
+    description: `Reader-voted ranking for ${show.name}.`,
+    path: `/shows/${show.slug}?view=community`,
+    items:
+      community.entries.length > 0
+        ? community.entries.map((entry) => ({
+            position: entry.rank,
+            name: entry.season.title,
+            path: `/shows/${show.slug}/season/${entry.season.slug}`,
+          }))
+        : [
+            {
+              position: 1,
+              name: `${show.name} — community vote opening`,
+              path: `/shows/${show.slug}?view=community`,
+            },
+          ],
+  })
 
-  const canonRankBySeason = new Map<number, number>()
-  for (const s of canonOrdered) {
-    canonRankBySeason.set(s.number, s.canonical_position ?? s.number)
-  }
-
-  function shiftFor(communityRank: number, seasonNumber: number): SeasonCardShift | null {
-    const canonRank = canonRankBySeason.get(seasonNumber)
-    if (canonRank == null) return null
-    const delta = canonRank - communityRank
-    if (delta === 0) return null
-    return {
-      delta,
-      sentiment: delta > 0 ? 'warm-up' : 'warm-down',
-    }
+  const stats: ShowHeroStat[] = [{ value: show.seasons, key: 'seasons aired' }]
+  const revisedYear = canonRevisedYear(canon?.last_revised)
+  if (revisedYear != null) {
+    stats.push({ value: revisedYear, key: 'Canon last revised' })
   }
 
   return (
     <ShowPaletteScope show={show.slug}>
       <script {...jsonLdScriptProps({ id: 'ld-show-home', data: collectionLd })} />
       <script {...jsonLdScriptProps({ id: 'ld-show-breadcrumb', data: crumbsLd })} />
+      <script {...jsonLdScriptProps({ id: 'ld-show-canon', data: canonItemListLd })} />
+      <script
+        {...jsonLdScriptProps({ id: 'ld-show-community', data: communityItemListLd })}
+      />
       <div className="screen show-home" data-testid="show-home-screen">
         <ShowHero
           title={show.name}
@@ -125,80 +158,13 @@ export default function ShowHomePage({ params }: { params: Params }) {
           tagline={show.tagline}
           shield={<ShieldBadge />}
         />
-        <ShowSplit
-          canon={{
-            href: `/shows/${show.slug}/canon`,
-            tag: '01 · CURATED',
-            title: "Editor's Canon",
-            blurb: `One ranking, written by someone who has watched every ${show.name} season twice.`,
-            go: 'Read the canon →',
-          }}
-          community={{
-            href: `/shows/${show.slug}/community`,
-            tag: '02 · LIVE',
-            title: 'Community Rank',
-            blurb: 'Voted by readers. Updated as the votes come in.',
-            go: 'See the vote →',
-          }}
-        />
         <ShiftsRow />
-        <section
-          className="show-seasons"
-          aria-labelledby="seasons-heading"
-          data-season-ordering-host
-          data-active-filter="canon"
-          data-testid="show-seasons"
-        >
-          <div className="section-head">
-            <h2 id="seasons-heading">All seasons, ranked</h2>
-            <span className="sec-meta">
-              Sorted by Editor&rsquo;s Canon · spoilers shielded
-            </span>
-          </div>
-          <FilterBar />
-          {seasons.length === 0 ? (
-            <p
-              data-testid="season-grid"
-              data-empty="true"
-              style={{ margin: '0 32px 56px', color: 'var(--show-ink)', opacity: 0.7 }}
-            >
-              Seasons haven&rsquo;t been added yet — this page populates as the loop ships
-              them.
-            </p>
-          ) : (
-            <>
-              <div data-season-ordering="canon" data-testid="season-ordering-canon">
-                <SeasonGrid>
-                  {canonOrdered.map((season) => (
-                    <SeasonCard
-                      key={season.number}
-                      rank={season.canonical_position ?? season.number}
-                      title={season.title}
-                      tag={seasonTag(season)}
-                      seasonNumber={season.number}
-                      href={`/shows/${show.slug}/season/${season.slug}`}
-                    />
-                  ))}
-                </SeasonGrid>
-              </div>
-              <div data-season-ordering="community" data-testid="season-ordering-community">
-                <SeasonGrid data-testid="season-grid-community">
-                  {community.entries.map((entry) => (
-                    <SeasonCard
-                      key={entry.season.number}
-                      rank={entry.rank}
-                      title={entry.season.title}
-                      tag={entry.tag}
-                      seasonNumber={entry.season.number}
-                      href={`/shows/${show.slug}/season/${entry.season.slug}`}
-                      shift={shiftFor(entry.rank, entry.season.number)}
-                    />
-                  ))}
-                </SeasonGrid>
-              </div>
-            </>
-          )}
-        </section>
+        <ShowRanking
+          show={show}
+          seasons={seasons}
+          canon={canon}
+          initialView={initialView}
+        />
         <FeaturedThemes show={show.slug} showName={show.name} />
       </div>
     </ShowPaletteScope>

@@ -1017,3 +1017,87 @@
     animation-duration: 0ms !important;
   }
 }
+
+/* ========================================================================
+   PHASE 33: CONSOLIDATED SHOW-PAGE RANKING SECTION
+   The canon/community internals (above) are now lifted onto the show
+   page inside a `.ranking` section. The standalone /canon + /community
+   routes 308 here. New surface: the `.ranking-intro` lede (dual copy,
+   CSS-toggled by the root `data-view`) and a sticky tab bar that pins
+   under the site header as the reader scrolls a long canon. Reconciled
+   against design/tiered.tv · Survivor.html §RANKING.
+   ======================================================================== */
+
+.ranking {
+  padding: 80px 0 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ranking-intro {
+  padding: 0 var(--gutter) 36px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
+}
+.ranking-intro h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 4.4vw, 48px);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  color: var(--show-ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.ranking-intro .meta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--ink-70);
+  margin: 0;
+  max-width: 520px;
+  text-wrap: pretty;
+}
+
+/* Sticky, full-bleed tab bar on the consolidated page. Pins just
+   under the sticky site header (chrome.css .site-header is z-index 30,
+   sticky top:0); the tabs sit below it at z-index 20. */
+.ranking .cp-tabs {
+  margin: 0;
+  max-width: none;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 60px;
+  z-index: 20;
+  background: color-mix(in oklab, var(--show-paper) 96%, #000);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.ranking .cp-tab {
+  padding: 20px var(--gutter);
+}
+
+@media (max-width: 820px) {
+  .ranking-intro {
+    grid-template-columns: 1fr;
+    padding: 0 32px 20px;
+    gap: 20px;
+  }
+}
+@media (max-width: 560px) {
+  .ranking {
+    padding: 56px 0 0;
+  }
+  .ranking-intro {
+    padding: 0 20px 20px;
+  }
+  .ranking .cp-tab {
+    padding: 14px 20px;
+  }
+}

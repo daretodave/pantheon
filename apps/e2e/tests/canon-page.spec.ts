@@ -1,13 +1,16 @@
 import { expect, test } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
+import { rankingRedirects } from '../src/fixtures/redirect-fixtures'
 
-// Phase 31c: /shows/[show]/canon renders the unified canon/community
-// shell with the canon view active. Methodology cells, tier bands, and
-// hero entries with optional community mini-pills appear when a canon
-// exists for the show. Shows without seeded canons render the empty
-// state per the always-working rule.
+// Phase 33: the standalone /shows/[show]/canon route is gone. It 308s
+// to the consolidated show page, where the Editor's Canon is the
+// default ranking view (methodology + tier bands). This spec asserts
+// the 308 contract and that the canon pane renders on the
+// consolidated page.
 
-const canonUrls = canonicalUrls.filter((u) => u.pattern === '/shows/[show]/canon')
+const showSlugs = canonicalUrls
+  .filter((u) => u.pattern === '/shows/[show]' && u.show)
+  .map((u) => u.show as string)
 
 const SHOWS_WITH_CANON = new Set([
   'survivor',
@@ -24,19 +27,48 @@ const SHOWS_WITH_CANON = new Set([
   'love-island-us',
 ])
 
-for (const url of canonUrls) {
-  const slug = url.show ?? ''
-  test.describe(`canon page: ${slug}`, () => {
-    test(`renders the unified shell with canon view active`, async ({ page }) => {
-      const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
+const canonRedirects = rankingRedirects.filter((r) =>
+  r.fromPath.endsWith('/canon'),
+)
+
+for (const r of canonRedirects) {
+  test(`canon 308: ${r.fromPath} → ${r.toPath}`, async ({ page }) => {
+    const response = await page.goto(r.fromPath, {
+      waitUntil: 'domcontentloaded',
+    })
+    expect(response?.status()).toBe(200)
+    expect(new URL(page.url()).pathname).toBe(r.toPath)
+
+    const chain: string[] = []
+    let req = response?.request()
+    while (req) {
+      chain.unshift(req.url())
+      const prev = req.redirectedFrom()
+      if (!prev) break
+      req = prev
+    }
+    expect(
+      chain[0],
+      `redirect chain start for ${r.fromPath}: ${chain.join(' → ')}`,
+    ).toContain(r.fromPath)
+  })
+}
+
+for (const slug of showSlugs) {
+  test.describe(`consolidated canon pane: ${slug}`, () => {
+    test(`canon is the default view with methodology + tiers`, async ({
+      page,
+    }) => {
+      const response = await page.goto(`/shows/${slug}`, {
+        waitUntil: 'domcontentloaded',
+      })
       expect(response?.status()).toBe(200)
 
-      await expect(page.getByTestId('canon-page-screen')).toBeVisible()
-      const root = page.getByTestId('canon-page-root')
-      await expect(root).toBeVisible()
-      expect(await root.getAttribute('data-view')).toBe('canon')
-      await expect(page.getByTestId('canon-h1')).toContainText(/editor['’]s canon/i)
+      const ranking = page.getByTestId('show-ranking')
+      await expect(ranking).toBeVisible()
+      expect(await ranking.getAttribute('data-view')).toBe('canon')
       await expect(page.getByTestId('canon-tabs')).toBeVisible()
+      await expect(page.getByTestId('canon-view-pane')).toBeVisible()
 
       const sigilCount = await page.getByTestId('show-sigil').count()
       expect(sigilCount).toBe(0)
@@ -51,42 +83,12 @@ for (const url of canonUrls) {
         const heroEntries = page.getByTestId('canon-hero-entry')
         expect(await heroEntries.count()).toBeGreaterThanOrEqual(1)
         const firstHref = await heroEntries.first().getAttribute('href')
-        expect(firstHref).toMatch(new RegExp(`^/shows/${slug}/(season/[a-z0-9-]+|$)`))
+        expect(firstHref).toMatch(
+          new RegExp(`^/shows/${slug}/(season/[a-z0-9-]+|$)`),
+        )
       } else {
         await expect(page.getByTestId('canon-empty')).toBeVisible()
       }
     })
   })
 }
-
-test.describe('mobile @ 375px viewport', () => {
-  test.use({ viewport: { width: 375, height: 812 } })
-
-  for (const url of canonUrls) {
-    const slug = url.show ?? ''
-    test(`canon mobile reflow: ${slug}`, async ({ page }) => {
-      const response = await page.goto(url.path, { waitUntil: 'domcontentloaded' })
-      expect(response?.status()).toBe(200)
-      await expect(page.getByTestId('canon-page-root')).toBeVisible()
-
-      const overflow = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-      }))
-      expect(
-        overflow.scrollWidth - overflow.clientWidth,
-        `horizontal overflow on ${url.path}: scrollWidth=${overflow.scrollWidth} clientWidth=${overflow.clientWidth}`,
-      ).toBeLessThanOrEqual(1)
-    })
-  }
-})
-
-test.describe('canon ↔ community tab switch', () => {
-  test('clicking the Community tab on /canon lands on /community', async ({ page }) => {
-    await page.goto('/shows/survivor/canon', { waitUntil: 'domcontentloaded' })
-    await page.getByTestId('canon-tab-community').click()
-    await expect(page).toHaveURL('/shows/survivor/community')
-    const root = page.getByTestId('canon-page-root')
-    expect(await root.getAttribute('data-view')).toBe('community')
-  })
-})

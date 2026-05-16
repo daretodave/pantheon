@@ -1,6 +1,4 @@
-export { CanonPageShell } from './CanonPageShell'
-export { CanonHead } from './CanonHead'
-export { CanonStats } from './CanonStats'
+export { ShowRanking } from './ShowRanking'
 export { CanonTabSwitch } from './CanonTabSwitch'
 export { CanonMethodology } from './CanonMethodology'
 export { CanonTierBand } from './CanonTierBand'

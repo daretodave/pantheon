@@ -67,15 +67,14 @@ function build(): CanonicalUrl[] {
 
   for (const showSlug of listDir(SHOWS_DIR)) {
     const seasonRows = listSeasons(showSlug)
-    out.push({ pattern: '/shows/[show]', path: `/shows/${showSlug}`, show: showSlug })
+    // Phase 33: /canon + /community are consolidated into the show
+    // page (they now 308 there). They are no longer canonical 200
+    // surfaces — the smoke walker skips them; redirect-fixtures.ts
+    // carries the 308 contract. seasonsCount rides on the show row
+    // so the consolidated-page spec can size the community pane.
     out.push({
-      pattern: '/shows/[show]/canon',
-      path: `/shows/${showSlug}/canon`,
-      show: showSlug,
-    })
-    out.push({
-      pattern: '/shows/[show]/community',
-      path: `/shows/${showSlug}/community`,
+      pattern: '/shows/[show]',
+      path: `/shows/${showSlug}`,
       show: showSlug,
       seasonsCount: seasonRows.length,
     })

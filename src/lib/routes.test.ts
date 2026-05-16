@@ -38,9 +38,13 @@ describe('getAllRoutes', () => {
     const survivor = routes.filter((r) => r.show === 'survivor')
     const patterns = survivor.map((r) => r.pattern).sort()
     expect(patterns).toContain('/shows/[show]')
-    expect(patterns).toContain('/shows/[show]/canon')
-    expect(patterns).toContain('/shows/[show]/community')
     expect(patterns).toContain('/shows/[show]/season/[slug]')
+  })
+
+  it('does not emit the consolidated canon/community routes (phase 33)', () => {
+    const patterns = new Set(getAllRoutes().map((r) => r.pattern))
+    expect(patterns.has('/shows/[show]/canon')).toBe(false)
+    expect(patterns.has('/shows/[show]/community')).toBe(false)
   })
 
   it('includes a slug-form season path for each seeded season', () => {

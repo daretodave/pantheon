@@ -24,9 +24,9 @@ tiered.tv serves all three from the same page surface. The editorial canon is th
 
 For each covered show, tiered.tv publishes:
 
-- **A show home** — a hero illustration (the show's "facade"), a one-liner, a season grid, links to the two rankings.
-- **An Editor's Canon** — `/[show]/canon`. AI-generated ranked list. Each season has a 50–80 word "knowledgeable peer" blurb explaining why it lands where it does, with zero plot, winners, deaths, or twists.
-- **A Community Rank** — `/[show]/community`. Vote-driven order. Users [+]/[−] each season; weighted aggregate sets the order.
+- **A show page** — `/[show]`. A tinted hero, a one-liner, then both rankings on one page behind a sticky tab (Phase 33 consolidated the two standalone ranking routes here; `?view=community` opens the community pane).
+- **An Editor's Canon** — the default view on `/[show]`. AI-generated ranked list. Each season has a 50–80 word "knowledgeable peer" blurb explaining why it lands where it does, with zero plot, winners, deaths, or twists.
+- **A Community Rank** — the second view on `/[show]` (`?view=community`). Vote-driven order. Users [+]/[−] each season; weighted aggregate sets the order.
 - **Per-season pages** — `/[show]/season/[n]`. Metadata, blurb, vote widget, comment thread.
 
 Plus cross-show **themed lists** (`/themes/best-finales`, `/themes/best-premieres`) that pull individual seasons across shows into curated collections.
@@ -62,9 +62,9 @@ Plus cross-show **themed lists** (`/themes/best-finales`, `/themes/best-premiere
 ```
 /                            home (featured show + featured rankings)
 /shows                       index of all shows
-/shows/[show]                show home (facade hero, season grid)
-/shows/[show]/canon          Editor's Canon
-/shows/[show]/community      Community Rank
+/shows/[show]                show page — hero + Editor's Canon + Community vote on one page (?view=community)
+/shows/[show]/canon          308 → /shows/[show]  (Phase 33 — consolidated into the show page)
+/shows/[show]/community      308 → /shows/[show]?view=community  (Phase 33 — consolidated into the show page)
 /shows/[show]/season/[n]     single season (vote + comments)
 /themes                      index of themed lists
 /themes/[theme]              single themed ranking

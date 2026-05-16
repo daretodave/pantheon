@@ -13,7 +13,7 @@ describe('<AppearsInList>', () => {
       <AppearsInList
         rows={[
           { href: '/themes/best-premieres', name: 'Best premieres ever', meta: 'list · 24 entries' },
-          { href: '/shows/survivor/canon', name: "Editor's Canon", meta: "Editor's Canon · #07" },
+          { href: '/shows/survivor', name: "Editor's Canon", meta: "Editor's Canon · #07" },
         ]}
       />,
     )

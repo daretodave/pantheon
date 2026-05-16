@@ -27,7 +27,7 @@ const FAQS = [
   {
     question: 'How is the editor’s canon ranking made?',
     answer:
-      'One editor watches every season of a show, writes 80–120 words of rationale per ranked position, and commits the ranking to content/. The canon is opinionated and signed; community vote is separate and lives at /shows/<show>/community.',
+      'One editor watches every season of a show, writes 80–120 words of rationale per ranked position, and commits the ranking to content/. The canon is opinionated and signed; the community vote is a separate ranking on the same show page, behind the Community tab.',
   },
   {
     question: 'How is the community ranking weighted?',

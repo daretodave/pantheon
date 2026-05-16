@@ -52,38 +52,29 @@ export const pageReads: Record<string, PageReadAssertion> = {
     ],
   },
   '/shows/[show]': {
+    // Phase 33: consolidated show page — hero + shifts + the ranking
+    // (sticky tabs, canon pane SSR'd + community pane SSR'd) + themed
+    // lists. Both panes are in the DOM regardless of active view (CSS
+    // toggles visibility), so the smoke walker asserts the canon pane
+    // visible (default view) and the ranking scaffold present.
     expectVisible: [
       '[data-testid=bullet]',
-      '[data-testid=season-grid]',
       '[data-testid=shield-badge]',
       '[data-testid=show-hero]',
       '[data-testid=show-hero-cover]',
       '[data-testid=show-hero-stats]',
-      '[data-testid=show-split]',
       '[data-testid=shifts-row]',
-      '[data-testid=filter-bar]',
+      '[data-testid=show-ranking][data-view=canon]',
+      '[data-testid=ranking-intro]',
+      '[data-testid=canon-tabs]',
+      '[data-testid=canon-view-pane]',
     ],
     expectNotVisible: [
       '[data-testid=show-facade-art]',
       '[data-testid=show-sigil-art]',
+      '[data-testid=show-split]',
     ],
     expectJsonLdType: 'CollectionPage',
-  },
-  '/shows/[show]/canon': {
-    expectH1Pattern: /Editor['’]s Canon/i,
-    expectJsonLdType: 'ItemList',
-    expectVisible: [
-      '[data-testid=canon-page-root][data-view=canon]',
-      '[data-testid=canon-tabs]',
-    ],
-  },
-  '/shows/[show]/community': {
-    expectH1Pattern: /Editor['’]s Canon|Community Rank/i,
-    expectJsonLdType: 'ItemList',
-    expectVisible: [
-      '[data-testid=canon-page-root][data-view=community]',
-      '[data-testid=community-live-strip]',
-    ],
   },
   '/shows/[show]/season/[slug]': {
     expectVisible: [

@@ -52,17 +52,9 @@ test('per-route opengraph-image: /shows/[show]', async ({ page }) => {
   expect(response?.headers()['content-type'] ?? '').toMatch(/image\/png/i)
 })
 
-test('per-route opengraph-image: /shows/[show]/canon', async ({ page }) => {
-  const response = await page.goto('/shows/survivor/canon/opengraph-image')
-  expect(response?.status()).toBe(200)
-  expect(response?.headers()['content-type'] ?? '').toMatch(/image\/png/i)
-})
-
-test('per-route opengraph-image: /shows/[show]/community', async ({ page }) => {
-  const response = await page.goto('/shows/survivor/community/opengraph-image')
-  expect(response?.status()).toBe(200)
-  expect(response?.headers()['content-type'] ?? '').toMatch(/image\/png/i)
-})
+// Phase 33: the standalone /canon + /community OG routes were
+// deleted with the route collapse. The consolidated show-page OG
+// (asserted above) now covers canon + community in one image.
 
 test('per-route opengraph-image: /shows/[show]/season/[slug]', async ({ page }) => {
   const response = await page.goto('/shows/survivor/season/borneo/opengraph-image')

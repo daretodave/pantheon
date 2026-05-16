@@ -213,9 +213,9 @@ existing shapes.
 ```
 GET  /                              home (featured show + featured rankings)
 GET  /shows                         index of all shows
-GET  /shows/[show]                  show home (facade hero, season grid)
-GET  /shows/[show]/canon            Editor's Canon
-GET  /shows/[show]/community        Community Rank
+GET  /shows/[show]                  show page — hero + Editor's Canon + Community vote (one page; ?view=community opens the community pane)
+GET  /shows/[show]/canon            308 → /shows/[show] (Phase 33 — canon + community consolidated into the show page)
+GET  /shows/[show]/community        308 → /shows/[show]?view=community (Phase 33 — consolidated into the show page)
 GET  /shows/[show]/season/[n]       single season page (vote + comments)
 GET  /themes                        index of themed lists
 GET  /themes/[theme]                single themed ranking

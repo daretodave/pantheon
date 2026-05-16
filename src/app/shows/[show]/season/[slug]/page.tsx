@@ -178,8 +178,10 @@ function appearsInRowsFor(
     })
   }
   if (canonRank != null) {
+    // Phase 33: canon consolidated into the show page; canon is the
+    // default ranking view there.
     rows.push({
-      href: `/shows/${show.slug}/canon`,
+      href: `/shows/${show.slug}`,
       name: `${show.name} — Editor's Canon`,
       meta: `Editor's Canon · #${pad2(canonRank)}`,
     })

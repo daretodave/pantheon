@@ -26,13 +26,11 @@ export function getAllRoutes(): RouteEntry[] {
   const out: RouteEntry[] = [...STATIC_ROUTES]
 
   for (const show of getAllShows()) {
+    // Phase 33: /canon + /community consolidated into /shows/[show]
+    // (the standalone routes now 308 there). Intentionally not
+    // emitted as canonical routes — no sitemap entry, no smoke row;
+    // the redirect fixture covers the 308 contract instead.
     out.push({ pattern: '/shows/[show]', path: `/shows/${show.slug}`, show: show.slug })
-    out.push({ pattern: '/shows/[show]/canon', path: `/shows/${show.slug}/canon`, show: show.slug })
-    out.push({
-      pattern: '/shows/[show]/community',
-      path: `/shows/${show.slug}/community`,
-      show: show.slug,
-    })
     for (const season of getAllSeasons(show.slug)) {
       out.push({
         pattern: '/shows/[show]/season/[slug]',

@@ -9,7 +9,7 @@ const DESKTOP_PAGES = [
   '/',
   '/shows',
   '/shows/survivor',
-  '/shows/survivor/canon',
+  '/shows/survivor?view=community',
   '/shows/survivor/season/borneo',
   '/themes',
   '/about',

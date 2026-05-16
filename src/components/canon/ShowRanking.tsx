@@ -1,8 +1,6 @@
 import type { CanonEntry, CanonFile, Season, Show } from '@/content'
 import { computeCommunityRank } from '@/lib/community/rank'
 import { buildTierBands } from '@/lib/canon/tier-bands'
-import { CanonHead } from './CanonHead'
-import { CanonStats } from './CanonStats'
 import { CanonTabSwitch } from './CanonTabSwitch'
 import { CanonMethodology } from './CanonMethodology'
 import { CanonTierBand } from './CanonTierBand'
@@ -13,20 +11,35 @@ import { CommunityRankList } from './CommunityRankList'
 
 type View = 'canon' | 'community'
 
-type CanonPageShellProps = {
+type ShowRankingProps = {
   show: Show
   seasons: Season[]
   canon: CanonFile | null
   initialView: View
 }
 
-function seasonHrefFor(showSlug: string, seasonByNumber: Map<number, Season>, entry: CanonEntry): string {
+function seasonHrefFor(
+  showSlug: string,
+  seasonByNumber: Map<number, Season>,
+  entry: CanonEntry,
+): string {
   const season = seasonByNumber.get(entry.season)
   if (season) return `/shows/${showSlug}/season/${season.slug}`
   return `/shows/${showSlug}`
 }
 
-export function CanonPageShell({ show, seasons, canon, initialView }: CanonPageShellProps) {
+// Phase 33: the canon/community internals (shipped phase 31c as
+// CanonPageShell, route-coupled to /canon + /community) are lifted
+// onto the consolidated show page. CanonHead/CanonStats are gone —
+// the show hero owns the title/stats now. The `.ranking-intro` block
+// (dual canon/community copy, CSS-toggled by the root `data-view`)
+// replaces them. Both panes are SSR'd; visibility is a CSS toggle, so
+// both rankings are always in the static HTML (SEO-safe). The
+// `.canon-page` class stays on the root because all the ported
+// `[data-view]` / `[data-view-pane]` CSS keys off it (the body
+// element is owned by the App Router root layout — the phase-31c
+// adaptation note in canon.css).
+export function ShowRanking({ show, seasons, canon, initialView }: ShowRankingProps) {
   const entries = canon?.entries ?? []
   const seasonByNumber = new Map<number, Season>()
   for (const s of seasons) seasonByNumber.set(s.number, s)
@@ -39,26 +52,40 @@ export function CanonPageShell({ show, seasons, canon, initialView }: CanonPageS
   })
 
   const community = computeCommunityRank(show, seasons, canon)
+  const hasLiveVotes = community.source === 'votes'
 
-  const seasonHref = (entry: CanonEntry) => seasonHrefFor(show.slug, seasonByNumber, entry)
+  const seasonHref = (entry: CanonEntry) =>
+    seasonHrefFor(show.slug, seasonByNumber, entry)
   const seasonOf = (entry: CanonEntry) => seasonByNumber.get(entry.season)
 
   return (
-    <div
-      className="canon-page"
+    <section
+      className="ranking canon-page"
       data-canon-page-root
       data-view={initialView}
-      data-testid="canon-page-root"
+      data-testid="show-ranking"
+      aria-label="The ranking"
     >
-      <CanonHead
-        show={show}
-        stats={<CanonStats entryCount={entries.length} canon={canon} />}
-      />
-      <CanonTabSwitch
-        initialView={initialView}
-        canonHref={`/shows/${show.slug}/canon`}
-        communityHref={`/shows/${show.slug}/community`}
-      />
+      <div className="ranking-intro" data-testid="ranking-intro">
+        <h2>
+          <span className="cp-canon-only">The canon, top to bottom.</span>
+          <span className="cp-community-only">What readers are voting on.</span>
+        </h2>
+        <p className="meta">
+          <span className="cp-canon-only">
+            One ranking, written by editors who have rewatched every season at
+            least twice. We argue with the community out loud — but we ship one
+            number.
+          </span>
+          <span className="cp-community-only">
+            {hasLiveVotes
+              ? 'Recomputed every Thursday at 9pm ET. Approval is the share of voters who would keep a season in its slot or move it up.'
+              : 'Recomputed every Thursday at 9pm ET. Until enough votes land, this mirrors the canon — be the first to move it.'}
+          </span>
+        </p>
+      </div>
+
+      <CanonTabSwitch initialView={initialView} />
 
       <div data-view-pane="canon" data-testid="canon-view-pane">
         {entries.length === 0 ? (
@@ -67,8 +94,8 @@ export function CanonPageShell({ show, seasons, canon, initialView }: CanonPageS
             data-testid="canon-empty"
             data-empty="true"
           >
-            The canon hasn&rsquo;t been ranked yet — this page populates as the loop ships
-            it.
+            The canon hasn&rsquo;t been ranked yet — this page populates as the
+            loop ships it.
           </div>
         ) : (
           <>
@@ -103,11 +130,11 @@ export function CanonPageShell({ show, seasons, canon, initialView }: CanonPageS
             data-testid="community-empty"
             data-empty="true"
           >
-            Seasons haven&rsquo;t been added yet — this page populates as the loop ships
-            them.
+            Seasons haven&rsquo;t been added yet — this page populates as the
+            loop ships them.
           </div>
         )}
       </div>
-    </div>
+    </section>
   )
 }
