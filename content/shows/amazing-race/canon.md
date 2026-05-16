@@ -1,7 +1,7 @@
 ---
 show: amazing-race
 editor: tiered.tv Editors
-last_revised: 2026-05-15
+last_revised: 2026-05-16
 meth_who_h: Who ranks?
 meth_who_p: tiered.tv's editors. We've watched The Amazing Race since the original Keoghan summer in 2001, and we've replayed every season that lands on this list. The ranking starts as one editor's read, then gets calibrated against what reasonable race fans agree on after a long argument. We are not pretending to be objective; we are pretending to be honest.
 meth_how_h: How do we weigh it?
@@ -575,3 +575,75 @@ also touched Switzerland, France, Greece, and Portugal before a
 Greater Los Angeles finish. The canon places it thirty-third
 because the production story is genuinely historic while the
 season's shape visibly carries the seam where it was interrupted.
+
+## 34. Season 34
+
+tag: The first international start — the season the US route finally launched from outside the country.
+slot_argument: A Munich opening, the first non-US starting city in the US version's history, plus the Mega Leg structure and the widest field since Season 15. The format-historical hook is real even where the hour itself runs standard.
+community_rank_hint: rank=34 delta=0 sentiment=hold
+
+Season 34 is the first time the US race launched its route
+outside the United States, and the canon rewards the structural
+nerve. Twelve teams left Munich — the widest field since Season
+15 — through Austria, Italy, France, Spain, and Iceland before a
+Jordan stretch and a Nashville finish. The Mega Leg structure
+stretches certain legs across two episodes, a tweak the editing
+room uses to widen team coverage. CBS held the Wednesday hour.
+The canon places it thirty-fourth because the international
+opening gives the modern franchise a genuine format-historical
+argument, even where the rest of the hour runs in its standard
+lane.
+
+## 35. Season 35
+
+tag: The record-field season — the largest cast yet, given feature-length room.
+slot_argument: Thirteen teams, the biggest field in show history at the time, broadcast in 90-minute episodes. The move to feature-length hours is the structural argument; the season otherwise runs the franchise's trusted modern lane.
+community_rank_hint: rank=35 delta=0 sentiment=hold
+
+Season 35 ran the largest field the franchise had assembled to
+date, and the canon places it where the scale lands. Thirteen
+teams covered roughly 23,800 miles across three continents and
+nine countries — Los Angeles through Thailand, Vietnam, and
+India, then Germany, Austria, Slovenia, Sweden, and Ireland
+before a Greater Seattle finish. The move to feature-length
+90-minute episodes gives each leg more room than the standard
+hour, and the returning Express Pass, U-Turn, and a new Blind
+U-Turn vote sharpen the strategy. The canon places it
+thirty-fifth because the bigger field and longer hour are
+real without reshaping what the format is for.
+
+## 36. Season 36
+
+tag: The all-Americas charter season — self-contained, no non-elimination legs.
+slot_argument: A chartered A320 instead of commercial flights, a route that never leaves the Americas, and no non-elimination legs. The structural tweaks are quieter than the higher modern entries, but the 90-minute restored cut widens the coverage.
+community_rank_hint: rank=36 delta=0 sentiment=hold
+
+Season 36 is the most self-contained outing the modern
+franchise has run. Thirteen teams covered roughly 11,711 miles
+across two continents and eight countries — Puerto Vallarta
+through Mexico, Colombia, Chile, Argentina, Uruguay, Barbados,
+and the Dominican Republic before a Philadelphia finish, with
+first franchise visits to Barbados and the Dominican Republic.
+A chartered Global Crossing Airlines A320 replaced commercial
+flights, the season ran no non-elimination legs, and the
+90-minute cut restored footage the standard hour would lose.
+The canon places it thirty-sixth because the structural set is
+competent but quieter than the modern entries above it.
+
+## 37. Season 37
+
+tag: The season of surprises — the largest US cast ever, with a twist built into every leg.
+slot_argument: Fourteen teams, the biggest US cast in franchise history, run through a structure where every leg carries a twist. The premise is a concept layer rather than a format argument, and it is the least-settled season in the canon.
+community_rank_hint: rank=37 delta=0 sentiment=hold
+
+Season 37 ran the largest US cast the franchise has ever
+assembled, and the canon places it where the concept lands.
+Fourteen teams left Los Angeles through Hong Kong, Japan,
+Bulgaria, France, Portugal, and Dubai before a Miami finish,
+with several first-time stops along the route. The season is
+built so every leg carries a twist, and the toolkit reflects it
+— Fork in the Road, Driver's Seat, and Valet Roulette debut
+alongside returning mechanics like the Intersection and
+Head-to-Head. The canon places it thirty-seventh because the
+twist-saturation premise is a concept layer rather than a
+format argument, and it is the least-settled read in the canon.
