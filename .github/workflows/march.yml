@@ -126,7 +126,25 @@ jobs:
       - name: Run /march (cloud mode)
         id: claude_run
         if: steps.ceiling.outputs.skip != 'true'
-        uses: anthropics/claude-code-action@v1
+        # Bound the STEP, not just the 300min job. claude-code-action
+        # has an upstream defect: the `claude` CLI does not self-exit
+        # after the agent's final turn (leaked handle — see the
+        # "directory mismatch … v1/tsconfig.json, fd 4 … indicates a
+        # bug" internal error in run logs). Without a step cap the
+        # zombie squats the runner for the full 5h job timeout and —
+        # because concurrency is serialized (cancel-in-progress:
+        # false) — every later scheduled tick queues behind it, so
+        # the whole loop stalls until a human cancels by hand. 60min
+        # sits well above true tick p95 (~40min) so real ticks are
+        # untouched, but a post-turn hang now fails fast: the job
+        # ends, the slot frees, the next cron tick runs, and the
+        # failure() step below files a (deduped) issue for /triage.
+        timeout-minutes: 60
+        # Pinned to the v1 tag's commit (resolved 2026-05-16, tagged
+        # 2026-05-14) so a future upstream retag of the floating v1
+        # can't regress this further. Bump deliberately once upstream
+        # ships a fix for the post-turn exit hang.
+        uses: anthropics/claude-code-action@51ea8ea73a139f2a74ff649e3092c25a904aed7e # v1
         with:
           # OAuth token bills against the user's Claude Pro/Max
           # subscription. $0 marginal cost; quota shared with local
@@ -199,6 +217,22 @@ jobs:
           GIT_AUTHOR_EMAIL:    'me@dave.blue'
           GIT_COMMITTER_NAME:  'David Rehmat'
           GIT_COMMITTER_EMAIL: 'me@dave.blue'
+
+      # Drain anything the tick left alive so the runner can finalize
+      # promptly instead of stalling in post-job orphan cleanup. The
+      # action can leave the `claude` CLI plus servers the verify
+      # chain spawned (Playwright webServer's `next start`, the
+      # pre-started Supabase Docker stack) in the process tree. Runs
+      # even on the step timeout / failure. All best-effort.
+      - name: Drain stray servers
+        if: always()
+        run: |
+          pkill -f 'next start'  || true
+          pkill -f 'next-server' || true
+          pkill -f 'playwright'  || true
+          supabase stop --no-backup || true
+          docker ps -q | xargs -r docker kill || true
+          echo "drain complete"
 
       - name: Open cloud-failed issue if action crashed
         # Safety net for the case where Claude Code itself crashed
