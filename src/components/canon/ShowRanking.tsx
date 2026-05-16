@@ -1,7 +1,9 @@
 import type { CanonEntry, CanonFile, Season, Show } from '@/content'
 import { computeCommunityRank } from '@/lib/community/rank'
 import { buildTierBands } from '@/lib/canon/tier-bands'
+import { makeEraOf } from '@/lib/canon/era-bands'
 import { CanonTabSwitch } from './CanonTabSwitch'
+import { CanonEraToolbar } from './CanonEraToolbar'
 import { CanonMethodology } from './CanonMethodology'
 import { CanonTierBand } from './CanonTierBand'
 import { CommunityLiveStrip } from './CommunityLiveStrip'
@@ -57,6 +59,8 @@ export function ShowRanking({ show, seasons, canon, initialView }: ShowRankingPr
   const seasonHref = (entry: CanonEntry) =>
     seasonHrefFor(show.slug, seasonByNumber, entry)
   const seasonOf = (entry: CanonEntry) => seasonByNumber.get(entry.season)
+  const eraBands = canon?.era_bands ?? []
+  const eraOf = makeEraOf(seasonOf, eraBands)
 
   return (
     <section
@@ -100,12 +104,14 @@ export function ShowRanking({ show, seasons, canon, initialView }: ShowRankingPr
         ) : (
           <>
             <CanonMethodology canon={canon} />
+            <CanonEraToolbar bands={eraBands} total={entries.length} />
             {tierBands.map((band) => (
               <CanonTierBand
                 key={band.key}
                 band={band}
                 seasonHref={seasonHref}
                 seasonOf={seasonOf}
+                eraOf={eraOf}
               />
             ))}
           </>

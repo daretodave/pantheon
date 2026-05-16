@@ -71,6 +71,7 @@ export function SeasonTOC({ sections }: SeasonTOCProps) {
                 data-toc-id={s.id}
                 onClick={() => setActiveId(s.id)}
               >
+                <span className="toc-dot" aria-hidden="true" />
                 <span className="toc-num">{s.num}</span>
                 <span>{s.label}</span>
               </a>

@@ -27,6 +27,46 @@ type TitleNode =
 // line break.
 const TITLE_TOKEN = /<em>([^<]+)<\/em>|<br\s*\/?>/gi
 
+// display_title is authored as a constrained HTML subset, so an
+// ampersand is written `&amp;` (and editors may reach for other
+// entities — `&rsquo;`, `&mdash;`, `&#39;`). React renders text
+// segments verbatim (JSX text is not HTML), so without this the h1
+// would print the literal "&amp;". One combined pass over the
+// schema-constrained, single-encoded set — no ongoing data
+// discipline required (33b bolt-on 1 root cause).
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+  rsquo: '’',
+  lsquo: '‘',
+  rdquo: '”',
+  ldquo: '“',
+  mdash: '—',
+  ndash: '–',
+  hellip: '…',
+}
+
+export function decodeTitleEntities(raw: string): string {
+  return raw.replace(
+    /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
+    (whole, body: string) => {
+      if (body[0] === '#') {
+        const code =
+          body[1] === 'x' || body[1] === 'X'
+            ? Number.parseInt(body.slice(2), 16)
+            : Number.parseInt(body.slice(1), 10)
+        return Number.isFinite(code) ? String.fromCodePoint(code) : whole
+      }
+      const named = NAMED_ENTITIES[body.toLowerCase()]
+      return named ?? whole
+    },
+  )
+}
+
 export function parseDisplayTitle(raw: string): TitleNode[] {
   const nodes: TitleNode[] = []
   let last = 0
@@ -34,17 +74,20 @@ export function parseDisplayTitle(raw: string): TitleNode[] {
   TITLE_TOKEN.lastIndex = 0
   while ((m = TITLE_TOKEN.exec(raw)) !== null) {
     if (m.index > last) {
-      nodes.push({ kind: 'text', value: raw.slice(last, m.index) })
+      nodes.push({
+        kind: 'text',
+        value: decodeTitleEntities(raw.slice(last, m.index)),
+      })
     }
     if (m[1] != null) {
-      nodes.push({ kind: 'accent', value: m[1] })
+      nodes.push({ kind: 'accent', value: decodeTitleEntities(m[1]) })
     } else {
       nodes.push({ kind: 'break' })
     }
     last = m.index + m[0].length
   }
   if (last < raw.length) {
-    nodes.push({ kind: 'text', value: raw.slice(last) })
+    nodes.push({ kind: 'text', value: decodeTitleEntities(raw.slice(last)) })
   }
   return nodes
 }

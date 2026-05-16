@@ -103,6 +103,74 @@ test.describe('same-page tab toggle persists URL state (no navigation)', () => {
   })
 })
 
+test.describe('era toolbar (33b)', () => {
+  test('Survivor canon pane: All preselected + era chips filter entries', async ({
+    page,
+  }) => {
+    await page.goto('/shows/survivor', { waitUntil: 'domcontentloaded' })
+
+    const toolbar = page.getByTestId('canon-era-toolbar')
+    await expect(toolbar).toBeVisible()
+
+    const all = page.getByTestId('era-chip-all')
+    await expect(all).toHaveAttribute('aria-selected', 'true')
+    await expect(all).toHaveText(/All \d+/)
+
+    // Survivor authors 5 era_bands → ≥1 era chip beyond All.
+    const eraChips = toolbar.locator('.cp-chip:not([data-filter=all])')
+    expect(await eraChips.count()).toBeGreaterThanOrEqual(1)
+
+    const firstEra = eraChips.first()
+    const eraKey = await firstEra.getAttribute('data-filter')
+    await firstEra.click()
+    await expect(firstEra).toHaveAttribute('aria-selected', 'true')
+    await expect(all).toHaveAttribute('aria-selected', 'false')
+
+    // CSS-toggle discipline: non-matching entries carry data-era-off,
+    // none are removed from the DOM (SEO-safe).
+    const offCount = await page
+      .locator('[data-view-pane=canon] [data-era-off=true]')
+      .count()
+    expect(offCount).toBeGreaterThan(0)
+    const matching = page.locator(
+      `[data-view-pane=canon] [data-era="${eraKey}"]`,
+    )
+    expect(await matching.count()).toBeGreaterThan(0)
+    for (const el of await matching.all()) {
+      expect(await el.getAttribute('data-era-off')).toBeNull()
+    }
+
+    // Keyboard-reachable, role=tab, visible focus ring (a11y — chip
+    // sizing stays locked to Survivor.html per the visual law).
+    await firstEra.focus()
+    await expect(firstEra).toBeFocused()
+    await expect(firstEra).toHaveAttribute('role', 'tab')
+
+    await all.click()
+    await expect(all).toHaveAttribute('aria-selected', 'true')
+    expect(
+      await page.locator('[data-view-pane=canon] [data-era-off=true]').count(),
+    ).toBe(0)
+  })
+
+  test('toolbar consumes era_bands generically on a second show', async ({
+    page,
+  }) => {
+    // The toolbar reads canon.era_bands generically — no per-show page
+    // code. dragrace authors its own bands; All stays preselected.
+    await page.goto('/shows/dragrace', { waitUntil: 'domcontentloaded' })
+    const toolbar = page.getByTestId('canon-era-toolbar')
+    await expect(toolbar).toBeVisible()
+    await expect(page.getByTestId('era-chip-all')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(
+      await toolbar.locator('.cp-chip:not([data-filter=all])').count(),
+    ).toBeGreaterThanOrEqual(1)
+  })
+})
+
 test.describe('mobile @ 375px viewport', () => {
   test.use({ viewport: { width: 375, height: 812 } })
 

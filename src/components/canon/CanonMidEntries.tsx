@@ -4,6 +4,7 @@ type CanonMidEntriesProps = {
   entries: CanonEntry[]
   seasonHref: (entry: CanonEntry) => string
   seasonOf: (entry: CanonEntry) => Season | undefined
+  eraOf: (entry: CanonEntry) => string | undefined
 }
 
 function padRank(rank: number): string {
@@ -19,7 +20,12 @@ function metaLine(entry: CanonEntry, season: Season | undefined): string {
   return parts.join(' · ')
 }
 
-export function CanonMidEntries({ entries, seasonHref, seasonOf }: CanonMidEntriesProps) {
+export function CanonMidEntries({
+  entries,
+  seasonHref,
+  seasonOf,
+  eraOf,
+}: CanonMidEntriesProps) {
   return (
     <div className="cp-mid-entries" data-testid="canon-mid-entries">
       {entries.map((entry) => {
@@ -31,6 +37,7 @@ export function CanonMidEntries({ entries, seasonHref, seasonOf }: CanonMidEntri
             href={seasonHref(entry)}
             data-testid="canon-mid-entry"
             data-rank={entry.rank}
+            data-era={eraOf(entry) ?? ''}
           >
             <div className="cp-mid-rank">{padRank(entry.rank)}</div>
             <div>

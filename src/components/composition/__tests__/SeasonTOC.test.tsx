@@ -64,6 +64,17 @@ describe('<SeasonTOC>', () => {
     expect(third.getAttribute('href')).toBe('#s-where')
   })
 
+  it('renders a current-progress dot on every row, active class on the first', () => {
+    render(<SeasonTOC sections={sections} />)
+    const links = screen.getAllByTestId('toc-link') as HTMLElement[]
+    for (const a of links) {
+      expect(a.querySelector('.toc-dot')).not.toBeNull()
+    }
+    const first = links[0]
+    if (!first) throw new Error('expected toc links')
+    expect(first.classList.contains('active')).toBe(true)
+  })
+
   it('renders the num and label for each section', () => {
     render(<SeasonTOC sections={sections} />)
     expect(screen.getByText('01')).toBeInTheDocument()

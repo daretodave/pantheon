@@ -611,12 +611,21 @@
   border-bottom: 1px solid color-mix(in oklab, var(--show-ink) 12%, transparent);
   background: color-mix(in oklab, var(--show-paper) 96%, #000);
 }
-.stats-inner { display: grid; grid-template-columns: repeat(6, 1fr); padding: 0 var(--s-gutter); }
+/* 33b bolt-on 2: each .stat carries a symmetric 24px inset so no
+   tile's content sits flush against the section edge or a vertical
+   divider. The grid offsets by (gutter - 24px) so the first tile's
+   content still lands on the 56px hero gutter rhythm; max(0px, …)
+   floors it on narrow viewports. */
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  padding-inline: max(0px, calc(var(--s-gutter) - 24px));
+}
 @media (max-width: 1180px) { .stats-inner { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 560px) { .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 0 20px; } }
+@media (max-width: 560px) { .stats-inner { grid-template-columns: repeat(2, 1fr); } }
 
 .stat {
-  padding: 24px 24px 24px 0;
+  padding: 24px;
   border-right: 1px solid color-mix(in oklab, var(--show-ink) 8%, transparent);
   min-width: 0;
 }
@@ -679,6 +688,17 @@
 }
 .toc-list a:hover, .toc-list a.active { color: var(--show-ink); }
 .toc-list a.active { color: var(--show-primary); }
+/* 33b bolt-on 3: current-progress dot. Type, not SVG (visual law).
+   Width is always reserved so the active state never shifts the row;
+   the bracketed "o" renders only on the active item. */
+.toc-dot {
+  font: 500 11px/1.4 var(--mono);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  min-width: 22px;
+  color: transparent;
+}
+.toc-list a.active .toc-dot::before { content: "[o]"; color: var(--show-primary); }
 .toc-num {
   font: 500 11px/1.4 var(--mono);
   color: color-mix(in oklab, var(--show-ink) 40%, transparent);

@@ -16,7 +16,13 @@ function e(rank: number): CanonEntry {
 
 describe('<CanonCompactEntries>', () => {
   it('renders compact rows', () => {
-    render(<CanonCompactEntries entries={[e(16), e(17)]} seasonHref={() => '/x'} />)
+    render(
+      <CanonCompactEntries
+        entries={[e(16), e(17)]}
+        seasonHref={() => '/x'}
+        eraOf={() => undefined}
+      />,
+    )
     expect(screen.getAllByTestId('canon-compact-entry')).toHaveLength(2)
     expect(screen.getByText('16')).toBeInTheDocument()
   })
@@ -24,7 +30,13 @@ describe('<CanonCompactEntries>', () => {
 
 describe('<CanonTailEntries>', () => {
   it('renders tail rows', () => {
-    render(<CanonTailEntries entries={[e(31), e(32)]} seasonHref={() => '/x'} />)
+    render(
+      <CanonTailEntries
+        entries={[e(31), e(32)]}
+        seasonHref={() => '/x'}
+        eraOf={() => undefined}
+      />,
+    )
     expect(screen.getAllByTestId('canon-tail-row')).toHaveLength(2)
     expect(screen.getByText('31')).toBeInTheDocument()
   })

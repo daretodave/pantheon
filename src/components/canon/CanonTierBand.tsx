@@ -13,6 +13,7 @@ type CanonTierBandProps = {
   band: TierBand
   seasonHref: (entry: CanonEntry) => string
   seasonOf: (entry: CanonEntry) => Season | undefined
+  eraOf: (entry: CanonEntry) => string | undefined
 }
 
 const TIER_HEADLINES: Record<TierBand['key'], string> = {
@@ -22,7 +23,12 @@ const TIER_HEADLINES: Record<TierBand['key'], string> = {
   C: 'The seasons we have made peace with.',
 }
 
-function bodyForBand(band: TierBand, seasonHref: CanonTierBandProps['seasonHref'], seasonOf: CanonTierBandProps['seasonOf']) {
+function bodyForBand(
+  band: TierBand,
+  seasonHref: CanonTierBandProps['seasonHref'],
+  seasonOf: CanonTierBandProps['seasonOf'],
+  eraOf: CanonTierBandProps['eraOf'],
+) {
   switch (band.key) {
     case 'S':
       return (
@@ -30,6 +36,7 @@ function bodyForBand(band: TierBand, seasonHref: CanonTierBandProps['seasonHref'
           entries={band.entries}
           seasonHref={seasonHref}
           seasonOf={seasonOf}
+          eraOf={eraOf}
         />
       )
     case 'A':
@@ -38,16 +45,34 @@ function bodyForBand(band: TierBand, seasonHref: CanonTierBandProps['seasonHref'
           entries={band.entries}
           seasonHref={seasonHref}
           seasonOf={seasonOf}
+          eraOf={eraOf}
         />
       )
     case 'B':
-      return <CanonCompactEntries entries={band.entries} seasonHref={seasonHref} />
+      return (
+        <CanonCompactEntries
+          entries={band.entries}
+          seasonHref={seasonHref}
+          eraOf={eraOf}
+        />
+      )
     case 'C':
-      return <CanonTailEntries entries={band.entries} seasonHref={seasonHref} />
+      return (
+        <CanonTailEntries
+          entries={band.entries}
+          seasonHref={seasonHref}
+          eraOf={eraOf}
+        />
+      )
   }
 }
 
-export function CanonTierBand({ band, seasonHref, seasonOf }: CanonTierBandProps) {
+export function CanonTierBand({
+  band,
+  seasonHref,
+  seasonOf,
+  eraOf,
+}: CanonTierBandProps) {
   const headline = TIER_HEADLINES[band.key]
   const blurb = band.blurb ?? DEFAULT_TIER_HEADINGS[band.key]
   const count =
@@ -66,7 +91,7 @@ export function CanonTierBand({ band, seasonHref, seasonOf }: CanonTierBandProps
           {tierRangeLabel(band)} · {count}
         </div>
       </div>
-      {bodyForBand(band, seasonHref, seasonOf)}
+      {bodyForBand(band, seasonHref, seasonOf, eraOf)}
     </section>
   )
 }

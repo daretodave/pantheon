@@ -1,5 +1,6 @@
 export { ShowRanking } from './ShowRanking'
 export { CanonTabSwitch } from './CanonTabSwitch'
+export { CanonEraToolbar } from './CanonEraToolbar'
 export { CanonMethodology } from './CanonMethodology'
 export { CanonTierBand } from './CanonTierBand'
 export { CanonHeroEntries } from './CanonHeroEntries'

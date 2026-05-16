@@ -4,6 +4,7 @@ type CanonHeroEntriesProps = {
   entries: CanonEntry[]
   seasonHref: (entry: CanonEntry) => string
   seasonOf: (entry: CanonEntry) => Season | undefined
+  eraOf: (entry: CanonEntry) => string | undefined
 }
 
 function padRank(rank: number): string {
@@ -32,6 +33,7 @@ export function CanonHeroEntries({
   entries,
   seasonHref,
   seasonOf,
+  eraOf,
 }: CanonHeroEntriesProps) {
   return (
     <div className="cp-hero-entries" data-testid="canon-hero-entries">
@@ -45,6 +47,7 @@ export function CanonHeroEntries({
             href={seasonHref(entry)}
             data-testid="canon-hero-entry"
             data-rank={entry.rank}
+            data-era={eraOf(entry) ?? ''}
           >
             <div className="cp-he-rank">{padRank(entry.rank)}</div>
             <div className="cp-he-body">

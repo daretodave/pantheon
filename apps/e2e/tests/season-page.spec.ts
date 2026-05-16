@@ -80,6 +80,28 @@ test.describe('survivor S20 — gold-standard reference', () => {
     // TOC visible on desktop, 6 entries (all sections present)
     const tocLinks = page.getByTestId('toc-link')
     await expect(tocLinks).toHaveCount(6)
+
+    // 33b bolt-on 3: current-progress dot on every row; the active
+    // row (first by default) carries .active for the primary tint.
+    await expect(tocLinks.first()).toHaveClass(/active/)
+    expect(await page.locator('.toc-dot').count()).toBe(6)
+  })
+})
+
+test.describe('survivor S28 Cagayan — display_title entity render (33b)', () => {
+  const path = '/shows/survivor/season/cagayan'
+
+  test('h1 renders a literal ampersand, not "&amp;"', async ({ page }) => {
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' })
+    expect(response?.status()).toBe(200)
+
+    const h1 = page.getByTestId('season-h1')
+    await expect(h1).toContainText('Brawn & Beauty')
+    const h1Text = (await h1.textContent()) ?? ''
+    expect(h1Text).not.toContain('&amp;')
+
+    const accent = page.getByTestId('display-title-accent')
+    await expect(accent).toHaveText('Brains')
   })
 })
 

@@ -19,6 +19,7 @@ describe('<CanonMidEntries>', () => {
         entries={[e(6), e(7), e(8)]}
         seasonHref={() => '/x'}
         seasonOf={() => undefined}
+        eraOf={() => undefined}
       />,
     )
     expect(screen.getAllByTestId('canon-mid-entry')).toHaveLength(3)

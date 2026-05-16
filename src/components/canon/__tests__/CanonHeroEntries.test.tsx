@@ -36,6 +36,7 @@ describe('<CanonHeroEntries>', () => {
         entries={entries}
         seasonHref={(e) => `/shows/survivor/season/${seasons.get(e.season)?.slug ?? e.season}`}
         seasonOf={(e) => seasons.get(e.season)}
+        eraOf={() => undefined}
       />,
     )
     const rows = screen.getAllByTestId('canon-hero-entry')
@@ -55,6 +56,7 @@ describe('<CanonHeroEntries>', () => {
         entries={entries}
         seasonHref={() => '/x'}
         seasonOf={() => undefined}
+        eraOf={() => undefined}
       />,
     )
     expect(screen.queryByTestId('canon-hero-mini-community')).toBeNull()
@@ -77,6 +79,7 @@ describe('<CanonHeroEntries>', () => {
         entries={entries}
         seasonHref={() => '/x'}
         seasonOf={() => undefined}
+        eraOf={() => undefined}
       />,
     )
     expect(screen.getByTestId('canon-hero-mini-community')).toBeInTheDocument()

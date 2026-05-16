@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { SeasonHero, parseDisplayTitle } from '../SeasonHero'
+import {
+  SeasonHero,
+  parseDisplayTitle,
+  decodeTitleEntities,
+} from '../SeasonHero'
 
 describe('parseDisplayTitle', () => {
   it('returns a single text node when no markup is present', () => {
@@ -21,6 +25,37 @@ describe('parseDisplayTitle', () => {
   it('accepts self-closed <br /> too', () => {
     const out = parseDisplayTitle('A<br />B')
     expect(out.find((n) => n.kind === 'break')).toBeDefined()
+  })
+
+  // 33b bolt-on 1 regression: Cagayan's display_title carries
+  // `&amp;` (HTML-escaped in the constrained subset). Text + accent
+  // segments must decode to a literal `&`, not print "&amp;".
+  it('decodes HTML entities in text + accent segments', () => {
+    const out = parseDisplayTitle(
+      'Cagayan: <em>Brains</em><br/>Brawn &amp; Beauty',
+    )
+    expect(out).toEqual([
+      { kind: 'text', value: 'Cagayan: ' },
+      { kind: 'accent', value: 'Brains' },
+      { kind: 'break' },
+      { kind: 'text', value: 'Brawn & Beauty' },
+    ])
+  })
+})
+
+describe('decodeTitleEntities', () => {
+  it('decodes named entities', () => {
+    expect(decodeTitleEntities('Brawn &amp; Beauty')).toBe('Brawn & Beauty')
+    expect(decodeTitleEntities('it&rsquo;s &mdash; now')).toBe('it’s — now')
+  })
+
+  it('decodes decimal + hex numeric entities', () => {
+    expect(decodeTitleEntities('a&#38;b')).toBe('a&b')
+    expect(decodeTitleEntities('a&#x26;b')).toBe('a&b')
+  })
+
+  it('leaves unknown entities untouched', () => {
+    expect(decodeTitleEntities('a&bogus;b')).toBe('a&bogus;b')
   })
 })
 

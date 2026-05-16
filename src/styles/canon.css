@@ -242,6 +242,14 @@
   font-style: normal;
   letter-spacing: 0.06em;
 }
+/* Era filter (33b): SEO-safe CSS toggle. Server renders every entry
+   visible (no data-era-off); CanonEraToolbar sets data-era-off on
+   non-matching entries after a chip click. No DOM removal. Era keys
+   are per-show dynamic so the boolean attribute — not a per-key
+   selector — is what CSS keys off. */
+.canon-page [data-era-off='true'] {
+  display: none;
+}
 
 /* =========================================================== METHODOLOGY */
 .cp-methodology {
