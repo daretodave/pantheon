@@ -149,7 +149,11 @@ jobs:
         # drift-freezing. If hangs persist on 122 the bug predates
         # it; bump forward only once upstream confirms a fix for the
         # exit hang (the watchdog covers us either way).
-        uses: anthropics/claude-code-action@86eb26bf01 # v1.0.122
+        # GitHub requires the FULL 40-char commit SHA for a SHA pin;
+        # an abbreviated ref fails hard at "Set up job" before any
+        # step runs. (Learned 2026-05-16 — the short pin took the
+        # whole tick down in seconds.)
+        uses: anthropics/claude-code-action@86eb26bf0139bdd75acd15ea5f00f45ee0a284c2 # v1.0.122
         with:
           # OAuth token bills against the user's Claude Pro/Max
           # subscription. $0 marginal cost; quota shared with local
@@ -258,22 +262,23 @@ jobs:
           fi
 
   # ── Cancel-on-hang watchdog ────────────────────────────────────
-  # Runs in parallel with `march` (no `needs:`). The hang signature
-  # is precise: the workflow already stamps every shipped commit
-  # with `Cloud-Run: <this run's URL>`. So "this run's Cloud-Run
-  # commit is on origin/main" == the tick's work is done and pushed.
-  # If that commit exists while the claude step is STILL running
-  # (past a short grace for the post-push deploy:check), the agent
-  # finished but the process is wedged — cancel within a poll.
-  # A genuinely-still-working 75min tick has not pushed its
-  # Cloud-Run commit yet, so the watchdog never touches it. A no-op
-  # tick never commits and exits on its own. The only thing the
-  # 120min step backstop is left to catch is a wedge BEFORE any
-  # commit. This is what unblocks the serialized queue fast without
-  # ever false-killing real work.
+  # Parallel to `march` (no `needs:`). Hang signature: the workflow
+  # stamps every shipped commit with `Cloud-Run: <this run's URL>`,
+  # so that commit on origin/main == the tick's work is done. If it
+  # is there while the run is still alive past a deploy:check grace,
+  # the agent finished but wedged on exit — cancel within a poll.
+  # A still-working tick has not pushed its Cloud-Run commit yet so
+  # it is never touched; a no-op tick exits on its own.
+  #
+  # Hard rule, learned the hard way (2026-05-16): the ONE thing this
+  # loop must never do is outlive a finished run. So it (a) keys off
+  # the march JOB status — reliable even when march dies at "Set up
+  # job" before any step exists — not a brittle step selector;
+  # (b) stands down after repeated unreadable status; and (c) has an
+  # UNCONDITIONAL hard cap that exits no matter what the API returns.
   watchdog:
     runs-on: ubuntu-latest
-    timeout-minutes: 130   # one tick over the march step backstop
+    timeout-minutes: 130   # last-ditch only; the script self-exits well before this
     permissions:
       actions: write       # gh run cancel on the hang
       contents: read
@@ -286,45 +291,56 @@ jobs:
         run: |
           set -uo pipefail
           FRAG="actions/runs/${RUN_ID}"   # this run's Cloud-Run stamp
-          BACKSTOP_MIN=120                 # pre-commit wedge cap (== step cap)
           GRACE_MIN=15                     # post-push window (covers deploy:check)
-          start=$(date +%s); shipped_at=""
-          while true; do
+          MAX_MIN=125                      # absolute hard stop — unconditional
+          start=$(date +%s); shipped_at=""; misses=0
+          while :; do
             sleep 75
             now=$(date +%s); elapsed=$(( (now - start) / 60 ))
 
-            # Poll the march job's claude-step status.
-            cs=$(gh run view "$RUN_ID" --repo "$REPO" --json jobs \
-                  --jq '.jobs[]|select(.name=="march").steps[]|select(.name=="Run /march (cloud mode)").status' \
-                  2>/dev/null || echo "unknown")
-            # The hang IS the claude step staying in_progress. Once it
-            # reaches `completed` (clean exit OR the 120min step
-            # timeout firing), the march job drains + finalizes
-            # itself — stand down. Anything else (queued during the
-            # ~5min setup, empty jq, transient API failure → unknown)
-            # means keep holding; never exit early.
-            if [ "$cs" = "completed" ]; then
-              echo "claude step completed at +${elapsed}min — watchdog standing down."
+            # UNCONDITIONAL cap — not nested under any status check.
+            # This is what guarantees the watchdog can never become
+            # the zombie itself, whatever the API does.
+            if [ "$elapsed" -ge "$MAX_MIN" ]; then
+              echo "watchdog hard cap ${MAX_MIN}min — cancelling ${RUN_ID} and exiting."
+              gh run cancel "$RUN_ID" --repo "$REPO" || true
               exit 0
             fi
 
-            # Arm the cancel logic only while the step is actually
-            # running (not during setup, not on a transient unknown).
-            if [ "$cs" = "in_progress" ]; then
-              if gh api "repos/${REPO}/commits?sha=main&per_page=25" \
-                   --jq '.[].commit.message' 2>/dev/null | grep -qF "$FRAG"; then
-                [ -z "$shipped_at" ] && { shipped_at=$now; \
-                  echo "+${elapsed}min: this run's Cloud-Run commit is on main — work shipped. Grace ${GRACE_MIN}min for deploy:check."; }
-                if [ $(( (now - shipped_at) / 60 )) -ge "$GRACE_MIN" ]; then
-                  echo "HANG CONFIRMED: shipped >=${GRACE_MIN}min ago, claude step still in_progress. Cancelling run ${RUN_ID}."
-                  gh run cancel "$RUN_ID" --repo "$REPO" || true
-                  exit 0
-                fi
-              elif [ "$elapsed" -ge "$BACKSTOP_MIN" ]; then
-                echo "BACKSTOP: +${elapsed}min, no Cloud-Run commit (wedged pre-commit). Cancelling run ${RUN_ID}."
+            # March JOB-level status (reliable; empty == unreadable).
+            st=$(gh run view "$RUN_ID" --repo "$REPO" --json jobs \
+                  --jq '.jobs[]|select(.name=="march")|.status' 2>/dev/null || echo "")
+
+            if [ -z "$st" ]; then
+              misses=$((misses + 1))
+              if [ "$misses" -ge 5 ]; then
+                echo "watchdog: march status unreadable ${misses}x — standing down (the 120min march step cap still guards a real hang)."
+                exit 0
+              fi
+              echo "watchdog +${elapsed}min: march status unreadable (${misses}/5) — retrying."
+              continue
+            fi
+            misses=0
+
+            # Job finished — success/failure/cancelled/skipped, incl.
+            # failing at "Set up job" before any step. Nothing to guard.
+            if [ "$st" = "completed" ]; then
+              echo "march job completed at +${elapsed}min — watchdog standing down."
+              exit 0
+            fi
+
+            # Still queued/in_progress: has THIS run already shipped
+            # its Cloud-Run commit? If so, work is done; a run still
+            # alive past the grace is the post-turn exit hang.
+            if gh api "repos/${REPO}/commits?sha=main&per_page=25" \
+                 --jq '.[].commit.message' 2>/dev/null | grep -qF "$FRAG"; then
+              [ -z "$shipped_at" ] && { shipped_at=$now; \
+                echo "+${elapsed}min: this run's Cloud-Run commit is on main — work shipped. Grace ${GRACE_MIN}min."; }
+              if [ $(( (now - shipped_at) / 60 )) -ge "$GRACE_MIN" ]; then
+                echo "HANG CONFIRMED: shipped, grace elapsed, march still ${st}. Cancelling ${RUN_ID}."
                 gh run cancel "$RUN_ID" --repo "$REPO" || true
                 exit 0
               fi
             fi
-            echo "watchdog +${elapsed}min: claude=${cs} shipped=${shipped_at:+yes} — holding."
+            echo "watchdog +${elapsed}min: march=${st} shipped=${shipped_at:+yes} — holding."
           done
