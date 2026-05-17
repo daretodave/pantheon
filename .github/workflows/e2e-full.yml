@@ -1,0 +1,124 @@
+name: e2e-full
+
+# The exhaustive every-URL crawl, kept OFF the per-commit hot path.
+# `pnpm verify` (local + cloud march) samples archetypes so it stays
+# flat as content grows; this nightly job is where the full catalog
+# actually gets walked in a browser. On failure it files an issue so
+# a regression in a non-sampled URL still surfaces — the enforcement
+# half of the sample/full split (see apps/e2e/src/fixtures/sample-urls.ts).
+#
+# Schedule: 23:00 UTC daily = 6 PM EST. NOTE: GitHub cron is UTC and
+# does not observe DST, so during EDT (Mar–Nov) this fires at 7 PM
+# ET. Flip to `0 22 * * *` if you want a true 6 PM through summer —
+# the exact hour is not load-bearing for a nightly sweep.
+
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-full
+  cancel-in-progress: false
+
+jobs:
+  e2e-full:
+    runs-on: ubuntu-latest
+    # Generous: cold full crawl is ~build 6m + ~2700+ specs ~20m +
+    # setup; sized well above that so a slow runner never false-fails
+    # and files a spurious issue.
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      issues: write   # failure -> tracking issue
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        if: hashFiles('apps/e2e/package.json') != ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('apps/e2e/package.json', 'pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright browsers (chromium only)
+        if: hashFiles('apps/e2e/package.json') != ''
+        run: pnpm e2e:install
+
+      - name: Install Supabase CLI
+        if: hashFiles('supabase/config.toml') != ''
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Pre-start Supabase containers
+        if: hashFiles('supabase/config.toml') != ''
+        run: supabase start
+        timeout-minutes: 5
+
+      - name: Production build (e2e serves the build output)
+        run: pnpm build
+        timeout-minutes: 20
+
+      - name: Exhaustive e2e crawl (E2E_FULL=1)
+        run: pnpm e2e:full
+        timeout-minutes: 50
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
+          AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL }}
+          E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
+          E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DISABLE_ANALYTICS: '1'
+
+      - name: Drain stray servers
+        if: always()
+        run: |
+          pkill -f 'next start'  || true
+          pkill -f 'next-server' || true
+          pkill -f 'playwright'  || true
+          supabase stop --no-backup || true
+          docker ps -q | xargs -r docker kill || true
+          echo "drain complete"
+
+      - name: File an issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
+        run: |
+          existing=$(gh issue list --search 'in:title "Nightly e2e-full failed" state:open' --json number --jq 'length')
+          if [ "$existing" -eq 0 ]; then
+            gh issue create \
+              --title "Nightly e2e-full failed: $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              --body "The exhaustive every-URL crawl (E2E_FULL=1) went red — a non-sampled URL regressed where the per-commit archetype sample does not look. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}. Filed unlabeled; next /triage classifies and routes."
+          else
+            echo "An open 'Nightly e2e-full failed' issue already exists — skipping dedupe."
+          fi
