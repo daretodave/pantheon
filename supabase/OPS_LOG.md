@@ -44,6 +44,45 @@ with a guest cookie returns `{"ok":true,"value":1,"weight":0.1,…}`
 — the path the reader hits when they click the vote pair on a
 season page. Closes #23.
 
+## 2026-05-17 — Migration backlog drained + automation added
+
+Same failure class as #23, recurring: phase 35's community-read
+migrations (`20260513000015_community_ranking`,
+`20260513000016_read_vote_rpc`) and phase 38's
+`20260517000001_profile_activity_rpc` had shipped to the repo
+but were never applied to prod. Visible symptom: `PGRST202 —
+Could not find the function public.profile_activity(p_handle)`
+on `/u/[handle]`.
+
+Root cause confirmed via `supabase migration list`: the remote
+`supabase_migrations.schema_migrations` tracking table was
+**empty** — the 2026-05-14 backfill applied 01–14 with raw
+`psql -1`, which inserts no tracking rows, so the CLI saw
+nothing as applied.
+
+Remediation (via `supabase` CLI 2.98.2, session-mode pooler at
+the corrected `aws-1` host):
+
+- `supabase migration repair --status applied 20260513000001
+  … 20260513000014` — marked the 14 already-applied migrations
+  as applied (objects exist; not re-run).
+- `supabase db push` — applied the 3 genuinely-pending
+  migrations: `…0015_community_ranking`,
+  `…0016_read_vote_rpc`, `…20260517000001_profile_activity_rpc`.
+  PostgREST reloaded its schema cache automatically (no manual
+  NOTIFY needed).
+
+Outcome: `GET https://tiered.tv/u/e2e` → HTTP 200, no PGRST202.
+The tracking table is now complete (01 → 0517 all recorded),
+so future `supabase db push` runs are incremental.
+
+**Automation added** (`.github/workflows/migrate.yml`): pushes
+to `main` touching `supabase/migrations/**` now auto-apply via
+`supabase db push`. This replaces the manual `psql` ritual that
+caused both #23 and this incident. The workflow pins the
+known-good pooler host (see Connection notes) so it doesn't
+inherit the `aws-0` trap.
+
 ## Connection notes
 
 - The pooler host for this project is

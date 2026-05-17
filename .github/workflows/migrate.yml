@@ -1,0 +1,79 @@
+name: migrate
+
+# Applies pending Supabase migrations to the production project
+# automatically. Before this workflow existed, migration files
+# shipped to the repo but prod only got them via a manual
+# `psql -1` (see supabase/OPS_LOG.md) — which silently lagged
+# twice: issue #23 (the entire phase 11-13 data layer) and the
+# phase-38 `profile_activity` RPC (PGRST202 on /u/[handle]).
+#
+# Trigger: any push to main that touches supabase/migrations/**,
+# plus manual dispatch. `supabase db push` is incremental — it
+# reads the remote `supabase_migrations.schema_migrations`
+# tracking table and applies only versions not yet recorded, so
+# re-runs are safe and a no-op when nothing is pending.
+#
+# Connection: built in-job from SUPABASE_PROJECT_ID +
+# SUPABASE_DB_PASSWORD against the SESSION-mode pooler. The host
+# is pinned to `aws-1-us-west-2.pooler.supabase.com` on purpose:
+# the repo's DIRECT_URL/DATABASE_URL secrets point at the
+# `aws-0-...` host, which returns `FATAL: Tenant or user not
+# found` for this project (OPS_LOG "Connection notes"). Pinning
+# the known-good host avoids inheriting that trap.
+#
+# Known limitation: Vercel auto-deploys on the same push,
+# independently and fast. If a deploy that needs a new RPC wins
+# the race, there is a brief PGRST202 window until this workflow
+# finishes (usually < 1 min). Acceptable for the v1 experiment;
+# eliminating it would mean gating the Vercel deploy on this
+# job. PostgREST reloads its schema cache automatically on DDL
+# (Supabase default event trigger), so no manual NOTIFY needed.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+  workflow_dispatch:
+
+concurrency:
+  group: migrate
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Build production DB URL
+        id: dburl
+        env:
+          PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_ID }}
+          DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PROJECT_REF}" ] || [ -z "${DB_PASSWORD}" ]; then
+            echo "::error::SUPABASE_PROJECT_ID and SUPABASE_DB_PASSWORD must be set as repo secrets"
+            exit 1
+          fi
+          ENC_PW=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote(os.environ['DB_PASSWORD'],safe=''))")
+          # Session-mode pooler, port 5432, region-correct host.
+          echo "::add-mask::${ENC_PW}"
+          echo "url=postgres://postgres.${PROJECT_REF}:${ENC_PW}@aws-1-us-west-2.pooler.supabase.com:5432/postgres" >> "$GITHUB_OUTPUT"
+
+      - name: Show pending migrations
+        run: supabase migration list --db-url "${{ steps.dburl.outputs.url }}"
+
+      - name: Apply pending migrations
+        run: supabase db push --db-url "${{ steps.dburl.outputs.url }}"
+
+      - name: Confirm migration history
+        run: supabase migration list --db-url "${{ steps.dburl.outputs.url }}"
