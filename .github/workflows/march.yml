@@ -187,9 +187,16 @@ jobs:
                - exit cleanly with a one-line note in the action log explaining why no work shipped this tick, or
                - if there is a real failure to surface, open a GitHub issue with `gh issue create --title "Cloud march failed: <iso-date>" --body "<context + run URL>"` and exit. Do not pass `--label` — the issue lands unlabeled and the next scheduled tick's /triage classifies and labels it appropriately.
 
+            8. MANDATORY FINAL ACTION — runs no matter the outcome (shipped / no-op / failure+issue). The cloud `claude` process has an exit-hang bug: after your last turn it sometimes does not terminate and wedges the whole run. To bound it, the LAST two shell commands of this tick — after verify+commit+push+deploy:check, OR after deciding no-op, OR after opening the failure issue — MUST be, in this exact order:
+                 (a) tear down anything the verify/e2e chain left alive, so the process tree can drain and the CLI can exit normally:
+                     supabase stop --no-backup 2>/dev/null || true; pkill -f 'next start' 2>/dev/null || true; pkill -f 'next-server' 2>/dev/null || true; pkill -f 'playwright' 2>/dev/null || true
+                 (b) push the done-marker the watchdog waits on (a cheap custom ref — does NOT touch main, branches, or tags):
+                     git push origin HEAD:refs/cloud-ticks/${{ github.run_id }}-done
+               Run nothing after (b). If (a) or (b) error, ignore the error and still end the tick. This is non-negotiable, like the verify gate and the Cloud-Run trailer.
+
             The dispatch order is the standard /march order from skills/march.md: triage → critique (skipped) → ship-a-phase → ship-data → ship-content → expand → iterate.
 
-            Begin. One tick. One commit-and-push (or no-op). Then exit.
+            Begin. One tick. One commit-and-push (or no-op). Then the mandatory final action (item 8). Then exit.
         env:
           # Deploy gate
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -290,18 +297,34 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -uo pipefail
-          FRAG="actions/runs/${RUN_ID}"   # this run's Cloud-Run stamp
-          GRACE_MIN=15                     # post-push window (covers deploy:check)
-          MAX_MIN=125                      # absolute hard stop — unconditional
+          FRAG="actions/runs/${RUN_ID}"       # this run's Cloud-Run commit stamp
+          MARKER="cloud-ticks/${RUN_ID}-done" # agent's mandatory final-action ref
+          GRACE_MIN=15                         # post-push window (covers deploy:check)
+          MAX_MIN=125                          # absolute hard stop — unconditional
           start=$(date +%s); shipped_at=""; misses=0
+
+          # Every cancel path calls this first: the run is about to be
+          # killed, so leave the evidence behind. Grouped so it is one
+          # foldable block, not noise — the user asked for full output
+          # on cancel specifically.
+          diag(){
+            echo "::group::watchdog cancel — $1 (+${elapsed}min)"
+            echo "run: https://github.com/${REPO}/actions/runs/${RUN_ID}"
+            gh run view "$RUN_ID" --repo "$REPO" --json jobs \
+              --jq '.jobs[]|"\(.name)=\(.status)/\(.conclusion // "-")",(.steps[]|"  \(.status)/\(.conclusion // "-") \(.name)")' \
+              2>/dev/null || true
+            echo "::endgroup::"
+          }
+
           while :; do
             sleep 75
             now=$(date +%s); elapsed=$(( (now - start) / 60 ))
 
             # UNCONDITIONAL cap — not nested under any status check.
-            # This is what guarantees the watchdog can never become
-            # the zombie itself, whatever the API does.
+            # Guarantees the watchdog can never become the zombie
+            # itself, whatever the API does.
             if [ "$elapsed" -ge "$MAX_MIN" ]; then
+              diag "hard cap ${MAX_MIN}min"
               echo "watchdog hard cap ${MAX_MIN}min — cancelling ${RUN_ID} and exiting."
               gh run cancel "$RUN_ID" --repo "$REPO" || true
               exit 0
@@ -329,18 +352,34 @@ jobs:
               exit 0
             fi
 
-            # Still queued/in_progress: has THIS run already shipped
-            # its Cloud-Run commit? If so, work is done; a run still
-            # alive past the grace is the post-turn exit hang.
+            # PRIMARY signal — commit-independent, covers every hang
+            # shape (no-op, failed-verify, or worked-then-wedged). The
+            # agent pushes refs/${MARKER} as its mandatory final action
+            # (prompt item 8), AFTER teardown + any commit/deploy:check.
+            # If that ref exists while march is still "${st}", the
+            # agent is fully done and the process wedged on exit —
+            # cancel now, no grace needed.
+            mref=$(gh api "repos/${REPO}/git/matching-refs/${MARKER}" --jq 'length' 2>/dev/null || echo 0)
+            case "$mref" in ''|*[!0-9]*) mref=0 ;; esac
+            if [ "$mref" -ge 1 ]; then
+              diag "done-marker present, march=${st}"
+              echo "DONE-MARKER at +${elapsed}min: agent finished, march still ${st} — exit hang. Cancelling ${RUN_ID}."
+              gh run cancel "$RUN_ID" --repo "$REPO" || true
+              exit 0
+            fi
+
+            # SECONDARY (defense in depth): a Cloud-Run commit shipped
+            # but somehow no marker — still a hang once grace elapses.
             if gh api "repos/${REPO}/commits?sha=main&per_page=25" \
                  --jq '.[].commit.message' 2>/dev/null | grep -qF "$FRAG"; then
               [ -z "$shipped_at" ] && { shipped_at=$now; \
                 echo "+${elapsed}min: this run's Cloud-Run commit is on main — work shipped. Grace ${GRACE_MIN}min."; }
               if [ $(( (now - shipped_at) / 60 )) -ge "$GRACE_MIN" ]; then
+                diag "shipped + grace elapsed, march=${st}"
                 echo "HANG CONFIRMED: shipped, grace elapsed, march still ${st}. Cancelling ${RUN_ID}."
                 gh run cancel "$RUN_ID" --repo "$REPO" || true
                 exit 0
               fi
             fi
-            echo "watchdog +${elapsed}min: march=${st} shipped=${shipped_at:+yes} — holding."
+            echo "watchdog +${elapsed}min: march=${st} shipped=${shipped_at:+yes} marker=no — holding."
           done
