@@ -52,6 +52,25 @@ export function pickMovers(
   })
 }
 
+// The recompute cadence is weekly (Thursday 9pm ET, v1 contract), so
+// a move measured against the >= 7d baseline snapshot is, by
+// construction, "this week's" change. This label is the contract,
+// not a computed countdown — the same honesty posture as
+// NEXT_RECOMPUTE_LABEL below.
+export const SHIFT_TIME_LABEL = 'this week'
+
+// The shift-card note. Strictly data-derived from the snapshot delta
+// — no invented editorial copy (same posture as CommunityMovers).
+// pickMovers only ever yields nonzero-delta movers, so there is no
+// "held" branch here.
+export function moverNote(mover: CommunityMover): string {
+  const n = Math.abs(mover.delta)
+  const spots = n === 1 ? 'one spot' : `${n} spots`
+  return mover.delta > 0
+    ? `Climbed ${spots} since the last weekly recompute.`
+    : `Slid ${spots} since the last weekly recompute.`
+}
+
 // "2h 14m ago" relative label for the last recompute timestamp.
 // Null timestamp = no snapshot has ever been written.
 export function formatLastRecompute(

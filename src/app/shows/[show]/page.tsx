@@ -4,6 +4,7 @@ import { getAllSeasons, getAllShows, getCanon, getShow } from '@/content'
 import { ShowPaletteScope } from '@/components/show/ShowPaletteScope'
 import { Bullet } from '@/components/atoms/Bullet'
 import {
+  ShiftCard,
   ShiftsRow,
   ShieldBadge,
   ShowHero,
@@ -17,6 +18,7 @@ import {
   jsonLdScriptProps,
 } from '@/lib/seo'
 import { getCommunityRanking } from '@/lib/community/ranking'
+import { pickMovers } from '@/lib/community/live'
 import { FeaturedThemes } from '@/components/featured-themes/FeaturedThemes'
 import type { Season } from '@/content'
 
@@ -129,6 +131,7 @@ export default async function ShowHomePage({
   })
 
   const community = await getCommunityRanking(show, seasons, canon)
+  const shiftMovers = pickMovers(community.entries)
   const communityItemListLd = buildJsonLd({
     type: 'ItemList',
     name: `${show.name} — Community Rank`,
@@ -180,7 +183,15 @@ export default async function ShowHomePage({
           tagline={show.tagline}
           shield={<ShieldBadge />}
         />
-        <ShiftsRow />
+        <ShiftsRow
+          cards={
+            shiftMovers.length > 0
+              ? shiftMovers.map((m) => (
+                  <ShiftCard key={m.season.number} mover={m} />
+                ))
+              : undefined
+          }
+        />
         <ShowRanking
           show={show}
           seasons={seasons}

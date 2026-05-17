@@ -125,6 +125,13 @@ test.describe('live community pane (votes cleared the threshold)', () => {
     expect(await list.getAttribute('data-source')).toBe('votes')
     // At least one row now carries a real approval percentage.
     await expect(list.locator('.cp-clr-pct').first()).toContainText('%')
+
+    // Phase 35 stage 3c: the "What changed this week." shifts row is
+    // snapshot-delta-driven. The hermetic DB seeds no >= 7d baseline
+    // snapshot, so even with live votes there is nothing to compare
+    // against — the surface stays absent (the design's intended empty
+    // behavior), it does not render an empty box.
+    await expect(page.getByTestId('shifts-row')).toHaveCount(0)
   })
 })
 

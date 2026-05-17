@@ -4,10 +4,13 @@ import type { CommunityRankRow } from './ranking'
 import {
   formatLastRecompute,
   formatVersion,
+  moverNote,
   NEXT_RECOMPUTE_LABEL,
   pickMovers,
+  SHIFT_TIME_LABEL,
   trendSentiment,
 } from './live'
+import type { CommunityMover } from './live'
 
 function season(number: number): Season {
   return {
@@ -101,5 +104,54 @@ describe('formatVersion', () => {
 describe('NEXT_RECOMPUTE_LABEL', () => {
   it('is the v1 cadence', () => {
     expect(NEXT_RECOMPUTE_LABEL).toBe('Thursday 9pm ET')
+  })
+})
+
+describe('SHIFT_TIME_LABEL', () => {
+  it('is the weekly-cadence framing', () => {
+    expect(SHIFT_TIME_LABEL).toBe('this week')
+  })
+})
+
+describe('moverNote', () => {
+  function mover(delta: number): CommunityMover {
+    return {
+      season: season(7),
+      tag: '2010',
+      rank: 7,
+      prevRank: 7 + delta,
+      delta,
+      sentiment: trendSentiment(delta),
+    }
+  }
+
+  it('describes a climb, pluralizing spots', () => {
+    expect(moverNote(mover(3))).toBe(
+      'Climbed 3 spots since the last weekly recompute.',
+    )
+  })
+
+  it('describes a slide', () => {
+    expect(moverNote(mover(-2))).toBe(
+      'Slid 2 spots since the last weekly recompute.',
+    )
+  })
+
+  it('uses singular phrasing for a one-spot move', () => {
+    expect(moverNote(mover(1))).toBe(
+      'Climbed one spot since the last weekly recompute.',
+    )
+    expect(moverNote(mover(-1))).toBe(
+      'Slid one spot since the last weekly recompute.',
+    )
+  })
+
+  it('never invents editorial copy — output is fully derived from the delta', () => {
+    for (const d of [1, 2, 5, 12, -1, -3, -9]) {
+      const note = moverNote(mover(d))
+      expect(note).toMatch(
+        /^(Climbed|Slid) (one spot|\d+ spots) since the last weekly recompute\.$/,
+      )
+    }
   })
 })
