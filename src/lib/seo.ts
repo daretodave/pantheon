@@ -34,7 +34,19 @@ type BuildMetadataArgs = {
   path: string
   image?: string
   noIndex?: boolean
+  // Phase 32: RSS auto-discovery. Each entry becomes a
+  // <link rel="alternate" type="application/rss+xml">. The global
+  // feed is always attached (see GLOBAL_FEED below — a page's
+  // metadata replaces, not merges, the root layout's `alternates`,
+  // so the global feed has to be re-emitted here); per-show pages
+  // pass their own feed in addition.
+  feeds?: { url: string; title: string }[]
 }
+
+const GLOBAL_FEED = {
+  url: '/feed.xml',
+  title: 'tiered.tv — all updates',
+} as const
 
 export function buildMetadata({
   title,
@@ -42,6 +54,7 @@ export function buildMetadata({
   path,
   image,
   noIndex,
+  feeds,
 }: BuildMetadataArgs): Metadata {
   const canonical = canonicalUrl(path)
   const ogImage = image
@@ -51,7 +64,15 @@ export function buildMetadata({
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      types: {
+        'application/rss+xml': [GLOBAL_FEED, ...(feeds ?? [])].map((f) => ({
+          url: f.url,
+          title: f.title,
+        })),
+      },
+    },
     openGraph: {
       title,
       description,

@@ -64,3 +64,10 @@ const SITEMAP_EXCLUDE_PATTERNS = new Set<string>([
 export function getSitemapRoutes(): RouteEntry[] {
   return getAllRoutes().filter((r) => !SITEMAP_EXCLUDE_PATTERNS.has(r.pattern))
 }
+
+// Phase 32: RSS feed paths — the global feed plus one per show.
+// Included in the sitemap; the e2e fixture derives the same list
+// from content/ independently (apps/e2e/src/fixtures/feed-urls.ts).
+export function getFeedPaths(): string[] {
+  return ['/feed.xml', ...getAllShows().map((s) => `/feed/${s.slug}.xml`)]
+}

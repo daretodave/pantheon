@@ -71,6 +71,39 @@ describe('buildMetadata', () => {
     expect(meta.alternates?.canonical).toBe(`${siteConfig.baseUrl}/shows`)
   })
 
+  it('always emits the global RSS feed alternate', () => {
+    const meta = buildMetadata({
+      title: 't',
+      description: 'd',
+      path: '/about',
+    })
+    const rss = (
+      meta.alternates?.types as
+        | Record<string, { url: string; title?: string }[]>
+        | undefined
+    )?.['application/rss+xml']
+    expect(rss?.length).toBe(1)
+    expect(rss?.[0]?.url).toBe('/feed.xml')
+  })
+
+  it('appends per-page feeds after the global feed', () => {
+    const meta = buildMetadata({
+      title: 't',
+      description: 'd',
+      path: '/shows/survivor',
+      feeds: [{ url: '/feed/survivor.xml', title: 'Survivor — tiered.tv' }],
+    })
+    const rss = (
+      meta.alternates?.types as
+        | Record<string, { url: string; title?: string }[]>
+        | undefined
+    )?.['application/rss+xml']
+    expect(rss?.map((r) => r.url)).toEqual([
+      '/feed.xml',
+      '/feed/survivor.xml',
+    ])
+  })
+
   it('sets openGraph and twitter blocks with the default OG image', () => {
     const meta = buildMetadata({
       title: 't',

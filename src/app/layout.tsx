@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   description:
     'A spoiler-free home for ranked TV seasons. Editor’s Canon and Community Rank side by side.',
   applicationName: 'tiered.tv',
+  // Phase 32: global RSS feed, auto-discoverable site-wide.
+  // Per-show pages add their own feed on top of this.
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        { url: '/feed.xml', title: 'tiered.tv — all updates' },
+      ],
+    },
+  },
   icons: {
     icon: [
       // Modern browsers prefer the SVG (vector, scales at any tab size).

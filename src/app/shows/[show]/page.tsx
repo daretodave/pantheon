@@ -10,7 +10,12 @@ import {
   type ShowHeroStat,
 } from '@/components/composition'
 import { ShowRanking } from '@/components/canon'
-import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
+import {
+  buildJsonLd,
+  buildMetadata,
+  canonicalUrl,
+  jsonLdScriptProps,
+} from '@/lib/seo'
 import { computeCommunityRank } from '@/lib/community/rank'
 import { FeaturedThemes } from '@/components/featured-themes/FeaturedThemes'
 import type { Season } from '@/content'
@@ -36,6 +41,12 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     title: `${show.name} — the canon + the community vote, no spoilers`,
     description: `${show.name}, every season ranked: the Editor's Canon and the live community vote on one page. ${show.tagline}`,
     path: `/shows/${show.slug}`,
+    feeds: [
+      {
+        url: canonicalUrl(`/feed/${show.slug}.xml`),
+        title: `${show.name} — tiered.tv`,
+      },
+    ],
   })
 }
 

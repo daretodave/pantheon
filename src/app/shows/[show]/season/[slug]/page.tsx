@@ -32,7 +32,12 @@ import {
 } from '@/components/composition'
 import { Bullet } from '@/components/atoms/Bullet'
 import { auth0 } from '@/lib/auth0'
-import { buildJsonLd, buildMetadata, jsonLdScriptProps } from '@/lib/seo'
+import {
+  buildJsonLd,
+  buildMetadata,
+  canonicalUrl,
+  jsonLdScriptProps,
+} from '@/lib/seo'
 
 type Params = { show: string; slug: string }
 
@@ -69,6 +74,12 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     title: `${show.name} S${season.number} — ${season.title}`,
     description: `Vote and discuss ${show.name} season ${season.number}: ${season.title}.`,
     path: `/shows/${show.slug}/season/${season.slug}`,
+    feeds: [
+      {
+        url: canonicalUrl(`/feed/${show.slug}.xml`),
+        title: `${show.name} — tiered.tv`,
+      },
+    ],
   })
 }
 

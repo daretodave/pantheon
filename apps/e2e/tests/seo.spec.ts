@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
+import { feedUrls } from '../src/fixtures/feed-urls'
 
 const SITEMAP_EXCLUDE = new Set<string>(['/sign-in', '/mod', '/u/[handle]'])
 
@@ -90,6 +91,10 @@ test('sitemap entry count matches expected canonical URL count', async ({ page }
   const body = (await response?.text()) ?? ''
   // Count <url> blocks (each entry).
   const urlCount = (body.match(/<url>/g) ?? []).length
-  const expected = canonicalUrls.filter((u) => !SITEMAP_EXCLUDE.has(u.pattern)).length
+  // Phase 32: the sitemap also carries the RSS feed URLs (global +
+  // one per show) — see app/sitemap.ts / lib/routes.getFeedPaths.
+  const expected =
+    canonicalUrls.filter((u) => !SITEMAP_EXCLUDE.has(u.pattern)).length +
+    feedUrls.length
   expect(urlCount, `sitemap has ${urlCount} entries, expected ${expected}`).toBe(expected)
 })

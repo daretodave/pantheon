@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { setContentRoot, __resetContentCache } from '@/content'
-import { getAllRoutes, getSitemapRoutes } from './routes'
+import { getAllRoutes, getFeedPaths, getSitemapRoutes } from './routes'
 
 const FIXTURE_ROOT = path.resolve(__dirname, '../../content')
 
@@ -132,5 +132,18 @@ describe('getSitemapRoutes', () => {
     expect(patterns.has('/')).toBe(true)
     expect(patterns.has('/shows')).toBe(true)
     expect(patterns.has('/about')).toBe(true)
+  })
+})
+
+describe('getFeedPaths', () => {
+  it('leads with the global feed then one .xml per show', () => {
+    const paths = getFeedPaths()
+    expect(paths[0]).toBe('/feed.xml')
+    const showPaths = paths.slice(1)
+    expect(showPaths.length).toBe(getAllRoutes().filter((r) => r.pattern === '/shows/[show]').length)
+    for (const p of showPaths) {
+      expect(p).toMatch(/^\/feed\/[a-z0-9-]+\.xml$/)
+    }
+    expect(paths).toContain('/feed/survivor.xml')
   })
 })
