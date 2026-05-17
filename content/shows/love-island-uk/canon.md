@@ -99,10 +99,18 @@ community_rank_hint: rank=9 delta=0 sentiment=hold
 
 Series 8 is the format in full modern mode and the season most weighed down by its own machinery. The cast is large and contemporary and the casting energy is high, but the run leans hard on structure, and the constant twists and second-villa mechanics can crowd the chemistry that earlier summers let breathe. It is capable and heavily watched, and it sits squarely in the busier, more processed stretch of the show. As an era argument it shows the format at its most engineered — competent, but not the show at its sharpest.
 
+## 11. Series 11 (Summer 2024)
+
+tag: The celebrity-bombshell summer — the modern machine running at its most processed.
+slot_argument: A famous face at launch, a private desirability-ranking coupling, and era mechanics stacked end to end. The most twist-forward, recognisability-driven summer the franchise has made.
+community_rank_hint: rank=10 delta=0 sentiment=hold
+
+Series 11 is the format at its most engineered. The launch leaned on a famous face and a private ranking mechanic, and the run stacked era devices end to end, with Maya Jama fully settled into her second Mallorca summer. The casting energy is high but built on recognisability and structure rather than the slow-burn chemistry of the peak years. It edges below the busier S8 because it leans even harder on apparatus, and above the comeback summer because the machine is sharper and the energy never goes cold. As an era argument it is the clearest picture yet of where the processed modern format ends up.
+
 ## 7. Series 7 (2021)
 
 tag: The comeback — the format restarting from a cold stop after the only cancelled summer.
 slot_argument: The longest gap in the show's history, then the lights back on in Mallorca. Important as a restart, less commanding as a season; the long pause is felt throughout.
-community_rank_hint: rank=10 delta=0 sentiment=hold
+community_rank_hint: rank=11 delta=0 sentiment=hold
 
 Series 7 is the comeback after the only cancelled summer in the show's run, and it carries the weight of being a return rather than a peak. The long gap is felt — the cast and the format spend the season finding their footing again, and the cultural urgency of the earlier summers is hard to recapture from a cold start. The production is assured and the mechanics are intact, but the spark is muted. It ranks last on era argument and energy: a consequential restart for the franchise, but the least commanding season in the canon as a watch.
