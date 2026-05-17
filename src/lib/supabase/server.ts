@@ -72,6 +72,42 @@ export async function castVote(args: CastVoteArgs): Promise<CastVoteResult> {
   }
 }
 
+// Convenience helper for the read_vote() RPC — the read sibling
+// of castVote. Returns this session's current vote on the target
+// plus the fresh aggregate. `sessionId` may be null (anon visitor
+// with no cookie): value comes back 0, count is still the true
+// net for the target.
+export type ReadVoteArgs = {
+  sessionId: string | null
+  targetType: 'season' | 'comment'
+  targetId: string
+}
+
+export type ReadVoteResult = {
+  value: number
+  count: number
+}
+
+export async function readVote(args: ReadVoteArgs): Promise<ReadVoteResult> {
+  const client = serviceRoleClient()
+  const { data, error } = await client.rpc('read_vote', {
+    p_session_id: args.sessionId,
+    p_target_type: args.targetType,
+    p_target_id: args.targetId,
+  })
+  if (error) {
+    const e = new Error(error.message) as Error & { code?: string; hint?: string }
+    e.code = error.code
+    e.hint = error.hint ?? undefined
+    throw e
+  }
+  const row = Array.isArray(data) ? data[0] : data
+  return {
+    value: row ? Number(row.value) : 0,
+    count: row ? Number(row.count) : 0,
+  }
+}
+
 // Upserts a users row keyed on auth0_sub. The cast_vote RPC reads
 // users.created_at to pick the weight bucket; missing rows fall
 // back to the new-account 0.25× weight.

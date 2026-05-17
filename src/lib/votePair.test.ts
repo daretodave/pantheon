@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { LOCK_MS, initialState, isDisabled, reduce } from './votePair'
+import { LOCK_MS, initialState, isDisabled, nextValue, reduce } from './votePair'
 
 describe('votePair.initialState', () => {
   it('starts idle with the given count and value 0 by default', () => {
@@ -88,6 +88,68 @@ describe('votePair.reduce — tick', () => {
     expect(unlocked.flash).toBeNull()
     expect(unlocked.value).toBe(1)
     expect(unlocked.count).toBe(1)
+  })
+})
+
+describe('votePair.reduce — hydrate (mount read-back)', () => {
+  it('seeds value + count from the server before the viewer acts', () => {
+    const s = reduce(initialState({ initialCount: 0 }), {
+      type: 'hydrate',
+      value: 1,
+      count: 7,
+    })
+    expect(s.value).toBe(1)
+    expect(s.count).toBe(7)
+    expect(s.userActed).toBe(false)
+  })
+
+  it('is a no-op once the viewer has clicked (stale-fetch guard)', () => {
+    const clicked = reduce(initialState({ initialCount: 0 }), {
+      type: 'click',
+      direction: 'up',
+      now: 100,
+    })
+    expect(clicked.userActed).toBe(true)
+    const after = reduce(clicked, { type: 'hydrate', value: -1, count: 99 })
+    expect(after).toBe(clicked)
+  })
+
+  it('returns the same state reference when the snapshot matches', () => {
+    const s = initialState({ initialCount: 5, initialValue: 1 })
+    expect(reduce(s, { type: 'hydrate', value: 1, count: 5 })).toBe(s)
+  })
+})
+
+describe('votePair.reduce — reconcile (post-write server truth)', () => {
+  it('snaps value + count to the server aggregate, leaving the lock intact', () => {
+    const clicked = reduce(initialState({ initialCount: 0 }), {
+      type: 'click',
+      direction: 'up',
+      now: 100,
+    })
+    // Optimistic count was 1; server says the weighted net is 0.3.
+    const reconciled = reduce(clicked, { type: 'reconcile', value: 1, count: 0.3 })
+    expect(reconciled.value).toBe(1)
+    expect(reconciled.count).toBe(0.3)
+    expect(reconciled.phase).toBe('locked')
+    expect(reconciled.flash).toBe('up')
+  })
+})
+
+describe('votePair.nextValue', () => {
+  it('resolves a fresh up-click to +1 and a fresh down-click to -1', () => {
+    expect(nextValue(0, 'up')).toBe(1)
+    expect(nextValue(0, 'down')).toBe(-1)
+  })
+
+  it('resolves a re-click in the same direction to 0 (retract)', () => {
+    expect(nextValue(1, 'up')).toBe(0)
+    expect(nextValue(-1, 'down')).toBe(0)
+  })
+
+  it('resolves an opposite click to the opposite value (swap)', () => {
+    expect(nextValue(1, 'down')).toBe(-1)
+    expect(nextValue(-1, 'up')).toBe(1)
   })
 })
 

@@ -45,12 +45,17 @@ for (const url of seasonUrls) {
       await page.goto(url.path, { waitUntil: 'domcontentloaded' })
       const up = page.getByTestId('vote-up')
       const down = page.getByTestId('vote-down')
-      const count = page.getByTestId('vote-count')
 
-      const before = Number((await count.textContent()) ?? '0')
       await up.click()
 
-      await expect(count).toHaveText(String(before + 1))
+      // Phase 35: the click records an up-vote and the count
+      // reconciles to the server's weighted aggregate (fractional,
+      // and shared across the hermetic DB), so we assert the vote
+      // state + lock cycle rather than an exact optimistic integer.
+      await expect(page.getByTestId('vote-pair')).toHaveAttribute(
+        'data-vote-value',
+        '1',
+      )
       await expect(up).toBeDisabled()
       await expect(down).toBeDisabled()
 

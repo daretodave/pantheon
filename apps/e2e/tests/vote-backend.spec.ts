@@ -32,6 +32,76 @@ async function castVote(
   }, args)
 }
 
+async function readVote(
+  page: import('@playwright/test').Page,
+  args: { targetType: 'season' | 'comment'; targetId: string },
+): Promise<{ status: number; body: { ok: boolean; value: number; count: number } }> {
+  return await page.evaluate(async (a) => {
+    const params = new URLSearchParams(a as Record<string, string>)
+    const res = await fetch(`/api/vote?${params.toString()}`, {
+      credentials: 'include',
+    })
+    const text = await res.text()
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(text)
+    } catch {
+      parsed = text
+    }
+    return {
+      status: res.status,
+      body: parsed as { ok: boolean; value: number; count: number },
+    }
+  }, args)
+}
+
+test('GET /api/vote reads back the persisted vote + true net (closes refresh-shows-0)', async ({
+  page,
+  context,
+}) => {
+  await context.clearCookies()
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+  const TARGET = `${SEASON_TARGET}:readback`
+
+  // Before voting: value 0, but the aggregate is still readable.
+  const before = await readVote(page, { targetType: 'season', targetId: TARGET })
+  expect(before.status).toBe(200)
+  expect(before.body.ok).toBe(true)
+  expect(before.body.value).toBe(0)
+
+  // Cast +1, then read it back — this is the page-refresh path.
+  const cast = await castVote(page, { targetType: 'season', targetId: TARGET, value: 1 })
+  expect(cast.status, `cast: ${JSON.stringify(cast.body)}`).toBe(200)
+
+  const after = await readVote(page, { targetType: 'season', targetId: TARGET })
+  expect(after.status).toBe(200)
+  expect(after.body.value).toBe(1)
+  expect(after.body.count).toBeGreaterThan(0)
+
+  // Retract (value 0) — read-back reflects the cleared state, not
+  // a phantom net (the "re-click drops the net" symptom).
+  const retract = await castVote(page, {
+    targetType: 'season',
+    targetId: TARGET,
+    value: 0,
+  })
+  expect(retract.status).toBe(200)
+  const cleared = await readVote(page, { targetType: 'season', targetId: TARGET })
+  expect(cleared.body.value).toBe(0)
+  expect(cleared.body.count).toBe(0)
+})
+
+test('GET /api/vote rejects a missing target with 400', async ({ page, context }) => {
+  await context.clearCookies()
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  const result = await page.evaluate(async () => {
+    const res = await fetch('/api/vote?targetType=season', { credentials: 'include' })
+    return { status: res.status }
+  })
+  expect(result.status).toBe(400)
+})
+
 test('anon vote round-trip persists in Supabase', async ({ page, context }) => {
   await context.clearCookies()
 

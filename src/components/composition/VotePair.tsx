@@ -1,7 +1,17 @@
 'use client'
 
 import { useEffect, useReducer, useRef } from 'react'
-import { initialState, reduce, type VotePairState } from '@/lib/votePair'
+import {
+  initialState,
+  nextValue,
+  reduce,
+  type VotePairState,
+  type VoteValue,
+} from '@/lib/votePair'
+
+function asVoteValue(n: unknown): VoteValue {
+  return n === 1 ? 1 : n === -1 ? -1 : 0
+}
 
 type VotePairProps = {
   initialCount?: number
@@ -13,6 +23,8 @@ type VotePairProps = {
 type Action =
   | { type: 'click'; direction: 'up' | 'down'; now: number }
   | { type: 'tick'; now: number }
+  | { type: 'hydrate'; value: VoteValue; count: number }
+  | { type: 'reconcile'; value: VoteValue; count: number }
 
 function reducer(state: VotePairState, action: Action): VotePairState {
   return reduce(state, action)
@@ -27,10 +39,14 @@ function reducer(state: VotePairState, action: Action): VotePairState {
  * (up vote = count slides up). `prefers-reduced-motion` collapses the
  * slide to an opacity fade per `design/tokens.json` motion.reduced.
  *
- * Wiring to `/api/vote` is fire-and-forget — the optimistic count +
- * flash always runs. Network failures (e.g. a stale Supabase RPC) do
- * not block the visual feedback, but they also don't currently warn
- * the reader; a proper error toast is on the backlog.
+ * Phase 35 stage 3 wires the read-back path. On mount it GETs
+ * `/api/vote` to seed the viewer's existing vote + the true net
+ * (so a refresh stops showing the static 0). A click POSTs the
+ * *resolved* value (a re-click sends 0 — a retract — not the raw
+ * direction) and reconciles the count to the server's aggregate
+ * on response. The optimistic flash still runs immediately;
+ * network failures fall back to optimistic-only without a toast
+ * (a proper error affordance is still on the backlog).
  */
 export function VotePair({
   initialCount = 0,
@@ -54,16 +70,55 @@ export function VotePair({
     return () => window.clearTimeout(t)
   }, [state])
 
+  // Mount read-back: seed the viewer's current vote + the true
+  // net from the server. The reducer's `hydrate` is a no-op once
+  // the viewer has clicked, so a fast vote that races this fetch
+  // is never clobbered by the (now stale) snapshot.
+  useEffect(() => {
+    let cancelled = false
+    const params = new URLSearchParams({ targetType, targetId })
+    fetch(`/api/vote?${params.toString()}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json: { ok?: boolean; value?: unknown; count?: unknown } | null) => {
+        if (cancelled || !json || json.ok !== true) return
+        dispatch({
+          type: 'hydrate',
+          value: asVoteValue(json.value),
+          count: Number(json.count) || 0,
+        })
+      })
+      .catch(() => {
+        /* Optimistic-only fallback — keep the static initialCount. */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [targetType, targetId])
+
   const onClick = (direction: 'up' | 'down') => () => {
     const now = Date.now()
+    // POST the value the click *resolves* to, not the button
+    // direction — a re-click is a retract (0), and sending the
+    // raw direction was the root of the "re-up drops the net" bug.
+    const sent = nextValue(state.value, direction)
     dispatch({ type: 'click', direction, now })
-    void fetch('/api/vote', {
+    fetch('/api/vote', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ targetType, targetId, value: direction === 'up' ? 1 : -1 }),
-    }).catch(() => {
-      /* Optimistic-only path for phase 9. Phase 11 wires recovery. */
+      body: JSON.stringify({ targetType, targetId, value: sent }),
     })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json: { ok?: boolean; value?: unknown; count?: unknown } | null) => {
+        if (!json || json.ok !== true) return
+        dispatch({
+          type: 'reconcile',
+          value: asVoteValue(json.value),
+          count: Number(json.count) || 0,
+        })
+      })
+      .catch(() => {
+        /* Optimistic-only path — the flash already ran. */
+      })
   }
 
   const disabled = state.phase === 'locked'

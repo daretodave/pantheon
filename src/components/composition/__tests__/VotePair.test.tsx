@@ -2,13 +2,43 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { fireEvent, render, screen, act } from '@testing-library/react'
 import { VotePair } from '../VotePair'
 
+// Flush the fetch().then(json).then(dispatch) microtask chain.
+// `waitFor` polls on real/fake timers and deadlocks under
+// `vi.useFakeTimers`, so we drain microtasks explicitly instead.
+async function flushAsync() {
+  await act(async () => {
+    for (let i = 0; i < 6; i++) await Promise.resolve()
+  })
+}
+
+// Mount fires a GET /api/vote read-back; a click fires a POST.
+// `fetchMock` lets each test script the JSON each call resolves
+// to (keyed by method) so the optimistic + reconcile paths are
+// both exercised deterministically.
+type VoteBody = { ok: boolean; value: number; count: number }
+
+function jsonResponse(body: VoteBody) {
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(body),
+  } as unknown as Response)
+}
+
 describe('<VotePair>', () => {
+  let getBody: VoteBody
+  let postBody: VoteBody
+  let fetchMock: ReturnType<typeof vi.fn>
+
   beforeEach(() => {
     vi.useFakeTimers()
-    // Stub fetch — the component fires-and-forgets to /api/vote; we
-    // just need the call to not throw.
+    getBody = { ok: true, value: 0, count: 0 }
+    postBody = { ok: true, value: 1, count: 1 }
+    fetchMock = vi.fn((input: unknown, init?: { method?: string }) => {
+      const method = init?.method ?? 'GET'
+      return jsonResponse(method === 'POST' ? postBody : getBody)
+    })
     Object.defineProperty(globalThis, 'fetch', {
-      value: vi.fn(() => Promise.resolve(new Response('ok'))),
+      value: fetchMock,
       configurable: true,
     })
   })
@@ -30,13 +60,57 @@ describe('<VotePair>', () => {
     expect(screen.getByTestId('vote-count').textContent).toBe('6')
     expect(screen.getByTestId('vote-up')).toBeDisabled()
     expect(screen.getByTestId('vote-down')).toBeDisabled()
-    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1)
+    const postCalls = fetchMock.mock.calls.filter(
+      (c) => (c[1] as { method?: string } | undefined)?.method === 'POST',
+    )
+    expect(postCalls.length).toBe(1)
   })
 
   it('clicking down decrements the count', () => {
     render(<VotePair initialCount={5} targetType="season" targetId="survivor:20" />)
     fireEvent.click(screen.getByTestId('vote-down'))
     expect(screen.getByTestId('vote-count').textContent).toBe('4')
+  })
+
+  it('reads the viewer existing vote + true net on mount and reflects it', async () => {
+    getBody = { ok: true, value: 1, count: 42 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    await flushAsync()
+    expect(screen.getByTestId('vote-count').textContent).toBe('42')
+    expect(screen.getByTestId('vote-pair').getAttribute('data-vote-value')).toBe('1')
+  })
+
+  it('POSTs the retract value 0 when re-clicking the already-voted direction', async () => {
+    getBody = { ok: true, value: 1, count: 10 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    await flushAsync()
+    expect(screen.getByTestId('vote-pair').getAttribute('data-vote-value')).toBe('1')
+    fireEvent.click(screen.getByTestId('vote-up'))
+    const postCall = fetchMock.mock.calls.find(
+      (c) => (c[1] as { method?: string } | undefined)?.method === 'POST',
+    )
+    const sent = JSON.parse((postCall?.[1] as { body: string }).body)
+    expect(sent.value).toBe(0)
+    // Optimistic net dropped by the prior +1.
+    expect(screen.getByTestId('vote-count').textContent).toBe('9')
+  })
+
+  it('reconciles the count to the server aggregate after the POST resolves', async () => {
+    postBody = { ok: true, value: 1, count: 3 }
+    render(<VotePair initialCount={5} targetType="season" targetId="survivor:20" />)
+    fireEvent.click(screen.getByTestId('vote-up'))
+    expect(screen.getByTestId('vote-count').textContent).toBe('6') // optimistic
+    await flushAsync()
+    expect(screen.getByTestId('vote-count').textContent).toBe('3')
+  })
+
+  it('a vote that races the mount fetch is not clobbered by the stale snapshot', async () => {
+    getBody = { ok: true, value: 0, count: 0 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    fireEvent.click(screen.getByTestId('vote-up')) // before GET resolves
+    await flushAsync()
+    // hydrate is a no-op post-click; optimistic +1 survives.
+    expect(screen.getByTestId('vote-pair').getAttribute('data-vote-value')).toBe('1')
   })
 
   it('unlocks the buttons after the lock window elapses', () => {

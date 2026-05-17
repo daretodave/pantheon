@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { upsertMock } = vi.hoisted(() => ({ upsertMock: vi.fn() }))
+const { upsertMock, rpcMock } = vi.hoisted(() => ({
+  upsertMock: vi.fn(),
+  rpcMock: vi.fn(),
+}))
 vi.mock('@supabase/supabase-js', () => ({
-  createClient: () => ({ from: () => ({ upsert: upsertMock }) }),
+  createClient: () => ({ from: () => ({ upsert: upsertMock }), rpc: rpcMock }),
 }))
 
 const HANDLE_DUP = {
@@ -71,6 +74,71 @@ describe('upsertUser handle-collision disambiguation', () => {
     const { upsertUser } = await import('./server')
     await expect(upsertUser({ sub: 'auth0|x', handle: 'dave' })).rejects.toThrow(/rls denied/)
     expect(upsertMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('readVote', () => {
+  beforeEach(() => {
+    rpcMock.mockReset()
+    process.env['NEXT_PUBLIC_SUPABASE_URL'] = 'https://example.supabase.co'
+    process.env['SUPABASE_SERVICE_ROLE_KEY'] = 'test-key'
+    vi.resetModules()
+  })
+  afterEach(() => {
+    if (savedUrl !== undefined) process.env['NEXT_PUBLIC_SUPABASE_URL'] = savedUrl
+    else delete process.env['NEXT_PUBLIC_SUPABASE_URL']
+    if (savedKey !== undefined) process.env['SUPABASE_SERVICE_ROLE_KEY'] = savedKey
+    else delete process.env['SUPABASE_SERVICE_ROLE_KEY']
+  })
+
+  it('calls read_vote with the resolved session + target and coerces the row', async () => {
+    rpcMock.mockResolvedValueOnce({ data: [{ value: 1, count: 0.3 }], error: null })
+    const { readVote } = await import('./server')
+    const r = await readVote({
+      sessionId: 'sess-1',
+      targetType: 'season',
+      targetId: 'survivor:20',
+    })
+    expect(rpcMock).toHaveBeenCalledWith('read_vote', {
+      p_session_id: 'sess-1',
+      p_target_type: 'season',
+      p_target_id: 'survivor:20',
+    })
+    expect(r).toEqual({ value: 1, count: 0.3 })
+  })
+
+  it('passes a null session through (anon visitor, aggregate still readable)', async () => {
+    rpcMock.mockResolvedValueOnce({ data: { value: 0, count: 5 }, error: null })
+    const { readVote } = await import('./server')
+    const r = await readVote({
+      sessionId: null,
+      targetType: 'season',
+      targetId: 'survivor:1',
+    })
+    expect(rpcMock).toHaveBeenCalledWith('read_vote', {
+      p_session_id: null,
+      p_target_type: 'season',
+      p_target_id: 'survivor:1',
+    })
+    expect(r).toEqual({ value: 0, count: 5 })
+  })
+
+  it('defaults to value 0 / count 0 when no row comes back', async () => {
+    rpcMock.mockResolvedValueOnce({ data: null, error: null })
+    const { readVote } = await import('./server')
+    expect(
+      await readVote({ sessionId: 's', targetType: 'season', targetId: 't' }),
+    ).toEqual({ value: 0, count: 0 })
+  })
+
+  it('throws (carrying the pg code) on an RPC error', async () => {
+    rpcMock.mockResolvedValueOnce({
+      error: { message: 'boom', code: '22023', hint: null },
+    })
+    const { readVote } = await import('./server')
+    await expect(
+      readVote({ sessionId: 's', targetType: 'season', targetId: 't' }),
+    ).rejects.toThrow(/boom/)
   })
 })
 
