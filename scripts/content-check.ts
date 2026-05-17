@@ -15,6 +15,7 @@ import {
   validateEraBandCoverage,
   yearOfSeason,
 } from '../src/lib/canon/era-bands'
+import { extractPlacementOrdinal } from '../src/lib/canon/placement-ordinal'
 
 export type Failure = { file: string; message: string }
 
@@ -57,6 +58,19 @@ export function collectFailures(strict = false): Failure[] {
           })
         }
         canonRankBySeason.set(entry.season, entry.rank)
+
+        // The rationale's spoken placement ("the canon places it
+        // twelfth", "earns the third slot") must equal the slot.
+        // Drift here is a reader-visible correctness bug on the
+        // flagship page (#63). Absence of a placement sentence is
+        // tolerated — only a stated-but-wrong ordinal fails.
+        const spoken = extractPlacementOrdinal(entry.rationale)
+        if (spoken != null && spoken !== entry.rank) {
+          failures.push({
+            file: `content/shows/${show.slug}/canon.md`,
+            message: `canon entry #${entry.rank} ("${entry.title}") prose states placement ${spoken}, not ${entry.rank} — rebase the placement ordinal to the slot`,
+          })
+        }
       }
       for (const season of seasons) {
         if (season.canonical_position == null) continue

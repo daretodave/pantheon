@@ -265,6 +265,74 @@ describe('content-check (strict mode preview)', () => {
   })
 })
 
+// Canon whose rationales carry a spoken placement sentence — used
+// to exercise the prose-ordinal-vs-slot invariant (#63).
+function makeCanonWithProse(
+  root: string,
+  show: string,
+  entries: Array<{ season: number; title: string; spoken: string }>,
+): void {
+  const file = path.join(root, 'shows', show, 'canon.md')
+  mkdirSync(path.dirname(file), { recursive: true })
+  const headings = entries
+    .map(
+      (e) =>
+        `## ${e.season}. ${e.title}\n\nThe canon places it ${e.spoken} because ${ninetyWords}\n`,
+    )
+    .join('\n')
+  writeFileSync(file, `---\nshow: ${show}\n---\n\n${headings}\n`)
+}
+
+describe('content-check — canon placement ordinal (#63)', () => {
+  let tmp: string
+  const ordMsg = (fs: ReturnType<typeof collectFailures>) =>
+    fs.filter((f) => /placement ordinal|states placement/i.test(f.message))
+
+  beforeEach(() => {
+    tmp = mkdtempSync(path.join(tmpdir(), 'tiered-content-check-ord-'))
+    setContentRoot(tmp)
+    __resetContentCache()
+  })
+
+  afterEach(() => {
+    setContentRoot(null)
+    __resetContentCache()
+    rmSync(tmp, { recursive: true, force: true })
+  })
+
+  it('passes when every spoken ordinal matches its slot', () => {
+    makeShow(tmp, 'alpha')
+    makeSeason(tmp, 'alpha', 1, 'one', { canonical_position: 1 })
+    makeSeason(tmp, 'alpha', 2, 'two', { canonical_position: 2 })
+    makeCanonWithProse(tmp, 'alpha', [
+      { season: 1, title: 'One', spoken: 'first' },
+      { season: 2, title: 'Two', spoken: 'second' },
+    ])
+    expect(ordMsg(collectFailures(false))).toEqual([])
+  })
+
+  it('fails (even in lax) when a spoken ordinal drifts from the slot', () => {
+    makeShow(tmp, 'alpha')
+    makeSeason(tmp, 'alpha', 1, 'one', { canonical_position: 1 })
+    makeSeason(tmp, 'alpha', 2, 'two', { canonical_position: 2 })
+    makeCanonWithProse(tmp, 'alpha', [
+      { season: 1, title: 'One', spoken: 'first' },
+      { season: 2, title: 'Two', spoken: 'first' },
+    ])
+    const problems = ordMsg(collectFailures(false))
+    expect(problems.some((f) => /states placement 1, not 2/.test(f.message))).toBe(
+      true,
+    )
+  })
+
+  it('tolerates a rationale with no placement sentence', () => {
+    makeShow(tmp, 'alpha')
+    makeSeason(tmp, 'alpha', 1, 'one', { canonical_position: 1 })
+    makeCanon(tmp, 'alpha', [{ rank: 1, season: 1, title: 'One' }])
+    expect(ordMsg(collectFailures(false))).toEqual([])
+  })
+})
+
 describe('content-check — era-band coverage (phase 34)', () => {
   let tmp: string
   const eraMsg = (fs: ReturnType<typeof collectFailures>) =>

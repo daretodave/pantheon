@@ -236,7 +236,7 @@ mid-game realignment that asks the audience to read crosscutting
 alliances for the first time. The location is the most striking
 the early show ever uses, with cliff-edge tribal grounds and
 Polynesian production design that still influences scout-team
-reels two decades later. The canon places it eleventh because the
+reels two decades later. The canon places it twelfth because the
 show, before this point, had been a simple game with simple
 math.
 
@@ -271,7 +271,7 @@ reason the franchise still runs. The format is recognizable from
 the first episode in a way Borneo's pilot stretch is not; the
 editing team has decided what Survivor looks like and starts
 producing the show at a sustained tempo. The canon places it
-twelfth because the season validates the experiment without
+fourteenth because the season validates the experiment without
 quite leaving its own distinctive mark on the format.
 
 ## 15. China
@@ -287,7 +287,7 @@ the runway with care — a Forbidden City opening, Buddhist-temple
 reward visits, a Jiangxi camp filmed with patience. The cast is
 the cleanest mid-2000s lineup the show had assembled, and the
 post-merge stretch is one of the strongest classic-era runs the
-format produced. The canon places China thirteenth because the
+format produced. The canon places China fifteenth because the
 season earns its rank the simple way: confident cast, confident
 location, almost no friction between the show and the game it
 wanted to play.
@@ -306,7 +306,7 @@ the merge. The Rio Negro location is a brutal version of the
 rainforest — high heat, low rainfall, ration shortages that
 compound across the back stretch — and the camp scenes lean into
 that texture in a way the franchise rarely tries afterward. The
-canon places it fourteenth because the cast is one of the strongest
+canon places it sixteenth because the cast is one of the strongest
 classic-era ensembles even where the structural choices feel a
 step behind Marquesas.
 
@@ -324,7 +324,7 @@ classic-era game with a noticeably wider casting net than the
 surrounding lineup. The Aitutaki location is among the most
 photogenic the show ever shot — turquoise water, clean horizon,
 the kind of frame the editing team uses without restraint. The
-canon places Cook Islands fifteenth because the season's
+canon places Cook Islands seventeenth because the season's
 contribution to who the show was willing to cast outlasts its
 opening twist by a long stretch.
 
@@ -342,7 +342,7 @@ structural mechanic the franchise still reaches for two decades
 later. The cast is sharper than the surrounding mid-2000s
 lineup, with archetypes that read instantly and a pre-merge
 dynamic that keeps both tribes legible. The canon places it
-sixteenth because Exile Island is a contribution the format
+eighteenth because Exile Island is a contribution the format
 genuinely needs at this point, even where the season's back half
 cannot quite sustain the early pace.
 
@@ -394,7 +394,7 @@ execution is rougher than the pitch suggests; the show is still
 figuring out what it owes returning players, and a third of the
 cast brings prior strategy that doesn't transplant. But every
 returnee season since plays inside a frame All-Stars
-established. The canon places it seventeenth because the
+established. The canon places it twenty-first because the
 experiment lands as concept even where the season itself is the
 franchise's first attempt at a thing it has since perfected.
 
@@ -412,7 +412,7 @@ casting team puts together a tribe split that produces real
 internal pressure. The back half slips, and the show has spent
 years trying to land a finale stretch that matches the front-end
 texture this season hits naturally. The canon places it
-eighteenth because the early run is real, even where the season
+twenty-second because the early run is real, even where the season
 cannot sustain that pace through the final tribal — a problem
 the format would solve in later returnee seasons.
 
@@ -430,7 +430,7 @@ builds character through-lines the format thrives on. The
 season is often cited as the last pure pre-strategy-renaissance
 run, after which the show began experimenting harder with
 twist density and returnee architecture. The canon places
-Tocantins nineteenth because the cast and the location do
+Tocantins twenty-third because the cast and the location do
 the work the format expects of a classic-era season, even
 where the structural ambition stays modest by design.
 
@@ -448,7 +448,7 @@ trusts the audience to sit with longer tribal-council
 confessionals than later seasons would dare. The Efate location
 is the southwestern Pacific at its rawest, and production
 lingers on island-fire ceremony in a way that anchors the
-season's tonal signature. The canon places it twentieth because
+season's tonal signature. The canon places it twenty-fourth because
 the rhythm is too slow for a casual viewer even where the
 texture rewards a second watch.
 
@@ -467,7 +467,7 @@ as a villain archetype. The casting bench is uneven; the
 editing tilts hard toward one read. The result is a season
 that splits the fandom but never gets dismissed, because the
 frame it installed kept showing up in the show's casting for
-years. The canon places Samoa twenty-first because the
+years. The canon places Samoa twenty-fifth because the
 structural footprint is real even where the watch divides.
 
 ## 22. Redemption Island
@@ -484,7 +484,7 @@ anchor the casting, and the mechanic creates a pacing
 problem the format would spend a decade learning to balance.
 The season's historical weight is hard to dismiss; nearly
 every season for the next ten years inherits some version of
-this structural argument. The canon places it twenty-second
+this structural argument. The canon places it twenty-sixth
 because the show was never quite the same after this
 mechanic walked into it.
 
@@ -502,7 +502,7 @@ right — and the cast spends much of the season simply contending
 with the place. That texture is admirable from a documentary
 angle and tough as a viewer experience. The casting team also
 brings less of a strategic frame than the surrounding two
-seasons. The canon places it twenty-third because Africa is the
+seasons. The canon places it twenty-seventh because Africa is the
 rare season where survival demands legitimately outweigh the
 gameplay it leaves room for.
 
@@ -521,7 +521,7 @@ on a third consecutive Samoan shoot. The pre-merge cast
 brings an unusually expressive frame around belief and
 identity that the editing handles with more care than the
 format usually does. The canon places South Pacific
-twenty-fourth because the season tightens a mechanic and
+twenty-eighth because the season tightens a mechanic and
 installs a casting frame, even where the loud returnee
 framing stays the dominant note.
 
@@ -537,7 +537,7 @@ Casting brings a tribe that struggles to produce the strategic
 shape the show by 2002 has begun to expect. The Ko Tarutao
 location is striking on a postcard and brutal in practice, with
 a heat profile that limits how much camp scene the editors can
-run before fatigue sets in. The canon places it twenty-fifth
+run before fatigue sets in. The canon places it twenty-ninth
 because the season does the format a service by mapping the
 outer edge of what the show can absorb — even where the watch
 itself is more historical than rewarding.
@@ -555,7 +555,7 @@ The casting skews younger than usual and the strategic vocabulary
 the season produces is thinner than the surrounding lineup.
 The editing leans on landscape — aerials, wide tracking shots,
 the texture of dry savanna — in stretches the strategy can't
-quite fill. The canon places Gabon twenty-sixth because the
+quite fill. The canon places Gabon thirtieth because the
 cinematography is real and the location is rare, but the
 season cannot escape the fact that the cast couldn't carry the
 shape the show wanted to play.
@@ -574,7 +574,7 @@ The structural experiment lands awkwardly; the premise is loud
 and the cast can't quite turn it into a game with shape. The
 back half runs better once the merge arrives and the camp
 asymmetry stops being the story. The canon places Fiji
-twenty-seventh because the season's contribution to the show is
+thirty-first because the season's contribution to the show is
 mostly the location — the first Macuata shoot, a coast the
 franchise would return to repeatedly.
 
@@ -591,7 +591,7 @@ system, and a tribal split drawn by age — players over 40
 opposite players under 30 — all in the same run. The cast
 pushes back against most of the structural ambition rather
 than playing with it, and the season's fandom reputation has
-stayed divided. The canon places Nicaragua twenty-eighth
+stayed divided. The canon places Nicaragua thirty-second
 because the show was pushing the format faster than the
 players were ready to push back, and the texture of that
 mismatch reads on screen.
@@ -627,7 +627,7 @@ whose original run ended too early to count, paired with
 fifteen newcomers who held the room. The Caramoan limestone
 coast pulled visible weight in the post-merge stretch, and
 confessional time spread unusually evenly across the bench.
-The canon places Philippines twenty-ninth because the season
+The canon places Philippines thirty-fourth because the season
 delivers exactly what the strategy renaissance was reaching
 for — a clean cast playing a confident format on a location
 the editors trusted, with no structural ambition fighting
@@ -665,7 +665,7 @@ Koh Rong's heat profile reads on camera in a way classic-era
 shoots rarely allowed, and the editors let medical attention
 breathe instead of cutting around it. The post-merge stretch
 carries the strategic vocabulary Cagayan installed without
-feeling like a copy. The canon places Kaôh Rōng thirtieth
+feeling like a copy. The canon places Kaôh Rōng thirty-sixth
 because the season delivers the reprise without falling into
 the trap most twist-heavy returns to a premise hit.
 
@@ -701,7 +701,7 @@ editors lean on without overworking. The cast bench is the
 deepest the show had assembled since the strategy renaissance
 peaked, and production handles a major weather event with
 unusual transparency in the front half. The canon places it
-thirty-first because the season quietly installs the home
+thirty-eighth because the season quietly installs the home
 base the franchise has used ever since, while running a clean
 twist-heavy-era game on its own terms.
 
@@ -719,7 +719,7 @@ gave the franchise a casting shape it had never tried, and the
 emotional math runs through every confessional after episode
 one. Redemption Island returns as the structural mechanic, now
 on its third run and tightened accordingly. The canon places
-Blood vs. Water thirty-second because the season reshaped how
+Blood vs. Water thirty-ninth because the season reshaped how
 returnee runs cast their benches, and the franchise leaned on
 the template afterward in shapes it had not before.
 
@@ -738,7 +738,7 @@ frame lands cleanly, with each tribe carrying a coherent
 internal voice, and the hustler tribe reads as a
 modernization of the older underdog cast slot. The post-merge
 runs at the dense pace the twist-heavy era taught the format
-to deliver. The canon places it thirty-third because the
+to deliver. The canon places it fortieth because the
 premise runs cleanly without ever pushing the format into
 something it cannot handle.
 
@@ -757,7 +757,7 @@ temperature runs hot from week two — no quiet pre-merge
 stretch waiting for the merge to start the season. The
 polarization stays present through the final stretch; the
 format does not back away from it. The canon places Game
-Changers thirty-fourth because the season delivers on its
+Changers forty-first because the season delivers on its
 own terms even where the fandom has never quite found common
 ground on the run.
 
@@ -775,7 +775,7 @@ The premise leans on class as casting frame, and the cast
 plays it loudly. Confrontational chemistry on at least one
 tribe runs unusually hot for early-season Survivor, and the
 editors let the friction breathe. The canon places Worlds
-Apart thirty-fifth because the season produced casting heat
+Apart forty-second because the season produced casting heat
 the franchise never quite ran the same way again, and the
 texture reads as both ambitious and uncomfortable on watch.
 
@@ -811,7 +811,7 @@ The Upolu camp handled its fourth consecutive Samoa shoot,
 and the format experimented with proximity as a casting
 pressure the editors had to manage carefully. Once the merge
 arrives, the season releases its grip and runs more like
-classic-era Survivor. The canon places One World thirty-sixth
+classic-era Survivor. The canon places One World forty-fourth
 because the structural premise is genuinely interesting even
 where the cast cannot quite carry the conditions the format
 imposed on it.
@@ -831,7 +831,7 @@ shows the casting weight Blood vs. Water needed, and without
 the prior context, the editors lean on relationship math the
 audience has to build from scratch. The merge releases the
 format into something closer to classic Survivor. The canon
-places San Juan del Sur thirty-seventh because the season
+places San Juan del Sur forty-fifth because the season
 shows the gap between a strong premise and the casting bench
 needed to carry it.
 
@@ -868,6 +868,6 @@ ways Micronesia had not, and the comparison the season has to
 carry from minute one is the one it cannot win. The post-merge
 stretch runs cleaner than the pre-merge stretch, but the
 season's reputation has stayed mixed. The canon places
-Caramoan thirty-eighth because the premise revival is the
+Caramoan forty-seventh because the premise revival is the
 hardest editorial weight to carry, and the season carries it
 honestly rather than well.
