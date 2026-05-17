@@ -3,8 +3,21 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SearchTrigger } from '@/components/search/SearchTrigger'
+import { canonicalUrl } from '@/lib/seo'
 import { BrandMark } from './BrandMark'
 import type { HeaderUser } from './headerUser'
+
+/**
+ * Auth0's logout route forwards `returnTo` verbatim as
+ * `post_logout_redirect_uri`. A relative value (`/`) reaches Auth0
+ * URL-encoded (`%2F`) and is always rejected — the allow-list only
+ * matches absolute URLs. Send the absolute canonical origin instead
+ * (see #56; the matching Allowed Logout URLs entry is a dashboard
+ * task noted on the issue).
+ */
+const SIGN_OUT_HREF = `/auth/logout?returnTo=${encodeURIComponent(
+  canonicalUrl('/'),
+)}`
 
 type HeaderViewProps = {
   tinted?: boolean
@@ -85,7 +98,7 @@ export function HeaderView({ tinted = false, user = null }: HeaderViewProps) {
             </Link>
             <Link
               className="site-header-signin"
-              href="/auth/logout?returnTo=/"
+              href={SIGN_OUT_HREF}
               prefetch={false}
               data-testid="site-header-signout-link"
             >

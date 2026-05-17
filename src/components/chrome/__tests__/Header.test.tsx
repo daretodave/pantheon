@@ -60,7 +60,17 @@ describe('<HeaderView>', () => {
     expect(handle).toHaveAttribute('href', '/u/asha')
     expect(handle).toHaveTextContent('@asha')
     const signOut = screen.getByTestId('site-header-signout-link')
-    expect(signOut).toHaveAttribute('href', '/auth/logout?returnTo=/')
+    expect(signOut).toHaveAttribute(
+      'href',
+      `/auth/logout?returnTo=${encodeURIComponent('https://tiered.tv/')}`,
+    )
+    // Auth0 rejects a relative post_logout_redirect_uri (#56): the
+    // returnTo must decode to an absolute URL.
+    const href = signOut.getAttribute('href') ?? ''
+    const returnTo = decodeURIComponent(
+      new URLSearchParams(href.split('?')[1]).get('returnTo') ?? '',
+    )
+    expect(returnTo).toMatch(/^https:\/\//)
     expect(signOut).toHaveTextContent(/Sign out/i)
     expect(screen.queryByTestId('site-header-signin-link')).toBeNull()
     expect(screen.getByTestId('site-header')).toHaveAttribute(
