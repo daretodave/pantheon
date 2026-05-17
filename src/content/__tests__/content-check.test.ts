@@ -43,7 +43,7 @@ function makeSeason(
   show: string,
   n: number,
   slug: string,
-  opts: { canonical_position?: number } = {},
+  opts: { canonical_position?: number; premiere_date?: string } = {},
 ): void {
   const file = path.join(
     root,
@@ -57,15 +57,51 @@ function makeSeason(
     opts.canonical_position != null
       ? `\ncanonical_position: ${opts.canonical_position}`
       : ''
+  const pd =
+    opts.premiere_date != null ? `\npremiere_date: ${opts.premiere_date}` : ''
   writeFileSync(
     file,
     `---
 show: ${show}
 number: ${n}
-title: ${slug}${cp}
+title: ${slug}${cp}${pd}
 ---
 
 ${sixtyWords}
+`,
+  )
+}
+
+// Canon with an explicit era_bands block — used to exercise the
+// phase-34 coverage invariant. `ranks` are auto-numbered 1..N over
+// seasons 1..N so the canon validates without per-season tuning.
+function makeEraCanon(
+  root: string,
+  show: string,
+  seasonCount: number,
+  bands: Array<{ key: string; label: string; range: [number, number] }>,
+): void {
+  const file = path.join(root, 'shows', show, 'canon.md')
+  mkdirSync(path.dirname(file), { recursive: true })
+  const bandsYaml = bands
+    .map(
+      (b) =>
+        `  - key: ${b.key}\n    label: ${b.label}\n    range: [${b.range[0]}, ${b.range[1]}]`,
+    )
+    .join('\n')
+  const headings = Array.from(
+    { length: seasonCount },
+    (_, i) => `## ${i + 1}. Title ${i + 1}\n\n${ninetyWords}\n`,
+  ).join('\n')
+  writeFileSync(
+    file,
+    `---
+show: ${show}
+era_bands:
+${bandsYaml}
+---
+
+${headings}
 `,
   )
 }
@@ -226,5 +262,106 @@ describe('content-check (strict mode preview)', () => {
       { rank: 2, season: 1, title: 'One' },
     ])
     expect(collectFailures(true)).toEqual([])
+  })
+})
+
+describe('content-check — era-band coverage (phase 34)', () => {
+  let tmp: string
+  const eraMsg = (fs: ReturnType<typeof collectFailures>) =>
+    fs.filter((f) => /era[ _]band/i.test(f.message))
+
+  beforeEach(() => {
+    tmp = mkdtempSync(path.join(tmpdir(), 'tiered-content-check-era-'))
+    setContentRoot(tmp)
+    __resetContentCache()
+  })
+
+  afterEach(() => {
+    setContentRoot(null)
+    __resetContentCache()
+    rmSync(tmp, { recursive: true, force: true })
+  })
+
+  function eightSeasons(show: string): void {
+    for (let i = 1; i <= 8; i++) {
+      makeSeason(tmp, show, i, `s${i}`, {
+        premiere_date: `${2000 + i}-01-01`,
+      })
+    }
+  }
+
+  it('lax tolerates a canon with no era_bands on a large show', () => {
+    makeShow(tmp, 'alpha')
+    eightSeasons('alpha')
+    makeCanon(
+      tmp,
+      'alpha',
+      Array.from({ length: 8 }, (_, i) => ({
+        rank: i + 1,
+        season: i + 1,
+        title: `S${i + 1}`,
+      })),
+    )
+    expect(eraMsg(collectFailures(false))).toEqual([])
+  })
+
+  it('strict requires era_bands on a canon’d show with >= 8 seasons', () => {
+    makeShow(tmp, 'alpha')
+    eightSeasons('alpha')
+    makeCanon(
+      tmp,
+      'alpha',
+      Array.from({ length: 8 }, (_, i) => ({
+        rank: i + 1,
+        season: i + 1,
+        title: `S${i + 1}`,
+      })),
+    )
+    const problems = eraMsg(collectFailures(true))
+    expect(problems.some((f) => /era_bands required/.test(f.message))).toBe(true)
+  })
+
+  it('strict does not require era_bands on a small canon’d show', () => {
+    makeShow(tmp, 'alpha')
+    makeSeason(tmp, 'alpha', 1, 's1', {
+      canonical_position: 1,
+      premiere_date: '2020-01-01',
+    })
+    makeCanon(tmp, 'alpha', [{ rank: 1, season: 1, title: 'S1' }])
+    expect(eraMsg(collectFailures(true))).toEqual([])
+  })
+
+  it('fails (even in lax) when present era_bands leave a gap', () => {
+    makeShow(tmp, 'alpha')
+    eightSeasons('alpha')
+    makeEraCanon(tmp, 'alpha', 8, [
+      { key: 'early', label: 'Early', range: [2001, 2003] },
+      { key: 'late', label: 'Late', range: [2006, 2010] },
+    ])
+    const problems = eraMsg(collectFailures(false))
+    expect(problems.some((f) => /gap between/.test(f.message))).toBe(true)
+  })
+
+  it('fails when present era_bands stop before the latest aired season', () => {
+    makeShow(tmp, 'alpha')
+    eightSeasons('alpha') // years 2001..2008
+    makeEraCanon(tmp, 'alpha', 8, [
+      { key: 'all', label: 'All', range: [2001, 2007] },
+    ])
+    const problems = eraMsg(collectFailures(false))
+    expect(problems.some((f) => /latest aired season is 2008/.test(f.message))).toBe(
+      true,
+    )
+  })
+
+  it('passes when present era_bands are contiguous and cover the span', () => {
+    makeShow(tmp, 'alpha')
+    eightSeasons('alpha') // years 2001..2008
+    makeEraCanon(tmp, 'alpha', 8, [
+      { key: 'early', label: 'Early', range: [2001, 2004] },
+      { key: 'late', label: 'Late', range: [2005, 2008] },
+    ])
+    expect(eraMsg(collectFailures(false))).toEqual([])
+    expect(eraMsg(collectFailures(true))).toEqual([])
   })
 })

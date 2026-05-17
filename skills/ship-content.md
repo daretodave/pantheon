@@ -53,6 +53,21 @@ fails on conflict (mismatched ranks, dangling refs, duplicate
 slugs); the strict-mode flip at the end of 31b makes the
 canon-presence requirement binding.
 
+**Era bands (phase 34, strict).** Author `canon.era_bands` in
+the same canon — 3–6 per-show editorial eras (`key` kebab,
+`label` ≤ 14 chars, `range: [startYear, endYear]`), boundaries
+on real format/host/periodisation shifts (not round decades).
+The ranges must be **gap-free and overlap-free** (adjacent
+bands abut: `prev.end + 1 === next.start`) and their union must
+**cover the full aired span** — `bands[0].start ≤ firstAired`
+and `bands[last].end ≥ latestAired`. A show with a canon and
+≥ 8 seeded seasons MUST carry bands (strict `content-check`
+fails otherwise); below that threshold bands are encouraged but
+optional. **When a season backfill extends a show past its last
+band, widen the final band's `end` (or add a new band) in the
+same commit** — that is exactly the stale-bands trap that broke
+the bachelorette bands when S21 (2024) shipped.
+
 The **filename-as-slug** convention: every season file is
 named `NN-<slug>.md` (e.g. `04-marquesas.md`). The `<slug>`
 suffix becomes the canonical URL slug — the site routes every
@@ -73,8 +88,13 @@ Pre-flight checklist before committing a content tick:
     editorially-correct slot, and surrounding ranks shifted
 [ ] every season filename is `NN-<slug>.md` with kebab-case
     ASCII slug; no spaces, no unicode
+[ ] if the show is canon'd: canon.era_bands present (>= 8
+    seeded seasons → required), gap-free, overlap-free, and the
+    union still covers the aired span after this batch (widen
+    the last band if a new season extends past it)
 [ ] pnpm content:check passes (slug uniqueness + canon-rank
-    sync; lax mode tolerates absence of canon)
+    sync + era-band coverage; lax mode tolerates absence of
+    canon / era_bands on small shows)
 ```
 
 ## 3. Autonomy contract

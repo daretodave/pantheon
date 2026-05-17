@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import { canonicalUrls } from '../src/fixtures/canonical-urls'
 
@@ -172,6 +175,42 @@ test.describe('era toolbar (33b)', () => {
       await toolbar.locator('.cp-chip:not([data-filter=all])').count(),
     ).toBeGreaterThanOrEqual(1)
   })
+})
+
+// Phase 34 (final tick): the era-band drain is complete — every
+// canon'd launch show carries authored `era_bands`. Derive the set
+// from the content tree (no src/ dependency, mirrors canonical-urls)
+// and assert each show's toolbar renders real era chips beyond All.
+// Future small shows without bands are naturally excluded — they
+// have no `era_bands:` block to match.
+const SHOWS_DIR = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../content/shows',
+)
+const showsWithEraBands = canonicalUrls
+  .filter((u) => u.pattern === '/shows/[show]' && u.show)
+  .map((u) => u.show as string)
+  .filter((slug) => {
+    const canon = resolve(SHOWS_DIR, slug, 'canon.md')
+    return existsSync(canon) && /^era_bands:/m.test(readFileSync(canon, 'utf8'))
+  })
+
+test.describe('era-band drain complete (phase 34)', () => {
+  for (const slug of showsWithEraBands) {
+    test(`${slug}: era toolbar renders > 1 chip`, async ({ page }) => {
+      await page.goto(`/shows/${slug}`, { waitUntil: 'domcontentloaded' })
+      const toolbar = page.getByTestId('canon-era-toolbar')
+      await expect(toolbar).toBeVisible()
+      await expect(page.getByTestId('era-chip-all')).toHaveAttribute(
+        'aria-selected',
+        'true',
+      )
+      expect(
+        await toolbar.locator('.cp-chip:not([data-filter=all])').count(),
+        `${slug} should expose authored era chips`,
+      ).toBeGreaterThanOrEqual(1)
+    })
+  }
 })
 
 test.describe('phase 37 design-fidelity nits', () => {

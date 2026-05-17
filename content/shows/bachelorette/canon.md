@@ -16,13 +16,13 @@ weekly_question: Which Bachelorette season holds up best on rewatch in 2026?
 era_bands:
   - key: founding
     label: Founding
-    range: [2003, 2005]
+    range: [2003, 2007]
   - key: travelogue
     label: Travelogue
     range: [2008, 2014]
   - key: modern
     label: Modern
-    range: [2015, 2023]
+    range: [2015, 2024]
 ---
 
 # Editor's Canon — The Bachelorette

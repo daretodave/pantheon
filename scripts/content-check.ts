@@ -11,6 +11,10 @@ import {
   loadAllContent,
 } from '../src/content/loaders'
 import { ContentValidationError } from '../src/content/errors'
+import {
+  validateEraBandCoverage,
+  yearOfSeason,
+} from '../src/lib/canon/era-bands'
 
 export type Failure = { file: string; message: string }
 
@@ -63,6 +67,33 @@ export function collectFailures(strict = false): Failure[] {
             message: `season ${season.number} declares canonical_position ${season.canonical_position} but canon ranks it #${expected}`,
           })
         }
+      }
+    }
+
+    // Phase 34: era-band coverage. A present `canon.era_bands[]`
+    // must always be structurally sound (gap-free, overlap-free,
+    // covering the aired span) — that fails in lax mode too, the
+    // same way a mismatched canon rank does. Absence is only a
+    // failure under strict, and only for a canon'd show with a
+    // substantial aired span (>= 8 seeded seasons) — newly-seeded
+    // shows get bands when their canon is first authored.
+    if (canon) {
+      const eraBands = canon.era_bands ?? []
+      const airedYears = seasons
+        .map((s) => yearOfSeason(s))
+        .filter((y): y is number => y != null)
+      if (eraBands.length > 0) {
+        for (const problem of validateEraBandCoverage(eraBands, airedYears)) {
+          failures.push({
+            file: `content/shows/${show.slug}/canon.md`,
+            message: problem,
+          })
+        }
+      } else if (strict && seasons.length >= 8) {
+        failures.push({
+          file: `content/shows/${show.slug}/canon.md`,
+          message: `era_bands required (strict mode) — canon'd show has ${seasons.length} seeded seasons`,
+        })
       }
     }
 
