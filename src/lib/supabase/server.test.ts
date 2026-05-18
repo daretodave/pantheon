@@ -92,7 +92,10 @@ describe('readVote', () => {
   })
 
   it('calls read_vote with the resolved session + target and coerces the row', async () => {
-    rpcMock.mockResolvedValueOnce({ data: [{ value: 1, count: 0.3 }], error: null })
+    rpcMock.mockResolvedValueOnce({
+      data: [{ value: 1, count: 0.3, raw_count: 4 }],
+      error: null,
+    })
     const { readVote } = await import('./server')
     const r = await readVote({
       sessionId: 'sess-1',
@@ -104,11 +107,16 @@ describe('readVote', () => {
       p_target_type: 'season',
       p_target_id: 'survivor:20',
     })
-    expect(r).toEqual({ value: 1, count: 0.3 })
+    // count is the weighted internal; rawCount is the clean
+    // integer the UI shows (#64).
+    expect(r).toEqual({ value: 1, count: 0.3, rawCount: 4 })
   })
 
   it('passes a null session through (anon visitor, aggregate still readable)', async () => {
-    rpcMock.mockResolvedValueOnce({ data: { value: 0, count: 5 }, error: null })
+    rpcMock.mockResolvedValueOnce({
+      data: { value: 0, count: 5, raw_count: 12 },
+      error: null,
+    })
     const { readVote } = await import('./server')
     const r = await readVote({
       sessionId: null,
@@ -120,7 +128,7 @@ describe('readVote', () => {
       p_target_type: 'season',
       p_target_id: 'survivor:1',
     })
-    expect(r).toEqual({ value: 0, count: 5 })
+    expect(r).toEqual({ value: 0, count: 5, rawCount: 12 })
   })
 
   it('defaults to value 0 / count 0 when no row comes back', async () => {
@@ -128,7 +136,7 @@ describe('readVote', () => {
     const { readVote } = await import('./server')
     expect(
       await readVote({ sessionId: 's', targetType: 'season', targetId: 't' }),
-    ).toEqual({ value: 0, count: 0 })
+    ).toEqual({ value: 0, count: 0, rawCount: 0 })
   })
 
   it('throws (carrying the pg code) on an RPC error', async () => {
@@ -139,6 +147,44 @@ describe('readVote', () => {
     await expect(
       readVote({ sessionId: 's', targetType: 'season', targetId: 't' }),
     ).rejects.toThrow(/boom/)
+  })
+})
+
+describe('castVote', () => {
+  beforeEach(() => {
+    rpcMock.mockReset()
+    process.env['NEXT_PUBLIC_SUPABASE_URL'] = 'https://example.supabase.co'
+    process.env['SUPABASE_SERVICE_ROLE_KEY'] = 'test-key'
+    vi.resetModules()
+  })
+  afterEach(() => {
+    if (savedUrl !== undefined) process.env['NEXT_PUBLIC_SUPABASE_URL'] = savedUrl
+    else delete process.env['NEXT_PUBLIC_SUPABASE_URL']
+    if (savedKey !== undefined) process.env['SUPABASE_SERVICE_ROLE_KEY'] = savedKey
+    else delete process.env['SUPABASE_SERVICE_ROLE_KEY']
+  })
+
+  it('maps the integer raw_count alongside the weighted count (#64)', async () => {
+    rpcMock.mockResolvedValueOnce({
+      data: [
+        { value: 1, weight: 0.25, count: 0.45, raw_count: 3, persisted: true },
+      ],
+      error: null,
+    })
+    const { castVote } = await import('./server')
+    const r = await castVote({
+      sessionId: 'sess-1',
+      targetType: 'season',
+      targetId: 'survivor:20',
+      value: 1,
+    })
+    expect(r).toEqual({
+      value: 1,
+      weight: 0.25,
+      count: 0.45,
+      rawCount: 3,
+      persisted: true,
+    })
   })
 })
 

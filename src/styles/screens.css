@@ -807,6 +807,12 @@
 }
 .vote-btn:hover:not(:disabled) { background: color-mix(in oklab, var(--show-ink) 8%, transparent); }
 .vote-btn:disabled { cursor: default; }
+/* Persistent voted state (issue #64): lower-alpha tint than the
+   transient .flash so the viewer can always see which way they
+   voted and that a re-click undoes it. Declared before .flash so
+   the flash pop still wins during the lock window. */
+.vote-btn.vote-down.voted { background: color-mix(in oklab, var(--s-warm-down) 15%, transparent); color: var(--s-warm-down); }
+.vote-btn.vote-up.voted   { background: color-mix(in oklab, var(--s-warm-up)   15%, transparent); color: var(--s-warm-up);   }
 .vote-btn.vote-down.flash { background: color-mix(in oklab, var(--s-warm-down) 30%, transparent); color: var(--s-warm-down); }
 .vote-btn.vote-up.flash   { background: color-mix(in oklab, var(--s-warm-up)   30%, transparent); color: var(--s-warm-up);   }
 .vote-count {
@@ -816,6 +822,14 @@
   border-left: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent);
   border-right: 1px solid color-mix(in oklab, var(--show-ink) 14%, transparent);
   overflow: hidden;
+  transition: opacity 320ms cubic-bezier(.4,0,.2,1);
+}
+/* Graceful load-in (issue #64): the number is a placeholder until
+   the mount read-back resolves. Fade it up once it's the true net
+   instead of popping 0 -> <X>. */
+.vote-pair[data-hydrated="false"] .vote-count { opacity: 0.4; }
+@media (prefers-reduced-motion: reduce) {
+  .vote-count { transition: opacity 240ms cubic-bezier(.4,0,.2,1); }
 }
 .vote-num {
   font: 500 28px/1 var(--mono); color: var(--show-ink); letter-spacing: -0.01em;

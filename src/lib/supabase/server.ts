@@ -44,7 +44,12 @@ export type CastVoteArgs = {
 export type CastVoteResult = {
   value: number
   weight: number
+  // Weighted aggregate SUM(value*weight) — a fractional ranking
+  // signal. Internal only; never the client-facing number.
   count: number
+  // Unweighted integer net SUM(value). This is the clean count
+  // the VotePair pill shows (issue #64).
+  rawCount: number
   persisted: boolean
 }
 
@@ -68,6 +73,7 @@ export async function castVote(args: CastVoteArgs): Promise<CastVoteResult> {
     value: Number(row.value),
     weight: Number(row.weight),
     count: Number(row.count),
+    rawCount: Number(row.raw_count) || 0,
     persisted: Boolean(row.persisted),
   }
 }
@@ -85,7 +91,10 @@ export type ReadVoteArgs = {
 
 export type ReadVoteResult = {
   value: number
+  // Weighted aggregate — internal ranking signal, never shown.
   count: number
+  // Unweighted integer net — the client-facing pill number (#64).
+  rawCount: number
 }
 
 export async function readVote(args: ReadVoteArgs): Promise<ReadVoteResult> {
@@ -105,6 +114,7 @@ export async function readVote(args: ReadVoteArgs): Promise<ReadVoteResult> {
   return {
     value: row ? Number(row.value) : 0,
     count: row ? Number(row.count) : 0,
+    rawCount: row ? Number(row.raw_count) || 0 : 0,
   }
 }
 

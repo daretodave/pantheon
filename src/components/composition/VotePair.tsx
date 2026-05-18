@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useReducer, useRef } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
 import {
   initialState,
   nextValue,
@@ -56,6 +56,10 @@ export function VotePair({
 }: VotePairProps) {
   const [state, dispatch] = useReducer(reducer, { initialCount }, initialState)
   const reduced = useRef(false)
+  // Until the mount read-back resolves (or the viewer acts), the
+  // number is a placeholder, not the true net. `hydrated` gates a
+  // one-time opacity fade so it doesn't pop 0 -> <X> (issue #64).
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     reduced.current =
@@ -86,6 +90,7 @@ export function VotePair({
           value: asVoteValue(json.value),
           count: Number(json.count) || 0,
         })
+        setHydrated(true)
       })
       .catch(() => {
         /* Optimistic-only fallback — keep the static initialCount. */
@@ -102,6 +107,9 @@ export function VotePair({
     // raw direction was the root of the "re-up drops the net" bug.
     const sent = nextValue(state.value, direction)
     dispatch({ type: 'click', direction, now })
+    // The viewer acted — the optimistic number is now authoritative
+    // even if the mount fetch hasn't landed; show it, don't fade.
+    setHydrated(true)
     fetch('/api/vote', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -122,6 +130,9 @@ export function VotePair({
   }
 
   const disabled = state.phase === 'locked'
+  const votedUp = state.value === 1
+  const votedDown = state.value === -1
+  const votedDir = votedUp ? 'up' : votedDown ? 'down' : 'none'
   // Bump derives from flash so the count slides UP for an up-vote and
   // DOWN for a down-vote. -8px translation in the slide direction.
   const bump = state.flash === 'up' ? 1 : state.flash === 'down' ? -1 : 0
@@ -137,14 +148,20 @@ export function VotePair({
       className="vote-pair"
       data-testid="vote-pair"
       data-vote-value={state.value}
+      data-voted={votedDir}
+      data-hydrated={hydrated ? 'true' : 'false'}
       aria-label={`Vote on ${label}`}
     >
       <button
         type="button"
-        className={`vote-btn vote-down${flashDownClass}`}
+        className={`vote-btn vote-down${flashDownClass}${votedDown ? ' voted' : ''}`}
         onClick={onClick('down')}
         disabled={disabled}
-        aria-label={`Vote down ${label}`}
+        aria-pressed={votedDown}
+        aria-label={
+          votedDown ? `Remove your down vote on ${label}` : `Vote down ${label}`
+        }
+        title={votedDown ? 'You voted this down — click to undo' : undefined}
         data-testid="vote-down"
       >
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -173,16 +190,20 @@ export function VotePair({
           data-testid="vote-count"
           style={numStyle}
         >
-          {state.count.toLocaleString()}
+          {Math.round(state.count).toLocaleString()}
         </span>
         <span className="vote-label">{label}</span>
       </div>
       <button
         type="button"
-        className={`vote-btn vote-up${flashUpClass}`}
+        className={`vote-btn vote-up${flashUpClass}${votedUp ? ' voted' : ''}`}
         onClick={onClick('up')}
         disabled={disabled}
-        aria-label={`Vote up ${label}`}
+        aria-pressed={votedUp}
+        aria-label={
+          votedUp ? `Remove your up vote on ${label}` : `Vote up ${label}`
+        }
+        title={votedUp ? 'You voted this up — click to undo' : undefined}
         data-testid="vote-up"
       >
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">

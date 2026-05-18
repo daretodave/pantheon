@@ -157,4 +157,39 @@ describe('<VotePair>', () => {
       value: original,
     })
   })
+
+  // --- issue #64: clean integers, voted affordance, load-in ---
+
+  it('reflects the voted direction via aria-pressed + a voted class', async () => {
+    getBody = { ok: true, value: 1, count: 7 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    await flushAsync()
+    const up = screen.getByTestId('vote-up')
+    const down = screen.getByTestId('vote-down')
+    expect(up.getAttribute('aria-pressed')).toBe('true')
+    expect(down.getAttribute('aria-pressed')).toBe('false')
+    expect(up.className).toContain('voted')
+    expect(up.getAttribute('aria-label')).toMatch(/remove your up vote/i)
+    expect(screen.getByTestId('vote-pair').getAttribute('data-voted')).toBe('up')
+  })
+
+  it('gates a graceful fade-in via data-hydrated until the mount read resolves', async () => {
+    getBody = { ok: true, value: 0, count: 9 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    expect(
+      screen.getByTestId('vote-pair').getAttribute('data-hydrated'),
+    ).toBe('false')
+    await flushAsync()
+    expect(
+      screen.getByTestId('vote-pair').getAttribute('data-hydrated'),
+    ).toBe('true')
+    expect(screen.getByTestId('vote-count').textContent).toBe('9')
+  })
+
+  it('rounds any stray fractional server count to a clean integer', async () => {
+    getBody = { ok: true, value: 0, count: 2.6 }
+    render(<VotePair initialCount={0} targetType="season" targetId="survivor:20" />)
+    await flushAsync()
+    expect(screen.getByTestId('vote-count').textContent).toBe('3')
+  })
 })

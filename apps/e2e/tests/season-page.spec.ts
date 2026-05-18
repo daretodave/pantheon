@@ -48,10 +48,10 @@ for (const url of seasonUrls) {
 
       await up.click()
 
-      // Phase 35: the click records an up-vote and the count
-      // reconciles to the server's weighted aggregate (fractional,
-      // and shared across the hermetic DB), so we assert the vote
-      // state + lock cycle rather than an exact optimistic integer.
+      // The click records an up-vote. The count reconciles to the
+      // server's clean integer net (#64) but is shared across the
+      // hermetic DB, so we assert the vote state + lock cycle
+      // rather than a specific number.
       await expect(page.getByTestId('vote-pair')).toHaveAttribute(
         'data-vote-value',
         '1',

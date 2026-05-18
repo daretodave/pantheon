@@ -128,7 +128,15 @@ export async function POST(request: Request) {
       targetId: parsed.targetId,
       value: parsed.value,
     })
-    return NextResponse.json({ ok: true, ...result })
+    // Client sees the clean integer net (`raw_count`), never the
+    // weighted ranking aggregate — that leak was issue #64.
+    return NextResponse.json({
+      ok: true,
+      value: result.value,
+      weight: result.weight,
+      count: result.rawCount,
+      persisted: result.persisted,
+    })
   } catch (err) {
     const e = err as { code?: string; hint?: string; message?: string }
     if (e.code === '23505' || e.hint?.includes('brigade')) {
@@ -172,7 +180,13 @@ export async function GET(request: Request) {
       targetType: q.data.targetType,
       targetId: q.data.targetId,
     })
-    return NextResponse.json({ ok: true, ...result })
+    // Client sees the clean integer net (`raw_count`), never the
+    // weighted ranking aggregate — that leak was issue #64.
+    return NextResponse.json({
+      ok: true,
+      value: result.value,
+      count: result.rawCount,
+    })
   } catch (err) {
     const e = err as { code?: string; message?: string }
     if (e.code === '22023') {
